@@ -5,6 +5,7 @@
 #still have not implemented XWing or YWing searches
 #maybe run a brute force generic solvable routine after all the other tests? too slow!
 
+
 use strict;
 use List::Util qw(shuffle);
 use sudokuvars;
@@ -131,8 +132,8 @@ while ( $blanksquares < 57 )
             if($debug) {print TROUBLE "Not Solvable: replaced $NumberOfPicks numbers<br>";}
             }
       }
- 
-$blanksquares = 0; 
+
+$blanksquares = 0;
 foreach my $cell ( @AllCells )
       {
       my ($x,$y) = @{ $cell };
@@ -149,7 +150,7 @@ if ($NP > 0 )
       {$difficulty = "Medium";}
 if ($IR > 0 )
       {$difficulty = "Hard";}
-     
+
 if($debug) {print TROUBLE &PrintGameArrayDebug();}
 
 open (DATA, "<./templates/index.html") or die("Template file /templates/index.html does not exist");
@@ -180,7 +181,7 @@ for (my $y = 0; $y < 9 ; $y++)
       $jscalcpuzz .= "\n";
       #$possibilities .= "<br>\n";
       }
-      
+
 #$template_file =~ s/%possibilities%/$possibilities/g;
 $template_file =~ s/%jscalcpuzz%/$jscalcpuzz/g;
 $template_file =~ s/\%archivepath\%/$archivepath/g;
@@ -250,7 +251,7 @@ for (my $y = 0; $y < 9 ; $y++)
 
 sub CreateFullSudokuGrid()
 {
-#fully fill in global $gameArray with valid sudoku numbers      
+#fully fill in global $gameArray with valid sudoku numbers
 #&FillPossibilityArray1to9();
 &SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules(); #require to prime RecursiveChoice
 &RecursiveCellSet( @AllCells );
@@ -284,8 +285,8 @@ do
       delete $TempGameArray[$x][$y];
       if (scalar @CellProbabilities == 0)
             {
-            if($debug) { print TROUBLE "No Probabilities left at $x,$y Returning<br>" }      
-            return(0);      
+            if($debug) { print TROUBLE "No Probabilities left at $x,$y Returning<br>" }
+            return(0);
             }
       my $choice = shift @CellProbabilities;
       $TempGameArray[$x][$y] = $choice; #remove choice from $PossibleNumberArray[$x][$y]
@@ -299,15 +300,15 @@ sub SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules()
 {
 #IMPORTANT totally rebuilds/wipes @PossibleNumberArray
 #fill up @PossibleNumberArray based on values in @$gameArray for each $row,$col,$squ
-#if any cell has no possibility return 0 - fail - indicates not a valid sudoku 
+#if any cell has no possibility return 0 - fail - indicates not a valid sudoku
 #DOES NOT SET $gameArray here
 #that will be done in another routine
 &FillPossibilityArray1to9();
 foreach my $cell ( @AllCells )
       {
       my ($x,$y) = @{ $cell };
-      my $choice = $TempGameArray[$x][$y]; 
-      if ($choice != undef) 
+      my $choice = $TempGameArray[$x][$y];
+      if ($choice != undef)
             {
             foreach my $region ( 'col' , 'row' , 'squ' )
                   {
@@ -316,9 +317,9 @@ foreach my $cell ( @AllCells )
                   foreach my $cell ( @list)
                         {
                         my ($x,$y) = @{ $cell };
-                        if ( $TempGameArray[$x][$y] != undef ) 
+                        if ( $TempGameArray[$x][$y] != undef )
                               {#$TempGameArray[$x][$y] is already set for this cell so no possibility to set here ()
-                              delete $PossibleNumberArray[$x][$y];      
+                              delete $PossibleNumberArray[$x][$y];
                               }
                         else
                               {#remove the $choice from the cell
@@ -341,7 +342,7 @@ foreach my $cell ( @AllCells )
       my ($x,$y) = @{ $cell };
       foreach my $value ( 1 .. 9 )
             {
-            $PossibleNumberArray[$x][$y]{$value} = 1; #see definition explanation     
+            $PossibleNumberArray[$x][$y]{$value} = 1; #see definition explanation
             }
       }
 }
@@ -349,22 +350,22 @@ foreach my $cell ( @AllCells )
 sub CopyGameArrays()
 {
 my $From = $_[0]; #ref to the 3 type of @GameArray's
-my $To = $_[1]; 
+my $To = $_[1];
 
 foreach my $cell ( @AllCells )
       {
       my ($x,$y) = @{ $cell };
       ${$To}[$x][$y] = ${$From}[$x][$y];
-      }      
+      }
 }
 
 sub CopyPossibleNumberArrays()
 {
 #not tested
 #not used
-      
+
 my $From = $_[0]; #ref to the 3 type of @PossibleNumberArray's
-my $To = $_[1]; 
+my $To = $_[1];
 
 foreach my $cell ( @AllCells )
       {
@@ -374,7 +375,7 @@ foreach my $cell ( @AllCells )
             {
             ${$To}[$x][$y]{$PossibleNumber} = ${$From}[$x][$y]{$PossibleNumber};
             }
-      }      
+      }
 }
 
 sub IsPuzzleSolvable()
@@ -428,7 +429,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
       #then try &SetNS as it alone clears up, and sets, the single possibilities! IT IS THE ONLY ONE THAT SETS THE $gameArrayTemp
       $AnyProgress = 0; #set it up to fail. if any possibility is removed using any technique, it still might be solvable
       #these should be first as they do not narrow possibilities down to one. Nor do they set a square on it's own. Give them a chance
-=pod           
+=pod
       if ($methods{np})
             {
             $LpNP = &SetNP(); #Set NP method 1 for Local regions
@@ -442,7 +443,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
                         }
                   }
             }
-            
+
       if ($methods{hs})
             {
             #start filling in puzzle using various techniques.
@@ -457,7 +458,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
                     }
                   }
             }
-=cut             
+=cut
        if ($methods{ir})
             {
             $LpIR1 = &SetIR1(); #Set IR1 for rows and columns
@@ -472,7 +473,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
               }
             $AnyProgress += $LpIR1;
             }
-            
+
        if ($methods{ir})
             {
             $LpIR2 = &SetIR2(); #Set IR2 for rows and columns
@@ -502,7 +503,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
            }
 
       #lets see if we are done yet
-      $blanksquaresleft = &AreThereBlankSquares();    
+      $blanksquaresleft = &AreThereBlankSquares();
       $loopcount++;
       }
 
@@ -529,7 +530,7 @@ for (my $y = 0; $y < 9 ; $y++)
                   push @AllBlankCells , [$x,$y];
                   }
             }
-      }      
+      }
 }
 
 my %RemovedCells; #RemovedCells{"$x$y"} = 1; So we can search which ones faster, and delete them easily!
@@ -557,7 +558,7 @@ do
       #try to remove some random cells
       for (my $count = 0; $count < $NumberOfPicks ; $count++) #loop to remove a bunch at one time
             {
-            #maybe later to make it truely recursive, we will have a shuffled list of all full, removable squares we can shift off 
+            #maybe later to make it truely recursive, we will have a shuffled list of all full, removable squares we can shift off
             my $x = int(rand(9));
             my $y = int(rand(9));
             #if(RemovedCells{"$x$y"} == 1) {next}  #ignore ones already removed
@@ -571,9 +572,9 @@ do
             }
       #if($debug) {print TROUBLE "Solvable: continuing...<br>";}
       #and test in &RecursiveRemoveCells()
-      }      
+      }
 until( &RecursiveRemoveCells() );
-return 1; #cascade back     
+return 1; #cascade back
 }
 
 sub RecursiveSolveTempGameArray()
@@ -581,14 +582,14 @@ sub RecursiveSolveTempGameArray()
 #IMPORTANT: Does not require IsPuzzleSolvible loop.
 #It can replace it.
 #It tests for solve all in one! cannot be used with other solve methods.
-     
+
 #recursively go through each @AllBlankCells
 #try a possibility from ProbabilityArray
 #test, said value, to ensure that all cells still have valid possibilities
 #true - set tempgamearray next recursive
 #false - try another possibility
-#out of possibilities return fail 0 
-#on return if no posibility return else try next possibility 
+#out of possibilities return fail 0
+#on return if no posibility return else try next possibility
 my @RemainingBlankCells = @_;
 if (scalar(@RemainingBlankCells) == 0)
       {
@@ -612,21 +613,21 @@ do
       {
       #if we are here, we are either: forging ahead or returning from an failed recurse attempt.  blank $GameArray[$x][$y] and try another choice if available
       if($debug) { print TROUBLE "deleted $TempGameArray[$x][$y] in TempGameArray[$x][$y]<br>" }
-      delete $TempGameArray[$x][$y]; 
-      if($debug) { print TROUBLE "@CellPossibilities are posibilities at $x,$y <br>" } 
+      delete $TempGameArray[$x][$y];
+      if($debug) { print TROUBLE "@CellPossibilities are posibilities at $x,$y <br>" }
       #if (scalar @CellPossibilities == 0) allows for incorrect game grids
       if (scalar @CellPossibilities != 1)
             {
-            if($debug) { print TROUBLE "No Possibilities left at $x,$y Returning 0<br>" }      
-            return(0);      
+            if($debug) { print TROUBLE "No Possibilities left at $x,$y Returning 0<br>" }
+            return(0);
             }
       my $choice = shift @CellPossibilities;
-      if($debug) { print TROUBLE "Trying $choice at in TempGameArray[$x][$y] and then calling next RemainingBlankCells with RecursiveSolveTempGameArray with @RemainingBlankCells<br>" } 
-      $TempGameArray[$x][$y] = $choice; #set $choice 
+      if($debug) { print TROUBLE "Trying $choice at in TempGameArray[$x][$y] and then calling next RemainingBlankCells with RecursiveSolveTempGameArray with @RemainingBlankCells<br>" }
+      $TempGameArray[$x][$y] = $choice; #set $choice
       }
 until( &RecursiveSolveTempGameArray( @RemainingBlankCells ) );
 #we are done calculating so we MUST remove solved square as they are actually meant to be blank ones
-if($debug) { print TROUBLE "Puzzle is solved and backtracking so deleting TempGameArray $TempGameArray[$x][$y] at $x,$y </br>" } 
+if($debug) { print TROUBLE "Puzzle is solved and backtracking so deleting TempGameArray $TempGameArray[$x][$y] at $x,$y </br>" }
 delete $TempGameArray[$x][$y];
 return(1); #cascade
 }
@@ -645,7 +646,7 @@ foreach my $region ( 'col' , 'row' )
             {
             #Step 1: go through each cell in each col and row
             #build up $PossibilityLocationsInRegion{$PossibleNumber}{'squares'} = 012 joining squ's. One lone number is a winner
-            #$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = "xyxyxyx" count and location 
+            #$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = "xyxyxyx" count and location
             my %PossibilityLocationsInRegion;
             #$PossibilityLocationsInRegion{Possibility #} = xyxyxyxy... (appended).
             #The length gives the frequency count, eg xyxy means $PossibleNumber occurs twice
@@ -668,8 +669,8 @@ foreach my $region ( 'col' , 'row' )
                   my $xyxyxy = $PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'};
                   if (length($squares)==1)
                         {
-                        #if ( (length($xyxyxy)==2) or  (length($xyxyxy)==4) or (length($xyxyxy)==6) ) 
-                        if ( (length($xyxyxy)==4) or (length($xyxyxy)==6) ) 
+                        #if ( (length($xyxyxy)==2) or  (length($xyxyxy)==4) or (length($xyxyxy)==6) )
+                        if ( (length($xyxyxy)==4) or (length($xyxyxy)==6) )
                               {#found a IR1 for this $PossibleNumber
                               #remove $PossibleNumber from $squ, then restore to $xyxyxy locations
                               $countIR++;
@@ -677,7 +678,7 @@ foreach my $region ( 'col' , 'row' )
                               foreach my $cell ( @list)
                                     {
                                     my ($x,$y) = @{ $cell };
-                                    delete  $PossibleNumberArray[$x][$y]{$PossibleNumber};               
+                                    delete  $PossibleNumberArray[$x][$y]{$PossibleNumber};
                                     }
                               #restore to $xyxyxy locations
                               @list = split('' , $xyxyxy); #locations to restore $PossibleNumber
@@ -685,9 +686,9 @@ foreach my $region ( 'col' , 'row' )
                                     {
                                     my $x = shift @list;
                                     my $y = shift @list;
-                                    $PossibleNumberArray[$x][$y]{$PossibleNumber}=1;    
+                                    $PossibleNumberArray[$x][$y]{$PossibleNumber}=1;
                                     }
-                              }      
+                              }
                         }
                   }
             }
@@ -708,7 +709,7 @@ foreach my $region ( 'squ' )
             {
             #Step 1: go through each cell in each col and row
             #build up $PossibilityLocationsInRegion{$PossibleNumber}{'squares'} = 012 joining squ's. One lone number is a winner
-            #$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = "xyxyxyx" count and location 
+            #$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = "xyxyxyx" count and location
             my %PossibilityLocationsInRegion;
             #$PossibilityLocationsInRegion{Possibility #} = xyxyxyxy... (appended).
             #The length gives the frequency count, eg xyxy means $PossibleNumber occurs twice
@@ -734,15 +735,15 @@ foreach my $region ( 'squ' )
                   my $xyxyxy = $PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'};
                   if (length($rows)==1)
                         {
-                         if ( (length($xyxyxy)==4) or (length($xyxyxy)==6) ) 
+                         if ( (length($xyxyxy)==4) or (length($xyxyxy)==6) )
                               {#found a IR2 for this $PossibleNumber
                               #remove $PossibleNumber from $row, then restore to $xyxyxy locations
                               $countIR++;
-                              my @list = @{ $CellsIn{'row'}{$rows} }; 
+                              my @list = @{ $CellsIn{'row'}{$rows} };
                               foreach my $cell ( @list)
                                     {
                                     my ($x,$y) = @{ $cell };
-                                    delete  $PossibleNumberArray[$x][$y]{$PossibleNumber};               
+                                    delete  $PossibleNumberArray[$x][$y]{$PossibleNumber};
                                     }
                               #restore to $xyxyxy locations
                               @list = split('' , $xyxyxy); #locations to restore $PossibleNumber
@@ -750,21 +751,21 @@ foreach my $region ( 'squ' )
                                     {
                                     my $x = shift @list;
                                     my $y = shift @list;
-                                    $PossibleNumberArray[$x][$y]{$PossibleNumber}=1;    
+                                    $PossibleNumberArray[$x][$y]{$PossibleNumber}=1;
                                     }
-                              }      
+                              }
                         }
                   if (length($cols)==1)
                         {
-                        if ( (length($xyxyxy)==4) or (length($xyxyxy)==6) ) 
+                        if ( (length($xyxyxy)==4) or (length($xyxyxy)==6) )
                               {#found a IR2 for this $PossibleNumber
                               #remove $PossibleNumber from $col, then restore to $xyxyxy locations
                               $countIR++;
-                              my @list = @{ $CellsIn{'col'}{$cols} }; 
+                              my @list = @{ $CellsIn{'col'}{$cols} };
                               foreach my $cell ( @list)
                                     {
                                     my ($x,$y) = @{ $cell };
-                                    delete  $PossibleNumberArray[$x][$y]{$PossibleNumber};               
+                                    delete  $PossibleNumberArray[$x][$y]{$PossibleNumber};
                                     }
                               #restore to $xyxyxy locations
                               @list = split('' , $xyxyxy); #locations to restore $PossibleNumber
@@ -772,9 +773,9 @@ foreach my $region ( 'squ' )
                                     {
                                     my $x = shift @list;
                                     my $y = shift @list;
-                                    $PossibleNumberArray[$x][$y]{$PossibleNumber}=1;    
+                                    $PossibleNumberArray[$x][$y]{$PossibleNumber}=1;
                                     }
-                              }      
+                              }
                         }
                   }
             }
@@ -822,21 +823,21 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                   my $xyxy = $PossibilityLocationsInRegion{$PossibleNumber};
                   if ( length($xyxy) != 4 )
                         {
-                        delete $PossibilityLocationsInRegion{$PossibleNumber};     
+                        delete $PossibilityLocationsInRegion{$PossibleNumber};
                         }
                   else
                         {
-                        #Step 3: look for $PossibilityLocationsInRegion{$PossibleNumber} that are in same locations by: 
+                        #Step 3: look for $PossibilityLocationsInRegion{$PossibleNumber} that are in same locations by:
                         #converting to $PossibilitiesInRegion2{xyxyxy}{$PossibleNumber(s)} = 1.
                         #If there are two $PossibilitiesInRegion2{$xyxy}{'possiblenumbers'}{$PossibleNumber} we will have found a NP
-                        $PossibilitiesInRegion2{$xyxy}{'possiblenumbers'}{$PossibleNumber} = 1; #if we have two {$PossibleNumber}, we have a winner  
+                        $PossibilitiesInRegion2{$xyxy}{'possiblenumbers'}{$PossibleNumber} = 1; #if we have two {$PossibleNumber}, we have a winner
                         $PossibilitiesInRegion2{$xyxy}{'count'}++;
                         }
                   }
-            #Step 4: Look for winners, $PossibilitiesInRegion2{$xyxy}'possiblenumbers'}{$PossibleNumber} with 2 $PossibleNumber keys, and set  
+            #Step 4: Look for winners, $PossibilitiesInRegion2{$xyxy}'possiblenumbers'}{$PossibleNumber} with 2 $PossibleNumber keys, and set
             foreach my $xyxy ( keys %PossibilitiesInRegion2 )
                   {
-                  if ($PossibilitiesInRegion2{$xyxy}{'count'} == 2) 
+                  if ($PossibilitiesInRegion2{$xyxy}{'count'} == 2)
                         {
                         my ($x1,$y1,$x2,$y2) = split('' , $xyxy); #locations of NP pair
                         my ($value1,$value2) = keys %{ $PossibilitiesInRegion2{$xyxy}{'possiblenumbers'} }; #values of NP pair
@@ -872,7 +873,7 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                                     if ($PossibleNumberArray[$x][$y]{$value1} == 1)
                                           {
                                           delete $PossibleNumberArray[$x][$y]{$value1};
-                                          
+
                                           }
                                     if ($PossibleNumberArray[$x][$y]{$value2} == 1)
                                           {
@@ -886,7 +887,7 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                   }
             if($NPCountOnce{1}==1){$countNP++}
             if($NPCountOnce{2}==1){$countNP++}
-           }            
+           }
       }
 return $countNP; #return the number of HP
 };
@@ -917,13 +918,13 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                         $PossibilityLocationsInRegion{$PossibleNumber}{'location'}{"$x$y"} = 1;
                         }
                   }
-            #look for $PossibleNumber that occurs only once in region 
+            #look for $PossibleNumber that occurs only once in region
             foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion )
                         {
                         if($PossibilityLocationsInRegion{$PossibleNumber}{'count'} == 1)
                               { #found HS
                               $countHS++;
-                              my ($xy) = keys %{ $PossibilityLocationsInRegion{$PossibleNumber}{'location'} }; 
+                              my ($xy) = keys %{ $PossibilityLocationsInRegion{$PossibleNumber}{'location'} };
                               my ($x,$y) = split('',$xy); #should only be one!
                               #$TempGameArray[$x][$y] = $PossibleNumber;  #set @TempGameArray
                               delete $PossibleNumberArray[$x][$y]; #clear @PossibleNumberArray
@@ -939,7 +940,7 @@ return $countHS; #return the number of HS hidden singles
 sub SetNS()
 {
 #NS Naked Singles
-#for @AllCells. if you find a cell with one possible value, set @TempGameArray as that value and remove value from @PossibleNumberArray 
+#for @AllCells. if you find a cell with one possible value, set @TempGameArray as that value and remove value from @PossibleNumberArray
 #remove the possibility from the affected squ,row,col regions
 #only one that sets @TempGameArray
 my $countNS = 0;
@@ -989,7 +990,7 @@ foreach my $cell ( @AllCells )
       my ($x,$y) = @{ $cell };
       if($TempGameArray[$x][$y] == undef)
             {
-            return(1);     
+            return(1);
             }
       }
 return(0);
@@ -1008,12 +1009,12 @@ for (my $y = 0; $y < 9 ; $y++)
             {
             $string .=  "<td border='1'>";
             $string .=  $TempGameArray[$x][$y];
-            $string .=  "</td>";      
+            $string .=  "</td>";
             }
       $string .=  "</tr>";
       }
-$string .=  "</table>";      
-      
+$string .=  "</table>";
+
 return $string;
 }
 
@@ -1030,12 +1031,12 @@ for (my $y = 0; $y < 9 ; $y++)
             {
             $string .=  "<td border='1'>";
             $string .=  $GameArray[$x][$y];
-            $string .=  "</td>";      
+            $string .=  "</td>";
             }
       $string .=  "</tr>";
       }
-$string .=  "</table>";      
-      
+$string .=  "</table>";
+
 return $string;
 }
 
@@ -1054,12 +1055,12 @@ for (my $y = 0; $y < 9 ; $y++)
             my @orderedlist = sort keys %{ $PossibleNumberArray[$x][$y] };
             my $str = join (',' , @orderedlist );
             $string .=  $str;
-            $string .=  "</td>";      
+            $string .=  "</td>";
             }
       $string .=  "</tr>";
       }
-$string .=  "</table>";      
-      
+$string .=  "</table>";
+
 return $string;
 }
 
@@ -1127,13 +1128,13 @@ sub CgiErr {
     print "\n</PRE>";
     exit -1;
 }
-  
+
 sub __SetGameArrayWithSinglePossibility()
 {
 #Not such a good idea. No benefit
-      
+
 #NS Naked Singles
-#for @AllCells. if you find a cell with one possible value, set @TempGameArray as that value and remove value from @PossibleNumberArray 
+#for @AllCells. if you find a cell with one possible value, set @TempGameArray as that value and remove value from @PossibleNumberArray
 #remove the possibility from the affected squ,row,col regions
 #only one that sets @TempGameArray
 
