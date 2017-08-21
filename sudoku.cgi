@@ -42,6 +42,7 @@ my $RemoveAttempCount;
 my $starttime = time;
 my $timetotry = 5;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once?
+my $target = 50;
 
 my $debug = 1;
 
@@ -90,6 +91,7 @@ if ($in{difficulty} eq 'Difficult')
 $blanksquares = 0;
 #start removing numbers from game grid
 &RecursiveRemoveCells();
+=pod
 #while ( (time() - $starttime) <= $timetotry )
 while ( $blanksquares < 57 )
       {
@@ -132,6 +134,7 @@ while ( $blanksquares < 57 )
             if($debug) {print TROUBLE "Not Solvable: replaced $NumberOfPicks numbers<br>";}
             }
       }
+=cut
 
 $blanksquares = 0;
 foreach my $cell ( @AllCells )
@@ -542,9 +545,15 @@ my %RemovedList;
 #Test for time
 #if( (time() - $starttime) <= $timetotry ) {return 1}
 #Test for $blanksquares
-if($blanksquares >= 10) {return 1}
-&SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules(); #reset PossibilityArray
-if (&IsPuzzleSolvable()) {return 0} #note: tests previous call
+if($blanksquares >= $target)
+      {
+      return 1
+      }
+#&SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules(); #reset PossibilityArray
+if (&IsPuzzleSolvable()==0)
+            {
+            return 0
+            } #note: tests previous call
 do
       {
       #was not solvable. replace removed numbers. Note: will be blank on forward
@@ -568,6 +577,7 @@ do
             if($debug) {print TROUBLE "$GameArray[$x][$y] removed at $x,$y : ";}
             delete $TempGameArray[$x][$y]; #remove picked number
             delete $GameArray[$x][$y]; #remove picked number
+            $RemoveAttempCount++;
             $blanksquares++;
             }
       #if($debug) {print TROUBLE "Solvable: continuing...<br>";}
