@@ -40,9 +40,9 @@ my @PossibleNumberArray; #global for recursive routines. $PossibleNumberArray[$x
 my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns,hs,np,ir
 my $RemoveAttempCount;
 my $starttime = time;
-my $timetotry = 5;
+my $timetotry = 10;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once?
-my $target = 54;
+my $target = 60;
 my $debug = 1;
 
 eval { &Main(); };                            # Trap any fatal errors so the program hopefully
@@ -529,9 +529,9 @@ if($debug) {print TROUBLE "Entering RecursiveRemoveCells. Count $RemoveAttempCou
 if($debug) {print TROUBLE "Testing IsPuzzleSolvable.<br>";}
 &CopyGameArrays( \@GameArray  , \@TempGameArray );
 
-&CalcAllBlankCellsInTempGameArray();
-if ( &RecursiveSolveTempGameArray(@AllBlankCells)==0 ) #if it is not solvable replace the number in the grid
-#if (&IsPuzzleSolvable()==0)
+#&CalcAllBlankCellsInTempGameArray();
+#if ( &RecursiveSolveTempGameArray(@AllBlankCells)==0 ) #if it is not solvable replace the number in the grid
+if (&IsPuzzleSolvable()==0)
       {
       if($debug) {print TROUBLE "Previous RecursiveRemoveCells was not Solvable. Returning 0<br>";}
       return 0
@@ -545,7 +545,7 @@ if($debug) {print TROUBLE "Previous RecursiveRemoveCells was Solvable. Contiuing
 if($debug) { print TROUBLE "GameArray is:</br>" }
 if($debug) { print TROUBLE &PrintGameArrayDebug() }
 
-#if( (time() - $starttime) <= $timetotry ) {if($debug) {print TROUBLE "Time limit reached. Return 1<br>";}; return 1;} #Test for time
+if( (time() - $starttime) >= $timetotry ) {if($debug) {print TROUBLE "Time limit reached. Return 1<br>";}; return 1;} #Test for time
 if($blanksquares >= $target)
       {
       if($debug) {print TROUBLE "Reached target. Return 1<br>";}
@@ -558,6 +558,7 @@ do
             my ($x,$y) = split('',$cell);
             #$TempGameArray[$x][$y] = $RemovedList{$cell};
             $GameArray[$x][$y] = $RemovedList{$cell};
+            delete $RemovedList{$cell}; #otherwise %$RemovedList piles up and we get errors
             $blanksquares--;
             if($debug) {print TROUBLE "Restoring $RemovedList{$cell} to \$GameArray[$x][$y].<br>";}
             }
@@ -570,7 +571,10 @@ do
             my $CellRef = shift @CellsToRemove ;
             my $x = $CellRef->[0];
             my $y = $CellRef->[1];
-            if ($GameArray[$x][$y] == undef){next} #no need to try and remove an already removed spot
+            if ($GameArray[$x][$y] == undef)
+                  {
+                  next;
+                  } #no need to try and remove an already removed spot
             $RemovedList{"$x$y"} = $GameArray[$x][$y]; #add to remove list. we may need to restore them if we can't solve board
             if($debug) {print TROUBLE "$GameArray[$x][$y] removed at $x,$y : ";}
             #delete $TempGameArray[$x][$y]; #remove picked number
