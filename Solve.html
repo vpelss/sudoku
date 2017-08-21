@@ -1,0 +1,35 @@
+<!-- saved from url=(0047)http://www.kawa.net/works/js/game/ncross-e.html -->
+<!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
+<HTML LANG="en"> 
+  <HEAD><META HTTP-EQUIV="Content-Type"
+	 CONTENT="text/html; charset=ISO-8859-1"> 
+	 <TITLE>[Sudoku] Quick Sudoku Solving by JavaScript</TITLE>
+		 <LINK REL="stylesheet" TYPE="text/css"
+	  HREF="ncross.css"> <SCRIPT
+	 SRC="ncross.js"></SCRIPT> <SCRIPT><!--
+	window.onload = function () {
+		read_table( document.getElementById("map").value );
+	};
+//--></SCRIPT> 
+  </HEAD> 
+  <BODY> 
+	 <FORM> 
+		<TABLE> 
+		  <TBODY> 
+			 <TR> 
+				<TD VALIGN="middle"> <TEXTAREA ID="map" NAME="map" ONKEYUP="start_cross(this.form);" ONCHANGE="start_cross(this.form);" ROWS="10" COLS="10">3-4---5-1
+---147---
+8-------6
+--39-24--
+-48-6-27-
+---------
+48---3-15
+----5----
+9--8----7</TEXTAREA> </TD> 
+				<TD VALIGN="middle">
+				  <INPUT TYPE="button" ONCLICK="start_cross(this.form);" VALUE="answer"> </TD> 
+				<TD VALIGN="middle" CLASS="num_cross" ID="result_here"> </TD> 
+			 </TR> 
+		  </TBODY> 
+		</TABLE> </FORM> </BODY>
+</HTML>

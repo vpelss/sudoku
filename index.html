@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
+<HTML> 
+  <HEAD>
+	 <META NAME="KEYWORDS"
+	  CONTENT="Sudoku , Friends ,infinite , instant , unlimited , Sudoku , number, game, generator , puzzle , script , Sudoku, printable">
+	 <META NAME="DESCRIPTION"
+	  CONTENT="Sudoku of Death. Sudoku Puzzle Generator Script to create Sudoku for prining or saving for use in your web browser">
+	 
+	 <TITLE>Sudoku of Death. Puzzle Generator by Emogic.com</TITLE> 
+  </HEAD> 
+  <BODY BACKGROUND="sudoku.gif"> <SCRIPT TYPE="text/javascript"> 		
+
+var browserType;
+if (document.layers) {browserType = "nn4"}
+if (document.all) {browserType = "ie"}
+if (window.navigator.userAgent.toLowerCase().match("gecko")) {browserType= "gecko"}
+
+function hide2(szDivID)
+{
+if (browserType == "gecko" )
+     document.poppedLayer = eval('document.getElementById(szDivID)');
+else if (browserType == "ie")
+     document.poppedLayer = eval('document.getElementById(szDivID)');
+else
+     document.poppedLayer =
+        eval('document.layers[szDivID]');
+document.poppedLayer.style.display = "none";
+}
+
+function show2(szDivID)
+{
+if (browserType == "gecko" )
+     document.poppedLayer = eval('document.getElementById(szDivID)');
+else if (browserType == "ie")
+     document.poppedLayer = eval('document.getElementById(szDivID)');
+else
+     document.poppedLayer = eval('document.layers[szDivID]');
+document.poppedLayer.style.display = "inline";
+}
+
+function gup( name )
+{
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return "";
+  else
+    return results[1];
+}
+</SCRIPT> 
+	
+		<TABLE CELLPADDING="0" CELLSPACING="1" BGCOLOR="#000000" ALIGN="CENTER"> 
+		  <TR> 
+			 <TD> 
+				<TABLE CELLPADDING="5" CELLSPACING="0" BGCOLOR="#FFFFFF"> 
+				  <TR> 
+					 <TD> 
+						<H3 ALIGN="CENTER">Sudoku of Death</H3> 
+						<CENTER> 
+						  <FORM ACTION="/cgi/sudoku/sudoku.cgi" METHOD="POST"
+							NAME="MyForm"> 
+							 <P><INPUT TYPE="HIDDEN" NAME="uid" ID="uid"><INPUT
+								TYPE="HIDDEN" NAME="name" ID="name"></P> 
+								
+								 <P> 
+								<SELECT NAME="difficulty" SIZE="1"> 
+								<OPTION VALUE="Simple">Simple</OPTION> 								
+								  <OPTION VALUE="Easy">Easy</OPTION> 
+								  <OPTION VALUE="Medium"
+									>Medium</OPTION> 
+								  <OPTION VALUE="Difficult" SELECTED="SELECTED">Difficult</OPTION> 
+								</SELECT></P> 
+							 <P><INPUT TYPE="SUBMIT" NAME="Submit1"
+								VALUE="Generate Puzzle - Wait 15 Sec"></P> 
+								
+								<!--
+							 <P><INPUT TYPE="RESET" NAME="Reset1"
+								VALUE="Defaults"></P>
+								-->
+						  </FORM> 
+						  <DIV ID="fbhide"> 
+							 <P><A HREF="/sudoku/common/">Sudoku Puzzle
+								Archive</A></P></DIV> <SCRIPT>hide2("fbhide");</SCRIPT> 
+						  <TABLE CELLPADDING="0" CELLSPACING="0" BGCOLOR="#FFFFFF"> 
+							 <TR> 
+								<TD> </TD> 
+							 </TR> 
+						  </TABLE> 
+						  <P><A HREF="/cgi/sudoku/WeWarnYouOnce.wav"
+							 TARGET="_blank">Why Sudoku of Death?</A></P> </CENTER></TD> 
+				  </TR> 
+				  
+				 <tr>
+				 <td>
+				 
+<!--FB share start-->
+<style>
+.facebook_button {
+    display: inline-block;
+
+    background: #627aac;
+
+    border-top: 1px solid #29447e;
+    border-right: 1px solid #29447e;
+    border-bottom: 1px solid #1a356e;
+    border-left: none;
+
+    height: 20px;
+
+    padding-right: 7px;
+    padding-left: 7px;
+
+    font-weight: bold;
+    font-size: 11px;
+    color: white;
+    text-decoration: none;
+    font-family: "lucida grande", tahoma, verdana, arial, sans-serif;
+    line-height: 20px;
+
+    cursor: pointer;
+
+}
+</style>
+	 <DIV ID="fb-root"></DIV> <SCRIPT>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=81021891245&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+function vp()
+{
+var tt = {
+    method: 'share',
+    href: "https://www.emogic.com/",
+  };
+tt.href = window.location.href;
+
+ FB.ui(
+  tt ,
+  function(response) {
+    if (response && !response.error_code) {
+      alert('Posting completed.');
+    } else {
+      alert('Error while posting.');
+    }
+  }
+        );
+};
+</SCRIPT>
+
+<CENTER><div class="fb-like" data-href="https://apps.facebook.com/sudokuofdeath/" data-layout="standard" data-action="like" data-show-faces="false" data-share="true"></div>
+<div class="facebook_button"  ONCLICK="window.open('https://apps.facebook.com/sudokuofdeath/','_blank');" >Play this on FB</div>
+<div class="facebook_button"  ONCLICK="window.open('https://www.facebook.com/games/sudokuofdeath/','_blank');">Add to your FB Apps</div>
+</CENTER>
+<!--FB share end-->
+				 
+				 </td>
+				 </tr>
+				</TABLE></TD> 
+		  </TR> 
+		</TABLE>
+		
+
+		
+		
+		<SCRIPT>
+document.getElementById("uid").value = gup("uid"); //send uid with hidden text in form for ??
+document.getElementById("name").value = gup("name"); //send name with hidden text in form for chat room identification in facebook app
+	
+if (!(document.getElementById("name").value)) //we are not in facebook. reveal hidden stuff
+	{
+	show2("fbhide");
+	}
+
+</SCRIPT> </BODY>
+</HTML>

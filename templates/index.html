@@ -1,0 +1,1569 @@
+<!DOCTYPE HTML PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN" "hmpro6.dtd">
+<HTML> 
+  <HEAD><META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+	 <META NAME="KEYWORDS"
+	  CONTENT="Sudoku , Friends , infinite , instant , unlimited , Sudoku , cross, word, generator , puzzle , script , Sudoku, printable , free">
+	 <META NAME="DESCRIPTION"
+	  CONTENT="Sudoku for Friends Infinite Free Sudoku Puzzle Generator Script to create Sudoku for prining or saving for use in your web browser">
+	 
+	 <TITLE>Sudoku Puzzle Generator by Emogic.com</TITLE><LINK REL="stylesheet"
+	 TYPE="text/css" HREF="/cgi/sudoku/ncross.css"> <STYLE TYPE="text/css">
+
+.cellnotselectedclass {
+  background-color: white;
+  text-align: center;
+  height: 30pt;
+  width: 30pt;
+  font-size: 7pt;
+  border-top: 1pt black solid;
+  border-right: 1pt Black solid;
+  border-bottom: 1pt Black solid;
+  border-left: 1pt Black solid;
+}
+
+.cellselectedclass {
+  background-color: yellow;
+  text-align: center;
+  height: 30pt;
+  width: 30pt;
+  font-size: 7pt;
+  border-top: 1pt black solid;
+  border-right: 1pt Black solid;
+  border-bottom: 1pt Black solid;
+  border-left: 1pt Black solid;
+}
+
+.cellstaticclass {
+  background-color: #CCFFFF;
+  text-align: center;
+  height: 30pt;
+  width: 30pt;
+  font-weight: bold;
+  font-size: 14pt;
+  border-top: 1pt black solid;
+  border-right: 1pt Black solid;
+  border-bottom: 1pt Black solid;
+  border-left: 1pt Black solid;
+}
+
+.celllockedclass {
+  text-align: center;
+  height: 30pt;
+  width: 30pt;
+  font-weight: bold;
+  font-size: 14pt;
+  border-top: 1pt black solid;
+  border-right: 1pt Black solid;
+  border-bottom: 1pt Black solid;
+  border-left: 1pt Black solid;
+}
+
+.cellgrayclass {
+  background-color: gray;
+  text-align: center;
+  height: 30pt;
+  width: 30pt;
+  font-weight: bold;
+  font-size: 14pt;
+  border-top: 1pt black solid;
+  border-right: 1pt Black solid;
+  border-bottom: 1pt Black solid;
+  border-left: 1pt Black solid;
+}
+
+.cellredclass {
+  background-color: red;
+  text-align: center;
+  height: 30pt;
+  width: 30pt;
+  font-size: 14pt;
+  border-top: 1pt black solid;
+  border-right: 1pt Black solid;
+  border-bottom: 1pt Black solid;
+  border-left: 1pt Black solid;
+}
+
+.bigtable{
+  border-top: 1pt black solid;
+  border-right: 1pt Black solid;
+  border-bottom: 1pt Black solid;
+  border-left: 1pt Black solid;
+}
+
+.subtable{  
+  border-top: 1pt black solid;
+  border-right: 1pt Black solid;
+  border-bottom: 1pt Black solid;
+  border-left: 1pt Black solid;
+}
+
+.chatbox {
+height:4em;
+width:100%;
+border:1px solid;
+padding:2px;
+margin-top:5px;
+overflow:auto;
+}
+</STYLE> <SCRIPT SRC="/cgi/sudoku/ncross.js"></SCRIPT>
+	 <LINK REL="stylesheet" HREF="/jqueryui/jquery-ui.css"> <SCRIPT SRC="//code.jquery.com/jquery-1.10.2.js"></SCRIPT> <SCRIPT SRC="/jqueryui/jquery-ui.js"></SCRIPT> <SCRIPT
+	 SRC="/sudoku/cookie.js"></SCRIPT> 
+  </HEAD> 
+  <BODY ONKEYUP="keyinput(LastCursorID , event.keyCode);"><SCRIPT>
+
+var forever = new Date('October 17, 2030 03:24:00'); //use in cookies
+var count = 0;
+  
+function gup( name )
+{
+//this routine looks for 'name' value in the url string ?name=value
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return "";
+  else
+    return results[1];
+}
+
+//variables passed from facebook to .cgi script
+var uid = "%uid%"
+var browserType;
+var LastCursorID = "cell_0_0";  
+//var LastCursorClass = "";
+var StaticArray = new Array(9); 
+for (var x = 0 ; x <= 8; x++) {StaticArray[x] = new Array(9)} //StaticArray[x][y]
+var ScratchArray = new Array(9); 
+for (var x = 0 ; x <= 8; x++) {ScratchArray[x] = new Array(9)} //ScratchArray[x][y]
+    
+var blanksquares = "%blanksquares%";
+var intable = 1;    
+var networkID; //sent with the cell info to identify cell data originator
+    
+//document.getElementById(CursorID).innerHTML=String.fromCharCode(event.keyCode);
+if (document.layers) {browserType = "nn4"}
+if (document.all) {browserType = "ie"}
+if (window.navigator.userAgent.toLowerCase().match("gecko")) {browserType= "gecko"}
+
+function hideID(szDivID)
+{
+if (browserType == "gecko" )
+     document.poppedLayer = eval('document.getElementById(szDivID)');
+else if (browserType == "ie")
+     document.poppedLayer = eval('document.getElementById(szDivID)');
+else
+     document.poppedLayer =
+        eval('document.layers[szDivID]');
+document.poppedLayer.style.display = "none";
+}
+
+function showID(szDivID)
+{
+if (browserType == "gecko" )
+     document.poppedLayer = eval('document.getElementById(szDivID)');
+else if (browserType == "ie")
+     document.poppedLayer = eval('document.getElementById(szDivID)');
+else
+     document.poppedLayer = eval('document.layers[szDivID]');
+document.poppedLayer.style.display = "inline";
+}
+
+function PositionFromID(cellID)
+{
+var gridID = cellID.slice(5,9999); //strip Grid_
+var LocationOfCell = Array();
+LocationOfCell = gridID.split('_'); //split 1_2 part
+var x = LocationOfCell[0];
+var y = LocationOfCell[1];
+
+return new Array(x , y);
+}
+
+function IsCellLockedID(cellID)
+{
+var text =  document.getElementById(cellID).innerHTML;
+if ((text.indexOf('locked' , 0) > -1  ) || (text.indexOf('LOCKED' , 0) > -1 ) ) {return 1}
+//if ((text.indexOf('</B>' , 0) > -1 ) || (text.indexOf('</b>' , 0) > -1 )) {return 1}
+else {return 0}
+};
+
+function IsCellStaticID(cellID)
+{
+var xy = Array();
+xy = PositionFromID(cellID);
+var x = xy[0];
+var y = xy[1];
+
+if (StaticArray[x][y] == 1) {return 1}
+else {return 0}
+};
+ 
+function choose(cellID)
+{
+//take care of last cursor cell
+//if (LastCursorClass == '') {LastCursorClass = document.getElementById(cellID).className} //so we don't pooch the starting square 
+//else {document.getElementById(LastCursorID).className = LastCursorClass;} //restore last selected square
+
+document.getElementById(LastCursorID).className = 'cellnotselectedclass'; //selected square back to white
+if (IsCellLockedID(LastCursorID) == 1)
+    {
+    document.getElementById(LastCursorID).className = 'celllockedclass';
+    }
+if (IsCellStaticID(LastCursorID) == 1)
+    {
+    document.getElementById(LastCursorID).className = 'cellstaticclass'; //selected square back to gray
+    }
+
+//take care of new cell
+//LastCursorClass = document.getElementById(cellID).className; //remember the last cursor color
+LastCursorID = cellID; //remember the last cursor cell
+
+//asumption
+document.getElementById(cellID).className = 'cellselectedclass'; //selected square back to yellow
+if (IsCellLockedID(cellID) == 1)
+    {
+    document.getElementById(cellID).className = 'cellgrayclass';
+    //LastCursorID = "celllockedclass";
+    }
+if (IsCellStaticID(cellID) == 1)
+    {
+    document.getElementById(cellID).className = 'cellgrayclass'; //selected square back to gray
+    }
+}; 
+
+function keyinput(cellID , keyCode)
+{
+var xy = Array();
+xy = PositionFromID(cellID);
+var x = xy[0];
+var y = xy[1];
+
+if (intable == 0) {return 0} //we are not typing in the table. ignore
+
+if (keyCode == 37) 
+    {
+    if (x <= 0){x=8}
+    else {x--}
+    choose('cell_' + x + '_' + y);
+    }; //left
+if (keyCode == 38) 
+	{
+	if (y <= 0){y=8}
+   else {y--}
+   choose('cell_' + x + '_' + y);
+	}; //up
+if (keyCode == 39) 
+    {
+    if (x >= 8){x=0}
+    else {x++}
+    choose('cell_' + x + '_' + y);
+    }; //right
+if (keyCode == 40) 
+	{
+    if (y >= 8){y=0}
+    else {y++}
+    choose('cell_' + x + '_' + y);
+	}; //down
+
+if (keyCode == 67) //c - clear - clear current cell, if not locked
+    {
+	if (IsAnEditCellID(cellID)	== 1)
+		{
+		document.getElementById(cellID).innerHTML = "";
+		send_cell_update(document.getElementById(cellID).innerHTML);
+		}
+    }
+
+if (keyCode == 72) //h - how - check how we are doing status and send to chat box
+    {
+    var textmsg = 'Numbers selected:' + CountLocked() + ' Correct:' + CountCorrectLocked('how') + '\n\r\n\rNote: this only counts locked numbers.'; 
+    //send_chat(textmsg); 
+    alert(textmsg);
+    //send_chat('Numbers selected:' + CountLocked() + '    Correct:' + CountCorrectLocked('how'));
+    }
+    
+if (keyCode == 82) //r - reveal - check how we are doing status and send to chat box
+    {
+    var textmsg = 'Numbers selected:' + CountLocked() + '    Correct:' + CountCorrectLocked('reveal') + '\n\r\n\rNote: this only counts locked numbers.' ;
+    //send_chat(textmsg); 
+    alert(textmsg);
+    }    
+    
+if (IsCellStaticID(cellID) == 1) {return 0} //static cells can't be modified
+
+//lock - unlock function
+if  (keyCode == 83) //s - save
+    {
+    var numberlist = document.getElementById(cellID).innerHTML;
+    //remove all but numbers
+    numberlist = numberlist.replace(/\D/g , '');
+    if (IsCellLockedID(cellID) == 1)
+        {
+        //unlock this square
+        document.getElementById(cellID).innerHTML = numberlist;
+        document.getElementById(cellID).className = 'cellnotselectedclass';
+        LastCursorClass = document.getElementById(cellID).className;
+        document.getElementById(cellID).className = 'cellselectedclass';
+        send_cell_update(document.getElementById(cellID).innerHTML);
+        }
+    else
+        {
+        //lock the square
+        if (numberlist.length == 1)
+            {
+            //lock this square
+            document.getElementById(cellID).innerHTML = numberlist + '<!--locked-->';
+            document.getElementById(cellID).className = 'celllockedclass';
+            LastCursorClass = document.getElementById(cellID).className;
+            document.getElementById(cellID).className = 'cellgrayclass';
+            send_cell_update(document.getElementById(cellID).innerHTML);
+            //did we win!
+            if (blanksquares == CountCorrectLocked(count))
+                {
+                //send_chat('You win!');
+                IWin();
+                }
+            }
+        else
+            {
+            window.alert("You can only lock squares with one number");
+            }
+        }
+    return 0;
+    }
+
+if (IsCellLockedID(cellID) == 1) {return 0} //can't edit a locked cell
+
+if  (keyCode >= 97 && keyCode <= 105) //convert numberpad characters
+    {keyCode = keyCode - 48;}
+    
+if (keyCode >= 49 && keyCode <= 57)  //number keys pressed 1 - 9
+	   {
+        var numberlist = document.getElementById(cellID).innerHTML;
+        //remove all but numbers
+        numberlist = numberlist.replace(/\D/g , '');
+        var keychar = String.fromCharCode(keyCode);
+        var founditindex = numberlist.indexOf(keychar , 0);
+        if (founditindex > -1)
+            {
+            //remove number from sring
+            var re = new RegExp(keychar , 'g');
+            numberlist = numberlist.replace(re , '');
+            }
+        else
+            {
+            numberlist = numberlist + keychar;
+            }
+        //sort our number list
+        var t = numberlist.split('');
+        t = t.sort();
+        t1 = t.slice(0,3);
+        t2 = t.slice(3,6);
+        t3 = t.slice(6,9);
+        numberlist = t1.join('') + '<br>' + t2.join('') + '<br>' + t3.join('');
+        //put numbers back on board
+        document.getElementById(cellID).innerHTML = numberlist;
+        send_cell_update(document.getElementById(cellID).innerHTML);
+        }
+}	
+
+function IsAnEditCellID(cellID)
+{
+if ((IsCellStaticID(cellID) == 1) || (IsCellLockedID(cellID) == 1)) {return 0;}
+else {return 1;}
+}
+
+function FindStatic()
+{
+for (var x = 0 ; x <= 8; x++)
+    {
+    for (var y = 0 ; y <= 8; y++)
+        {
+        var text =  document.getElementById('cell_' + x + '_' + y).innerHTML;
+        StaticArray[x][y] = 0;
+            {
+            if (text.indexOf('static' , 0) > -1  ) {StaticArray[x][y]=1}
+            }
+        }
+    }
+}
+
+function ColorStatic()
+{
+for (var x = 0 ; x <= 8; x++)
+    {
+    for (var y = 0 ; y <= 8; y++)
+        {
+        if (StaticArray[x][y] == 1)
+            {document.getElementById('cell_' + x + '_' + y).className = 'cellstaticclass'}
+        else
+            {document.getElementById('cell_' + x + '_' + y).className = 'cellnotselectedclass'}
+        }
+    }
+}
+
+function CountCorrectLocked(mode)
+{
+var CorrectCount = 0;
+for (var x = 0 ; x <= 8; x++)
+    {
+    for (var y = 0 ; y <= 8; y++)
+        {
+        var CellID = 'cell_' + x + '_' + y;
+        var SolutionID = 'solution_' + x + '_' + y;
+        if (IsCellLockedID(CellID) == 1)
+            {
+            var cellresult = document.getElementById(CellID).innerHTML;
+            cellresult = cellresult.replace(/\D/g , '');
+            var solutionresult = document.getElementById(SolutionID).innerHTML;
+            solutionresult = solutionresult.replace(/\D/g , '');
+            if (cellresult == solutionresult)
+                {
+                CorrectCount++;
+                }
+            else
+                {
+                if (mode == 'reveal')
+                    {document.getElementById(CellID).className = 'cellredclass';}
+                }
+            }
+        }
+    }
+return(CorrectCount);
+}
+
+function CountLocked()
+{
+var LockedCount = 0;
+for (var x = 0 ; x <= 8; x++)
+    {
+    for (var y = 0 ; y <= 8; y++)
+        {
+        var CellID = 'cell_' + x + '_' + y;
+        if (IsCellLockedID(CellID) == 1)
+            {
+            LockedCount++;
+            }
+        }
+    }
+return(LockedCount);
+}
+
+function CreateBookmarkLink() 
+	{
+	var title = "Crossword game %game%"; 
+	var url = "%archiveurl%/%uid%/%game%";
+	if (window.sidebar) 
+ 		{ // Mozilla Firefox Bookmark
+		window.sidebar.addPanel(title, url,"");
+		} 
+	else if( window.external ) 
+		{ // IE Favorite
+		window.external.AddFavorite( url, title); 
+		}
+	else if(window.opera && window.print) 
+		{ // Opera Hotlist
+		return true; 
+		}
+ 	}
+
+	 </SCRIPT> <SCRIPT TYPE="text/javascript">
+  
+function send_cell_update(k)
+	{
+	var letter = k;
+	//ajax_send_uri('%scripturl%/cellupdate.cgi' , do_nothing , '&cell=' + LastCursorID + '&number=' + letter + '<!--' + networkID + '-->' + '&uid=%uid%' + '&game=%game%');	
+ setCookie( LastCursorID , letter , forever , '' , '' , ''); //LastCursorID = cell_x_y
+	}
+
+function SetCellsFromCookies()
+{
+var cookieNames = listCookies();
+for (var i = 0 ; i < cookieNames.length ; i++) {
+		if (cookieNames[i].indexOf("cell") != -1) {
+			var thecell = cookieNames[i];
+			thecell = thecell.trim();
+			var theletter = getCookie(cookieNames[i]);
+			theletter = theletter.trim();			
+			document.getElementById(thecell).innerHTML = theletter;	
+			if (IsCellLockedID(thecell) == 1) {
+    			document.getElementById(thecell).className = 'celllockedclass';
+    			}
+			}
+		}
+}
+	
+function get_sudoku_updates()
+	{
+	//ajax_send_uri('%archiveurl%/%uid%/%game%/out.txt' , processupdates , '');
+	SetCellsFromCookies();
+	}
+	
+function CreateBookmarkLink() 
+	{
+	var title = "Crossword game %game%"; 
+	var url = "%archiveurl%/%uid%/%game%";
+	if (window.sidebar) 
+ 		{ // Mozilla Firefox Bookmark
+		window.sidebar.addPanel(title, url,"");
+		} 
+	else if( window.external ) 
+		{ // IE Favorite
+		window.external.AddFavorite( url, title); 
+		}
+	else if(window.opera && window.print) 
+		{ // Opera Hotlist
+		return true; 
+		}
+ 	}
+
+var fivesec = 0;
+function IWin()
+{
+var winstate;
+if (fivesec > 100) {winstate = 'up'}
+if (fivesec > 200) {winstate = 'down'}
+if (fivesec > 300) {winstate = 'done'}
+
+fivesec++;
+
+var trig = 0;
+while (trig == 0) 
+            {
+            var x = Math.floor(Math.random() * 9);
+            var y = Math.floor(Math.random() * 9);
+            var CellID = 'cell_' + x + '_' + y;
+            if (IsCellStaticID(CellID) == 0)
+                {
+                trig = 1;
+                var red = Math.floor(Math.random() * 255);
+                var green = Math.floor(Math.random() * 255);
+                var blue = Math.floor(Math.random() * 255);
+                if (winstate == 'up') {document.getElementById(CellID).style.backgroundColor = 'rgb('+red+','+green+','+blue+')';}
+                if (winstate == 'down') {document.getElementById(CellID).style.backgroundColor = '';}
+                }
+            }
+
+if (winstate != 'done')
+    {
+    var IWinLoop = setTimeout("IWin();",10);
+    }
+
+if (winstate == 'done')
+    {
+    clearTimeout(IWinLoop);
+    fivesec = 0;
+    for (var x = 0 ; x <= 8; x++)
+        {
+        for (var y = 0 ; y <= 8; y++)
+            {
+            var CellID = 'cell_' + x + '_' + y;
+            document.getElementById(CellID).style.backgroundColor = '';
+            }
+        }
+    } 
+ //showID('win');   
+ } 
+ 
+function ClearUnlockedCells()
+{
+   for (var x = 0 ; x <= 8; x++)
+        {
+        for (var y = 0 ; y <= 8; y++) {
+            var cellID = 'cell_' + x + '_' + y;
+            //document.getElementById(CellID).style.backgroundColor = '';
+				if (IsAnEditCellID(cellID)	== 1) {
+					document.getElementById(cellID).innerHTML = "";
+					//send_cell_update(document.getElementById(cellID).innerHTML);
+					deleteCookie(cellID);
+					}				
+            }
+			}
+}
+  
+function MakeSmaller()
+{
+var oStyleSheet=document.styleSheets[0];
+for (var x = 0 ; x <= 5; x++)
+    {
+    if (browserType == 'ie')
+        {var oRules = oStyleSheet.rules[x]}
+    else
+        {var oRules = oStyleSheet.cssRules[x]}
+    var newwidth = oRules.style.width;
+    newwidth = newwidth.replace(/\D/g , '');
+    newwidth  = newwidth  - 2;
+    var fontsizes = Math.floor(newwidth / 4.0) - 1 ;
+    if ((x == 2) || (x == 3) || (x == 4)) //static cells
+        {fontsizes = Math.floor(newwidth / 2) - 1 ;}
+    oRules.style.width = newwidth + 'pt';
+    oRules.style.height = newwidth + 'pt';
+    oRules.style.fontSize = fontsizes + 'pt';
+    }
+}
+
+function MakeBigger()
+{
+var oStyleSheet=document.styleSheets[0];
+for (var x = 0 ; x <= 5; x++)
+    {
+    if (browserType == 'ie')
+        {var oRules = oStyleSheet.rules[x]}
+    else
+        {var oRules = oStyleSheet.cssRules[x]}
+    var newwidth = oRules.style.width;
+    newwidth = newwidth.replace(/\D/g , '');
+    newwidth  = newwidth - 2 + 4; //fool string into int
+    var fontsizes = Math.floor(newwidth / 4.0) - 1 ;
+    if ((x == 2) || (x == 3) || (x == 4)) //static cells
+        {fontsizes = Math.floor(newwidth / 2) - 1 ;}
+    oRules.style.width = newwidth + 'pt';
+    oRules.style.height = newwidth + 'pt';
+    oRules.style.fontSize = fontsizes + 'pt';
+    }
+}   
+ 
+function SolutionClass()
+{   
+for (var x = 0 ; x <= 8; x++)
+    {
+    for (var y = 0 ; y <= 8; y++)
+        {
+        document.getElementById('solution_' + x + '_' + y).className = 'celllockedclass';
+        }
+    }
+}
+   
+</SCRIPT> 
+
+
+<!--start How To Play dialog jqueryui-->
+	 <SCRIPT>
+//start dialogs and turn off
+$(function() {
+    $( ".dialogs" ).dialog({
+        autoOpen: false,
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  });
+  
+function howtoplay ()
+ {
+ $( '#dialog-message' ).dialog( "open" );
+$( "#dialog-message" ).dialog( "option", "width", 800 );   
+ };
+ 
+</SCRIPT> 
+	 <DIV ID="dialog-message" TITLE="How do I play?" CLASS="dialogs"
+	 STYLE="width:100%;"> 
+		<P>Suduku Rules:</P> 
+		<UL> 
+		  <LI>Every row must contain the numbers 1 through 9.</LI> 
+		  <LI> Every column must contain the numbers 1 through 9.</LI> 
+		  <LI> Every one of the 9 smaller squares (3 x 3) must contain the
+			 numbers 1 through 9.</LI> 
+		</UL> 
+		<P>How to Play:</P> 
+		<UL> 
+		  <LI>Use arrow keys to move cursor.</LI> 
+		  <LI>Use number keys to add number(s).</LI> 
+		  <LI>Note that you can add multiple numbers to use as a scratch
+			 pad.</LI> 
+		  <LI>To remove a number, hit that number again. 'C' will clear the
+			 current cell of all numbers, if unlocked.</LI> 
+		  <LI>When you are sure you have a correct number, hit 'S' to Save or
+			 unSave it.</LI> 
+		  <LI>Hit 'H' to see How you are doing. The result will show in the chat
+			 box.</LI> 
+		  <LI>Hit 'R' to Reveal the incorrect locked positions.</LI> 
+		  <LI>It is advisable to turn on your Num Lock is on and use the
+			 keypad.</LI> 
+		  <LI>If you accidentaly hit F5, your browser will refresh.</LI> 
+		  <LI>Add to Favorites to complete it at a later time.</LI> 
+		  <LI>If you print it, you may want to Show Answers at the bottom of this
+			 page first.</LI> 
+		</UL> </DIV>  
+<!--end How To Play dialog jqueryui-->
+	 <TABLE CELLPADDING="3" CELLSPACING="0" BGCOLOR="#FFFFFF" BORDER="1"
+	 ALIGN="CENTER"> 
+		<TR> 
+		  <TD> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="How do I play"
+				ONCLICK="howtoplay();"></FORM> </TD> 
+		  <TD> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button5"
+				VALUE="Create another Sudoku"
+				ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('%scripturl%/','_self');}
+else{};"></FORM></TD>
+		  
+		  <TD> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button2"
+				VALUE="Other Sudoku Puzzles"
+				ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('/sudoku/common/','_self');}
+else{};"></FORM></TD>
+		  
+		</TR> 
+		<TR> 
+		  <TD COLSPAN="3"> 
+			 <P ALIGN="CENTER">Your puzzle has been archived at:
+				<A HREF="%archiveurl%/%uid%/%game%">%archiveurl%/%uid%/%game%/</A></P></TD> 
+		</TR> 
+	 </TABLE> 
+	 <DIV ID="fbhide3" ALIGN="CENTER"> </DIV> 
+	 <DIV ALIGN="CENTER">Difficulty: <B><A HREF="#"
+		TITLE="This rating is based on algorithms used to generate this puzzle and may not be reflected in actual gameplay.">%difficulty%</A></B>
+		%globalstring%</DIV> 
+	 <TABLE CLASS="bigtable" CELLSPACING="0" CELLPADDING="0"
+	 ONCLICK="intable = 1;" ALIGN="CENTER"> 
+		<TR> 
+		  <TD COLSPAN="3"> 
+			 <TABLE WIDTH="100%" CELLPADDING="0" CELLSPACING="0"> 
+				<TR> 
+				  <TD> 
+					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="1"
+						ONCLICK="keyinput(LastCursorID , 49);"
+						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+				  <TD> 
+					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="2"
+						ONCLICK="keyinput(LastCursorID , 50);"
+						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+				  <TD> 
+					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="3"
+						ONCLICK="keyinput(LastCursorID , 51);"
+						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+				  <TD> 
+					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="4"
+						ONCLICK="keyinput(LastCursorID , 52);"
+						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+				  <TD> 
+					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="5"
+						ONCLICK="keyinput(LastCursorID , 53);"
+						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+				  <TD> 
+					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="6"
+						ONCLICK="keyinput(LastCursorID , 54);"
+						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+				  <TD> 
+					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="7"
+						ONCLICK="keyinput(LastCursorID , 55);"
+						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+				  <TD> 
+					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="8"
+						ONCLICK="keyinput(LastCursorID , 56);"
+						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+				  <TD> 
+					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="9"
+						ONCLICK="keyinput(LastCursorID , 57);"
+						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+				</TR> 
+			 </TABLE> </TD> 
+		  <TD ROWSPAN="4"> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button1"
+				VALUE="Lock/Unlock" ONCLICK="keyinput(LastCursorID , 83);"></FORM> 
+			 <FORM>
+				<INPUT TYPE="BUTTON" NAME="Button3" VALUE="How am I doing?"
+				ONCLICK="keyinput(LastCursorID , 72);"> </FORM> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="Reveal Bad Choices"
+				ONCLICK="keyinput(LastCursorID , 82);"></FORM> 
+			 <FORM> 
+				<P><INPUT TYPE="HIDDEN" NAME="uid" VALUE="%uid%"><INPUT
+				  TYPE="HIDDEN" NAME="game" VALUE="%game%"><INPUT TYPE="HIDDEN"
+				  NAME="name" VALUE="%name%"><INPUT TYPE="SUBMIT" VALUE="Clear Unlocked Cells"
+				  ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers that are not locked.')) {ClearUnlockedCells();}else{return false;}">
+				  </P> </FORM> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="Clear Cell"
+				ONCLICK="keyinput(LastCursorID , 67);"></FORM> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button4"
+				VALUE="Grid Bigger" ONCLICK="MakeBigger();"></FORM> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button4" VALUE="Grid Smaller"
+				ONCLICK="MakeSmaller();"></FORM> </TD> 
+		</TR> 
+		<TR> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_0_0"
+					 ONCLICK="choose(this.id);"><%cell_0_0%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_1_0"
+					 ONCLICK="choose(this.id);"><%cell_1_0%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_2_0"
+					 ONCLICK="choose(this.id);"><%cell_2_0%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_1"
+					 ONCLICK="choose(this.id);"><%cell_0_1%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_1"
+					 ONCLICK="choose(this.id);"><%cell_1_1%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_1"
+					 ONCLICK="choose(this.id);"><%cell_2_1%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_2"
+					 ONCLICK="choose(this.id);"><%cell_0_2%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_2"
+					 ONCLICK="choose(this.id);"><%cell_1_2%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_2"
+					 ONCLICK="choose(this.id);"><%cell_2_2%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_3_0"
+					 ONCLICK="choose(this.id);"><%cell_3_0%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_4_0"
+					 ONCLICK="choose(this.id);"><%cell_4_0%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_5_0"
+					 ONCLICK="choose(this.id);"><%cell_5_0%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_1"
+					 ONCLICK="choose(this.id);"><%cell_3_1%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_1"
+					 ONCLICK="choose(this.id);"><%cell_4_1%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_1"
+					 ONCLICK="choose(this.id);"><%cell_5_1%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_2"
+					 ONCLICK="choose(this.id);"><%cell_3_2%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_2"
+					 ONCLICK="choose(this.id);"><%cell_4_2%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_2"
+					 ONCLICK="choose(this.id);"><%cell_5_2%></DIV></TD> 
+				</TR> 
+			 </TABLE> </TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_6_0"
+					 ONCLICK="choose(this.id);"><%cell_6_0%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_7_0"
+					 ONCLICK="choose(this.id);"><%cell_7_0%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_8_0"
+					 ONCLICK="choose(this.id);"><%cell_8_0%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_1"
+					 ONCLICK="choose(this.id);"><%cell_6_1%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_1"
+					 ONCLICK="choose(this.id);"><%cell_7_1%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_1"
+					 ONCLICK="choose(this.id);"><%cell_8_1%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_2"
+					 ONCLICK="choose(this.id);"><%cell_6_2%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_2"
+					 ONCLICK="choose(this.id);"><%cell_7_2%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_2"
+					 ONCLICK="choose(this.id);"><%cell_8_2%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		</TR> 
+		<TR> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_0_3"
+					 ONCLICK="choose(this.id);"><%cell_0_3%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_1_3"
+					 ONCLICK="choose(this.id);"><%cell_1_3%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_2_3"
+					 ONCLICK="choose(this.id);"><%cell_2_3%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_4"
+					 ONCLICK="choose(this.id);"><%cell_0_4%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_4"
+					 ONCLICK="choose(this.id);"><%cell_1_4%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_4"
+					 ONCLICK="choose(this.id);"><%cell_2_4%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_5"
+					 ONCLICK="choose(this.id);"><%cell_0_5%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_5"
+					 ONCLICK="choose(this.id);"><%cell_1_5%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_5"
+					 ONCLICK="choose(this.id);"><%cell_2_5%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_3_3"
+					 ONCLICK="choose(this.id);"><%cell_3_3%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_4_3"
+					 ONCLICK="choose(this.id);"><%cell_4_3%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_5_3"
+					 ONCLICK="choose(this.id);"><%cell_5_3%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_4"
+					 ONCLICK="choose(this.id);"><%cell_3_4%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_4"
+					 ONCLICK="choose(this.id);"><%cell_4_4%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_4"
+					 ONCLICK="choose(this.id);"><%cell_5_4%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_5"
+					 ONCLICK="choose(this.id);"><%cell_3_5%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_5"
+					 ONCLICK="choose(this.id);"><%cell_4_5%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_5"
+					 ONCLICK="choose(this.id);"><%cell_5_5%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_6_3"
+					 ONCLICK="choose(this.id);"><%cell_6_3%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_7_3"
+					 ONCLICK="choose(this.id);"><%cell_7_3%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_8_3"
+					 ONCLICK="choose(this.id);"><%cell_8_3%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_4"
+					 ONCLICK="choose(this.id);"><%cell_6_4%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_4"
+					 ONCLICK="choose(this.id);"><%cell_7_4%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_4"
+					 ONCLICK="choose(this.id);"><%cell_8_4%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_5"
+					 ONCLICK="choose(this.id);"><%cell_6_5%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_5"
+					 ONCLICK="choose(this.id);"><%cell_7_5%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_5"
+					 ONCLICK="choose(this.id);"><%cell_8_5%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		</TR> 
+		<TR> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_0_6"
+					 ONCLICK="choose(this.id);"><%cell_0_6%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_1_6"
+					 ONCLICK="choose(this.id);"><%cell_1_6%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_2_6"
+					 ONCLICK="choose(this.id);"><%cell_2_6%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_7"
+					 ONCLICK="choose(this.id);"><%cell_0_7%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_7"
+					 ONCLICK="choose(this.id);"><%cell_1_7%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_7"
+					 ONCLICK="choose(this.id);"><%cell_2_7%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_8"
+					 ONCLICK="choose(this.id);"><%cell_0_8%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_8"
+					 ONCLICK="choose(this.id);"><%cell_1_8%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_8"
+					 ONCLICK="choose(this.id);"><%cell_2_8%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_3_6"
+					 ONCLICK="choose(this.id);"><%cell_3_6%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_4_6"
+					 ONCLICK="choose(this.id);"><%cell_4_6%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_5_6"
+					 ONCLICK="choose(this.id);"><%cell_5_6%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_7"
+					 ONCLICK="choose(this.id);"><%cell_3_7%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_7"
+					 ONCLICK="choose(this.id);"><%cell_4_7%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_7"
+					 ONCLICK="choose(this.id);"><%cell_5_7%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_8"
+					 ONCLICK="choose(this.id);"><%cell_3_8%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_8"
+					 ONCLICK="choose(this.id);"><%cell_4_8%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_8"
+					 ONCLICK="choose(this.id);"><%cell_5_8%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_6_6"
+					 ONCLICK="choose(this.id);"><%cell_6_6%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_7_6"
+					 ONCLICK="choose(this.id);"><%cell_7_6%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_8_6"
+					 ONCLICK="choose(this.id);"><%cell_8_6%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_7"
+					 ONCLICK="choose(this.id);"><%cell_6_7%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_7"
+					 ONCLICK="choose(this.id);"><%cell_7_7%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_7"
+					 ONCLICK="choose(this.id);"><%cell_8_7%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_8"
+					 ONCLICK="choose(this.id);"><%cell_6_8%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_8"
+					 ONCLICK="choose(this.id);"><%cell_7_8%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_8"
+					 ONCLICK="choose(this.id);"><%cell_8_8%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		</TR> 
+	 </TABLE> 
+	 <P></P> 
+	 <P ALIGN="CENTER"><A HREF="#" ONCLICK='showID("Solution");'>Show</A> or
+		<A HREF="#" ONCLICK='hideID("Solution");'>Hide</A> Sudoku Solution</P> 
+	 <FORM ID="Solution"> 
+		<TABLE ALIGN="CENTER"> 
+		  <TBODY> 
+			 <TR VALIGN="MIDDLE"> 
+				<TD VALIGN="middle" ALIGN="CENTER" COLSPAN="3">Sudoku Solver</TD> 
+			 </TR> 
+			 <TR VALIGN="MIDDLE"> 
+				<TD VALIGN="middle" ALIGN="LEFT" COLSPAN="3">If the grid below is
+				  not complete, the puzzle is not solvable and there is a bug in our program..
+				  Please notify us.at <A HREF="http://www.emogic.com/contact"
+				  TARGET="_blank">http://www.emogic.com/contact</A></TD> 
+			 </TR> 
+			 <TR VALIGN="MIDDLE"> 
+				<TD VALIGN="middle" ALIGN="LEFT" WIDTH="50%">
+				  <INPUT TYPE="BUTTON" ONCLICK="start_cross(this.form);" VALUE="Calculate 
+ Answer" ID="answerbutton"><BR><TEXTAREA ID="map" NAME="map" ONKEYUP="start_cross(this.form);" ONCHANGE="start_cross(this.form);" ROWS="10" COLS="10">%jscalcpuzz%
+</TEXTAREA></TD> 
+				<TD VALIGN="MIDDLE" ID="result_here" CLASS="num_cross" COLSPAN="2"
+				WIDTH="50%">&nbsp;</TD> 
+			 </TR> 
+		  </TBODY> 
+		</TABLE> </FORM> 
+	 <DIV ID="Solution__" STYLE="display: none"> 
+		<TABLE CLASS="bigtable" CELLSPACING="0" CELLPADDING="0" ALIGN="CENTER"> 
+		  <TR> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_0_0"><%solution_0_0%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_1_0"><%solution_1_0%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_2_0"><%solution_2_0%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_1"><%solution_0_1%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_1"><%solution_1_1%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_1"><%solution_2_1%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_2"><%solution_0_2%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_2"><%solution_1_2%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_2"><%solution_2_2%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_3_0"><%solution_3_0%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_4_0"><%solution_4_0%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_5_0"><%solution_5_0%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_1"><%solution_3_1%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_1"><%solution_4_1%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_1"><%solution_5_1%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_2"><%solution_3_2%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_2"><%solution_4_2%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_2"><%solution_5_2%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE> </TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_6_0"><%solution_6_0%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_7_0"><%solution_7_0%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_8_0"><%solution_8_0%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_1"><%solution_6_1%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_1"><%solution_7_1%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_1"><%solution_8_1%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_2"><%solution_6_2%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_2"><%solution_7_2%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_2"><%solution_8_2%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+		  </TR> 
+		  <TR> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_0_3"><%solution_0_3%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_1_3"><%solution_1_3%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_2_3"><%solution_2_3%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_4"><%solution_0_4%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_4"><%solution_1_4%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_4"><%solution_2_4%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_5"><%solution_0_5%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_5"><%solution_1_5%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_5"><%solution_2_5%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_3_3"><%solution_3_3%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_4_3"><%solution_4_3%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_5_3"><%solution_5_3%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_4"><%solution_3_4%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_4"><%solution_4_4%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_4"><%solution_5_4%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_5"><%solution_3_5%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_5"><%solution_4_5%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_5"><%solution_5_5%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_6_3"><%solution_6_3%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_7_3"><%solution_7_3%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_8_3"><%solution_8_3%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_4"><%solution_6_4%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_4"><%solution_7_4%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_4"><%solution_8_4%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_5"><%solution_6_5%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_5"><%solution_7_5%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_5"><%solution_8_5%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+		  </TR> 
+		  <TR> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_0_6"><%solution_0_6%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_1_6"><%solution_1_6%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_2_6"><%solution_2_6%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_7"><%solution_0_7%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_7"><%solution_1_7%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_7"><%solution_2_7%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_8"><%solution_0_8%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_8"><%solution_1_8%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_8"><%solution_2_8%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_3_6"><%solution_3_6%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_4_6"><%solution_4_6%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_5_6"><%solution_5_6%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_7"><%solution_3_7%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_7"><%solution_4_7%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_7"><%solution_5_7%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_8"><%solution_3_8%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_8"><%solution_4_8%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_8"><%solution_5_8%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_6_6"><%solution_6_6%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_7_6"><%solution_7_6%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_8_6"><%solution_8_6%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_7"><%solution_6_7%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_7"><%solution_7_7%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_7"><%solution_8_7%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_8"><%solution_6_8%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_8"><%solution_7_8%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_8"><%solution_8_8%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+		  </TR> 
+		</TABLE> </DIV> 
+	 <FORM ACTION="%scripturl%/clear.cgi" METHOD="GET"> 
+		<P ALIGN="CENTER"><INPUT TYPE="HIDDEN" NAME="uid" VALUE="%uid%"><INPUT
+		  TYPE="HIDDEN" NAME="game" VALUE="%game%"><INPUT TYPE="HIDDEN"
+		  NAME="name" VALUE="%name%"><INPUT TYPE="SUBMIT"
+		  VALUE="Restart this Sudoku Board"
+		  ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers and clear the chat.')) {DeleteCookies();location.reload();}">
+		  </P> </FORM> 
+		  
+
+		  
+<!--FB share start-->
+<!--
+  <STYLE>
+.facebook_button {
+    display: inline-block;
+
+    background: #627aac;
+
+    border-top: 1px solid #29447e;
+    border-right: 1px solid #29447e;
+    border-bottom: 1px solid #1a356e;
+    border-left: none;
+
+    height: 20px;
+
+    padding-right: 7px;
+    padding-left: 7px;
+
+    font-weight: bold;
+    font-size: 11px;
+    color: white;
+    text-decoration: none;
+    font-family: "lucida grande", tahoma, verdana, arial, sans-serif;
+    line-height: 20px;
+
+    cursor: pointer;
+
+}
+</STYLE> 
+  <DIV ID="fb-root"></DIV> <SCRIPT>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=81021891245&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+function vp()
+{
+var tt = {
+    method: 'share',
+    href: "https://www.emogic.com/",
+  };
+tt.href = window.location.href;
+
+ FB.ui(
+  tt ,
+  function(response) {
+    if (response && !response.error_code) {
+      alert('Posting completed.');
+    } else {
+      alert('Error while posting.');
+    }
+  }
+        );
+};
+</SCRIPT>
+
+<CENTER><div class="fb-like" data-href="https://apps.facebook.com/sudokuofdeath/" data-layout="standard" data-action="like" data-show-faces="false" data-share="true"></div>
+<div class="facebook_button"  ONCLICK="window.open('https://apps.facebook.com/sudokuofdeath/','_blank');" >Play this on FB</div>
+<div class="facebook_button"  ONCLICK="vp();">Share this page on FB</div>
+<div class="facebook_button"  ONCLICK="window.open('https://www.facebook.com/games/sudokuofdeath/','_blank');">Add to your FB Apps</div>
+</CENTER>
+-->
+<!--FB share end-->
+	 <SCRIPT>
+//hideID("fbhide3");		  
+	hideID("Solution");
+FindStatic();
+ColorStatic();
+choose('cell_0_0'); 
+ 
+//set our name for the chat if passed from facebook!
+var $name = gup("name");
+
+//setTimeout("continue_main();",1000);
+var exposed = 81 - blanksquares;
+//send_chat(unescape($name + ' joined the game.  ' + exposed + ' exposed numbers in this puzzle'));
+SolutionClass();
+start_cross(document.getElementById("Solution")); //solve js solution board
+get_sudoku_updates();
+  
+ </SCRIPT> </BODY>
+</HTML>
