@@ -55,7 +55,7 @@ sub Main()
 print "Content-type: text/html\n\n";
 $in{difficulty} = 'Difficult';
 %in = &ParseForm; #get input arguments
-if ( $debug ) { open (TROUBLE, ">aaa.html") }
+if ( $debug ) { open (TROUBLE, ">c:\aaa.html") }
 &CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
 &CreateFullSudokuGrid();
 if ( $debug ) {
@@ -135,7 +135,7 @@ while ( $blanksquares < 57 )
             }
       }
 =cut
-
+#count blank squares. required?
 $blanksquares = 0;
 foreach my $cell ( @AllCells )
       {
@@ -143,6 +143,7 @@ foreach my $cell ( @AllCells )
       my $choice = $GameArray[$x][$y];
       if ($choice == '') {$blanksquares++}
       }
+      
 my $TimeTaken = (time() - $starttime);
 my $exposedsquares = 81 - $blanksquares;
 $globalstring = " RemoveAttempCount: $RemoveAttempCount | NS: $NS | HS: $HS | NP: $NP | IR1: $IR1  | IR2: $IR2 | Blank: $blanksquares | Time: $TimeTaken";
@@ -536,27 +537,14 @@ for (my $y = 0; $y < 9 ; $y++)
       }
 }
 
-my %RemovedCells; #RemovedCells{"$x$y"} = 1; So we can search which ones faster, and delete them easily!
-#might not be required
-
 sub RecursiveRemoveCells()
 {
 my %RemovedList;
-#Test for time
-#if( (time() - $starttime) <= $timetotry ) {return 1}
-#Test for $blanksquares
-if($blanksquares >= $target)
-      {
-      return 1
-      }
-#&SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules(); #reset PossibilityArray
-if (&IsPuzzleSolvable()==0)
-            {
-            return 0
-            } #note: tests previous call
+if (&IsPuzzleSolvable()==0){return 0} #note: tests previous call
+#if( (time() - $starttime) <= $timetotry ) {return 1} #Test for time
+if($blanksquares >= $target){return 1} #Test for $target
 do
-      {
-      #was not solvable. replace removed numbers. Note: will be blank on forward
+      { #was not solvable. replace removed numbers. Note: will be blank on forward
       foreach my $cell (keys %RemovedList)
             {
             my ($x,$y) = split('',$RemovedList{$cell});
