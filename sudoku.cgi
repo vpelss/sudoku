@@ -42,7 +42,7 @@ my $RemoveAttempCount;
 my $starttime = time;
 my $timetotry = 5;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once?
-my $target = 52;
+my $target = 54;
 my $debug = 1;
 
 eval { &Main(); };                            # Trap any fatal errors so the program hopefully
@@ -412,7 +412,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
       #then try &SetNS as it alone clears up, and sets, the single possibilities! IT IS THE ONLY ONE THAT SETS THE $gameArrayTemp
       $AnyProgress = 0; #set it up to fail. if any possibility is removed using any technique, it still might be solvable
       #these should be first as they do not narrow possibilities down to one. Nor do they set a square on it's own. Give them a chance
-=pod
+
       if ($methods{np})
             {
             $LpNP = &SetNP(); #Set NP method 1 for Local regions
@@ -441,7 +441,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
                     }
                   }
             }
-=cut
+
 =pod
        if ($methods{ir})
             {
@@ -520,6 +520,8 @@ for (my $y = 0; $y < 9 ; $y++)
 sub RecursiveRemoveCells()
 {
 &PrintGameArrayHTML();
+&PrintProbArrayHTML();
+
 my @CellsToRemove = shuffle @_; #will get shorter each loop by $NumberOfPicks
 my %RemovedList;
 $RemoveAttempCount++;
@@ -528,8 +530,8 @@ if($debug) {print TROUBLE "Testing IsPuzzleSolvable.<br>";}
 &CopyGameArrays( \@GameArray  , \@TempGameArray );
 
 &CalcAllBlankCellsInTempGameArray();
-#if ( &RecursiveSolveTempGameArray(@AllBlankCells)==0 ) #if it is not solvable replace the number in the grid
-if (&IsPuzzleSolvable()==0)
+if ( &RecursiveSolveTempGameArray(@AllBlankCells)==0 ) #if it is not solvable replace the number in the grid
+#if (&IsPuzzleSolvable()==0)
       {
       if($debug) {print TROUBLE "Previous RecursiveRemoveCells was not Solvable. Returning 0<br>";}
       return 0
@@ -1070,6 +1072,31 @@ $string .=  "</table>";
 print HTML $string;
 close HTML;
 #return $string;
+}
+
+sub PrintProbArrayHTML()
+{ #for prob array
+open (HTML, ">./PossibilityArray.html");  
+
+my $string .=  "<table border='1'>";
+
+for (my $y = 0; $y < 9 ; $y++)
+      {
+      $string .=  "<tr>";
+      for (my $x = 0; $x < 9 ; $x++)
+            {
+            $string .=  "<td border='1'>";
+            my @orderedlist = sort keys %{ $PossibleNumberArray[$x][$y] };
+            my $str = join (',' , @orderedlist );
+            $string .=  $str;
+            $string .=  "</td>";
+            }
+      $string .=  "</tr>";
+      }
+$string .=  "</table>";
+
+print HTML $string;
+close HTML;
 }
 
 sub PrintProbArrayDebug()

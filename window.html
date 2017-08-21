@@ -319,7 +319,7 @@ function Get_Results()
         //and remember the jqxhr object for this request
         var d = new Date();
         var tm = d.getTime();
-        var jqxhr = $.get( "./results.txt?" + tm
+        var jqxhr = $.get( "./PossibilityArray.html?" + tm
                                , function(){ $("#PrintResults").html( jqxhr.responseText ); }
                                            , "html"
                                           )
