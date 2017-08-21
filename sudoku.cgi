@@ -89,53 +89,8 @@ if ($in{difficulty} eq 'Difficult')
 
 $blanksquares = 0;
 #start removing numbers from game grid
-#until( &RecursiveRemoveCells( @AllCells ) ) {}
 &RecursiveRemoveCells( @AllCells ) ;
 
-=pod
-#while ( (time() - $starttime) <= $timetotry )
-while ( $blanksquares < 57 )
-      {
-      if($debug) { print TROUBLE &PrintTempGameArrayDebug() }
-      &CopyGameArrays( \@GameArray  , \@TempGameArray );
-      my %RemoveList;
-      for (my $count = 0; $count < $NumberOfPicks ; $count++) #loop to remove a bunch at one time
-            {
-            my $x = int(rand(9));
-            my $y = int(rand(9));
-            #add to remove list. we may need to restore them if we can't solve board
-            if ($TempGameArray[$x][$y] == undef){next} #no need to try and remove an already removed spot
-            $RemoveList{"$x$y"} = $TempGameArray[$x][$y];
-            if($debug) {print TROUBLE "$TempGameArray[$x][$y] removed at $x,$y : ";}
-            delete $TempGameArray[$x][$y]; #remove picked number
-            }
-      if($debug) {print TROUBLE "$NumberOfPicks numbers removed, Trying to solve...<br>";}
-      #after ANY square is removed, test to see if it is solvable.
-      $RemoveAttempCount++;
-      &CalcAllBlankCellsInTempGameArray();
-      #if ( &RecursiveSolveTempGameArray(@AllBlankCells) ) #if it is not solvable replace the number in the grid
-      #or
-      if ( &IsPuzzleSolvable() ) #if it is not solvable replace the number in the grid
-            {
-            foreach my $cell (keys %RemoveList)
-                  {
-                  my ($x,$y) = split('',$cell);
-                  delete $GameArray[$x][$y]; #remove from real game array
-                  $blanksquares++;
-                  }
-            if($debug) {print TROUBLE "Solvable: continuing...<br>";}
-            }
-      else
-            {
-            foreach my $cell (keys %RemoveList)
-                  {
-                  my ($x,$y) = split('',$RemoveList{$cell});
-                  $TempGameArray[$x][$y] = $RemoveList{$cell}; #was not solvable. replace removed numbers
-                  }
-            if($debug) {print TROUBLE "Not Solvable: replaced $NumberOfPicks numbers<br>";}
-            }
-      }
-=cut
 #count blank squares. required?
 $blanksquares = 0;
 foreach my $cell ( @AllCells )
@@ -442,7 +397,6 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
                   }
             }
 
-=pod
        if ($methods{ir})
             {
             $LpIR1 = &SetIR1(); #Set IR1 for rows and columns
@@ -472,7 +426,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
               }
             $AnyProgress += $LpIR2;
             }
-=cut
+
         #clears up all single possibilities. that is why it is last!
       if ($methods{ns})
             {
