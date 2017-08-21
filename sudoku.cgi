@@ -89,8 +89,8 @@ if ($in{difficulty} eq 'Difficult')
 
 $blanksquares = 0;
 #start removing numbers from game grid
-until( &RecursiveRemoveCells( @AllCells ) ) {}
-#&RecursiveRemoveCells( @AllCells ) ;
+#until( &RecursiveRemoveCells( @AllCells ) ) {}
+&RecursiveRemoveCells( @AllCells ) ;
 
 =pod
 #while ( (time() - $starttime) <= $timetotry )
@@ -382,6 +382,7 @@ foreach my $cell ( @AllCells )
 
 sub IsPuzzleSolvable()
 {
+      $debug = 0;
 #this takes a partially filled @TempGameArray and continually try to solve it by various techniques, IR, NP, HS and finally NS
 #it fails if there is no progress on one loop
 my $AnyProgress = 1; #set so we can enter loop
@@ -495,6 +496,8 @@ if ($blanksquaresleft == 0)
      } #it is only solvable if there are no blank squares left!
 
 #if ($debug) {print TROUBLE "<br>\n solvable:$solved | blankleft:$blanksquaresleft | NS:$NS | NP:$NP | HS:$HS | IR:$IR | loopcount:$loopcount<br>\n";}
+
+$debug = 1;
 return ($solved);
 };
 
@@ -521,6 +524,7 @@ $RemoveAttempCount++;
 if($debug) {print TROUBLE "Entering RecursiveRemoveCells. Count $RemoveAttempCount. With @CellsToRemove<br>";}
 if($debug) {print TROUBLE "Testing IsPuzzleSolvable.<br>";}
 &CopyGameArrays( \@GameArray  , \@TempGameArray );
+
 if (&IsPuzzleSolvable()==0)
       {
       if($debug) {print TROUBLE "Previous RecursiveRemoveCells was not Solvable. Returning 0<br>";}
