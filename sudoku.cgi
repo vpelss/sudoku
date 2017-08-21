@@ -42,7 +42,7 @@ my $RemoveAttempCount;
 my $starttime = time;
 my $timetotry = 5;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once?
-my $target = 40;
+my $target = 50;
 my $debug = 1;
 
 eval { &Main(); };                            # Trap any fatal errors so the program hopefully
@@ -89,7 +89,9 @@ if ($in{difficulty} eq 'Difficult')
 
 $blanksquares = 0;
 #start removing numbers from game grid
-&RecursiveRemoveCells();
+until( &RecursiveRemoveCells( @AllCells ) ) {}
+#&RecursiveRemoveCells( @AllCells ) ;
+
 =pod
 #while ( (time() - $starttime) <= $timetotry )
 while ( $blanksquares < 57 )
@@ -409,7 +411,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
       #then try &SetNS as it alone clears up, and sets, the single possibilities! IT IS THE ONLY ONE THAT SETS THE $gameArrayTemp
       $AnyProgress = 0; #set it up to fail. if any possibility is removed using any technique, it still might be solvable
       #these should be first as they do not narrow possibilities down to one. Nor do they set a square on it's own. Give them a chance
-=pod
+
       if ($methods{np})
             {
             $LpNP = &SetNP(); #Set NP method 1 for Local regions
@@ -438,7 +440,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
                     }
                   }
             }
-
+=pod
        if ($methods{ir})
             {
             $LpIR1 = &SetIR1(); #Set IR1 for rows and columns
@@ -513,9 +515,10 @@ for (my $y = 0; $y < 9 ; $y++)
 
 sub RecursiveRemoveCells()
 {
+my @CellsToRemove = shuffle @_; #will get shorter each loop by $NumberOfPicks
 my %RemovedList;
 $RemoveAttempCount++;
-if($debug) {print TROUBLE "Entering RecursiveRemoveCells. Count $RemoveAttempCount.<br>";}
+if($debug) {print TROUBLE "Entering RecursiveRemoveCells. Count $RemoveAttempCount. With @CellsToRemove<br>";}
 if($debug) {print TROUBLE "Testing IsPuzzleSolvable.<br>";}
 &CopyGameArrays( \@GameArray  , \@TempGameArray );
 if (&IsPuzzleSolvable()==0)
@@ -523,16 +526,16 @@ if (&IsPuzzleSolvable()==0)
       if($debug) {print TROUBLE "Previous RecursiveRemoveCells was not Solvable. Returning 0<br>";}
       return 0
       } #note: tests previous call
+if($debug) {print TROUBLE "Previous RecursiveRemoveCells was Solvable. Contiuing.<br>"}
 
-if($debug) { print TROUBLE "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules is:</br>" }
-if($debug) { print TROUBLE &PrintProbArrayDebug() }
-if($debug) { print TROUBLE "TempGameArray is:</br>" }
-if($debug) { print TROUBLE &PrintTempGameArrayDebug() }
+#if($debug) { print TROUBLE "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules is:</br>" }
+#if($debug) { print TROUBLE &PrintProbArrayDebug() }
+#if($debug) { print TROUBLE "TempGameArray is:</br>" }
+#if($debug) { print TROUBLE &PrintTempGameArrayDebug() }
 if($debug) { print TROUBLE "GameArray is:</br>" }
 if($debug) { print TROUBLE &PrintGameArrayDebug() }
 
-if($debug) {print TROUBLE "Previous RecursiveRemoveCells was Solvable. Contiuing.<br>"}
-#if( (time() - $starttime) <= $timetotry ) {return 1} #Test for time
+#if( (time() - $starttime) <= $timetotry ) {if($debug) {print TROUBLE "Time limit reached. Return 1<br>";}; return 1;} #Test for time
 if($blanksquares >= $target)
       {
       if($debug) {print TROUBLE "Reached target. Return 1<br>";}
@@ -542,17 +545,21 @@ do
       { #was not solvable. replace removed numbers. Note: will be blank on forward
       foreach my $cell (keys %RemovedList)
             {
-            my ($x,$y) = split('',$RemovedList{$cell});
+            my ($x,$y) = split('',$cell);
             #$TempGameArray[$x][$y] = $RemovedList{$cell};
             $GameArray[$x][$y] = $RemovedList{$cell};
+            $blanksquares--;
+            if($debug) {print TROUBLE "Restoring $RemovedList{$cell} to \$GameArray[$x][$y].<br>";}
             }
-      if($debug) {print TROUBLE "Restoring \%RemovedList if any.<br>";}
+      #if($debug) {print TROUBLE "Restoring \%RemovedList if any.<br>";}
       #try to remove some random cells
       for (my $count = 0; $count < $NumberOfPicks ; $count++) #loop to remove a bunch at one time
             {
             #maybe later to make it truly recursive, we will have a shuffled list of all full, removable squares we can shift off
-            my $x = int(rand(9));
-            my $y = int(rand(9));
+            if (scalar @CellsToRemove == 0){return 0} #out of random cells to try
+            my $CellRef = shift @CellsToRemove ;
+            my $x = $CellRef->[0];
+            my $y = $CellRef->[1];
             if ($GameArray[$x][$y] == undef){next} #no need to try and remove an already removed spot
             $RemovedList{"$x$y"} = $GameArray[$x][$y]; #add to remove list. we may need to restore them if we can't solve board
             if($debug) {print TROUBLE "$GameArray[$x][$y] removed at $x,$y : ";}
@@ -565,7 +572,7 @@ do
       #and test in &RecursiveRemoveCells()
       if($debug) {print TROUBLE "Calling next \&RecursiveRemoveCells.<br>"}
       }
-until( &RecursiveRemoveCells() );
+until( &RecursiveRemoveCells(@CellsToRemove) );
 return 1; #cascade back
 }
 
