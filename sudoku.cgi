@@ -45,10 +45,10 @@ my @TempGameArray; #simple $TempGameArray[$x][$y] = $value | undef
 my @PossibleNumberArray; #global for recursive routines. $PossibleNumberArray[$x][$y]{0 - 9} = 1|undef Note: Final value is a series of hashes = 1 so we can easily remove them = undef
 my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns,hs,np,ir
 my $RemoveAttempCount;
-my $starttime = time;
-my $timetotry = 10;
-my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once?
-my $target = 60;
+my $starttime;
+my $timetotry = 5;
+my $NumberOfPicks = 5; #how many numbers should we try to remove and then test at once?
+my $target = 57;
 my $debug = 1;
 
 eval { &Main(); };                            # Trap any fatal errors so the program hopefully
@@ -60,12 +60,12 @@ sub Main()
 print "Content-type: text/html\n\n";
 $in{difficulty} = 'Difficult';
 %in = &ParseForm; #get input arguments
-if ( $debug ) { open (TROUBLE, ">../aaa.html") }
+if ( $debug ) { open (DEBUG, ">../aaa.html") }
 &CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
 &CreateFullSudokuGrid();
 if ( $debug ) {
-      print TROUBLE "<p>Game Array Created</p>";
-      print TROUBLE &PrintTempGameArrayDebug();
+      print DEBUG "<p>Game Array Created</p>";
+      print DEBUG &PrintTempGameArrayDebug();
       }
 &CopyGameArrays( \@TempGameArray , \@FullGameArray );
 &CopyGameArrays( \@TempGameArray , \@GameArray );
@@ -93,9 +93,23 @@ if ($in{difficulty} eq 'Difficult')
      $methods{ir} = 1;
      }
 
+$starttime = time();
 $blanksquares = 0;
 #start removing numbers from game grid
-&RecursiveRemoveCells( @AllCells ) ;
+my $result;
+do
+      {
+      $result = &RecursiveRemoveCells( @AllCells ) ;
+      if($result==0)
+            {
+            my $r = 9;
+            if($debug) { print DEBUG "GameArray is:</br>" }
+            if($debug) { print DEBUG &PrintGameArrayDebug() }
+            die "ouch";
+            }
+      }
+until ($result);
+if($result==0){die "could not solve"};
 
 #count blank squares. required?
 $blanksquares = 0;
@@ -117,7 +131,7 @@ if ($NP > 0 )
 if ($IR > 0 )
       {$difficulty = "Hard";}
 
-if($debug) {print TROUBLE &PrintGameArrayDebug();}
+if($debug) {print DEBUG &PrintGameArrayDebug();}
 
 open (DATA, "<./templates/index.html") or die("Template file /templates/index.html does not exist");
 my @DATA = <DATA>;
@@ -187,7 +201,7 @@ close (DATA);
 print qq|<META HTTP-EQUIV="Refresh" CONTENT="0; URL=$archiveurl/$uid/$game/?uid=$uid&name=$name">|; #name is for chat
 
 print "\n\n";
-if ($debug) {close TROUBLE;}
+if ($debug) {close DEBUG;}
 };
 
 sub CalcRegionalCellLocations()
@@ -205,7 +219,7 @@ for (my $y = 0; $y < 9 ; $y++)
             push @{ $CellsIn{'row'}{$y} } , [$x,$y];
             push @{ $CellsIn{'col'}{$x} } , [$x,$y];
             my $squ = int($x/3) * 3 + int($y/3);
-            #if ($debug) {print TROUBLE "$x,$y:$squ<br>"}
+            #if ($debug) {print DEBUG "$x,$y:$squ<br>"}
             push @{ $CellsIn{'squ'}{$squ} } , [$x,$y];
             #note col and row not required as $x and $y are equivalent. But I add it anyway.
             $IAmIn{'col'}{$x}{$y} = $x;
@@ -235,10 +249,10 @@ if (scalar(@RemainingCells) == 0)
 my $Cell = shift @RemainingCells;
 my ($x , $y) = @{ $Cell };
 my $result = &SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
-if($debug) { print TROUBLE &PrintProbArrayDebug() }
+if($debug) { print DEBUG &PrintProbArrayDebug() }
 if ( $result == 0 )
       {
-      if($debug) { print TROUBLE "No Probabilities Somewhere Returning<br>" }
+      if($debug) { print DEBUG "No Probabilities Somewhere Returning<br>" }
       return(0)
       }
 my @CellProbabilities = shuffle keys %{ $PossibleNumberArray[$x][$y] } ;
@@ -250,12 +264,12 @@ do
       delete $TempGameArray[$x][$y];
       if (scalar @CellProbabilities == 0)
             {
-            if($debug) { print TROUBLE "No Probabilities left at $x,$y Returning<br>" }
+            if($debug) { print DEBUG "No Probabilities left at $x,$y Returning<br>" }
             return(0);
             }
       my $choice = shift @CellProbabilities;
       $TempGameArray[$x][$y] = $choice; #remove choice from $PossibleNumberArray[$x][$y]
-      if($debug) { print TROUBLE &PrintTempGameArrayDebug() }
+      if($debug) { print DEBUG &PrintTempGameArrayDebug() }
       }
 until( &RecursiveCellSet( @RemainingCells ) );
 return(1); #cascade
@@ -374,34 +388,6 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
       $AnyProgress = 0; #set it up to fail. if any possibility is removed using any technique, it still might be solvable
       #these should be first as they do not narrow possibilities down to one. Nor do they set a square on it's own. Give them a chance
 
-      if ($methods{np})
-            {
-            $LpNP = &SetNP(); #Set NP method 1 for Local regions
-            if ($LpNP > 0)
-                  {
-                  $NP += $LpNP;
-                  $AnyProgress += $LpNP;
-                  if ( $debug )
-                        {
-                        print TROUBLE "Set $LpNP NP <br>";
-                        }
-                  }
-            }
-
-      if ($methods{hs})
-            {
-            #start filling in puzzle using various techniques.
-            $LpHS =  &SetHS(); #Set HS Local squares
-            $HS += $LpHS;
-            $AnyProgress += $LpHS;
-            if ($LpHS)
-              {
-              if ( $debug )
-                    {
-                    print TROUBLE "Set $LpHS HS<br>";
-                    }
-                  }
-            }
 
        if ($methods{ir})
             {
@@ -412,7 +398,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
               {
               if ( $debug )
                   {
-                  print TROUBLE "Set IR1<br>$string";
+                  print DEBUG "Set IR1<br>$string";
                   }
               }
             $AnyProgress += $LpIR1;
@@ -427,22 +413,51 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
               {
               if ( $debug )
                   {
-                  print TROUBLE "Set IR2<br>$string";
+                  print DEBUG "Set IR2<br>$string";
                   }
               }
             $AnyProgress += $LpIR2;
             }
 
+                  if ($methods{np})
+            {
+            $LpNP = &SetNP(); #Set NP method 1 for Local regions
+            if ($LpNP > 0)
+                  {
+                  $NP += $LpNP;
+                  $AnyProgress += $LpNP;
+                  if ( $debug )
+                        {
+                        print DEBUG "Set $LpNP NP <br>";
+                        }
+                  }
+            }
+
+      if ($methods{hs})
+            {
+            #start filling in puzzle using various techniques.
+            $LpHS =  &SetHS(); #Set HS Local squares
+            $HS += $LpHS;
+            $AnyProgress += $LpHS;
+            if ($LpHS)
+              {
+              if ( $debug )
+                    {
+                    print DEBUG "Set $LpHS HS<br>";
+                    }
+                  }
+            }
+
         #clears up all single possibilities. that is why it is last!
       if ($methods{ns})
             {
-            if ($debug) {print TROUBLE "Try NS<br>"}
+            if ($debug) {print DEBUG "Try NS<br>"}
             $LpNS =  &SetNS(); #Set NS based on previously calculated possibilities
             $NS += $LpNS;
             $AnyProgress += $LpNS;
             if ($LpNS)
                   {
-                  if ($debug) {print TROUBLE "Set $LpNS NS<br>"}
+                  if ($debug) {print DEBUG "Set $LpNS NS<br>"}
                   }
            }
 
@@ -456,7 +471,7 @@ if ($blanksquaresleft == 0)
      $solved = 1;
      } #it is only solvable if there are no blank squares left!
 
-#if ($debug) {print TROUBLE "<br>\n solvable:$solved | blankleft:$blanksquaresleft | NS:$NS | NP:$NP | HS:$HS | IR:$IR | loopcount:$loopcount<br>\n";}
+#if ($debug) {print DEBUG "<br>\n solvable:$solved | blankleft:$blanksquaresleft | NS:$NS | NP:$NP | HS:$HS | IR:$IR | loopcount:$loopcount<br>\n";}
 
 $debug = 1;
 return ($solved);
@@ -482,33 +497,36 @@ sub RecursiveRemoveCells()
 &PrintGameArrayHTML();
 &PrintProbArrayHTML();
 
+
 my @CellsToRemove = shuffle @_; #will get shorter each loop by $NumberOfPicks
 my %RemovedList;
 $RemoveAttempCount++;
-if($debug) {print TROUBLE "Entering RecursiveRemoveCells. Count $RemoveAttempCount. With @CellsToRemove<br>";}
-if($debug) {print TROUBLE "Testing IsPuzzleSolvable.<br>";}
-&CopyGameArrays( \@GameArray  , \@TempGameArray );
+if($debug) {print DEBUG "Entering RecursiveRemoveCells. Count $RemoveAttempCount. With @CellsToRemove<br>";}
+if($debug) { print DEBUG "GameArray is:</br>" }
+if($debug) { print DEBUG &PrintGameArrayDebug() }
 
+if($debug) {print DEBUG "Testing IsPuzzleSolvable.<br>";}
+&CopyGameArrays( \@GameArray  , \@TempGameArray );
 #&CalcAllBlankCellsInTempGameArray();
 #if ( &RecursiveSolveTempGameArray(@AllBlankCells)==0 ) #if it is not solvable replace the number in the grid
 if (&IsPuzzleSolvable()==0)
       {
-      if($debug) {print TROUBLE "Previous RecursiveRemoveCells was not Solvable. Returning 0<br>";}
+      if($debug) {print DEBUG "Previous RecursiveRemoveCells was not Solvable. Returning 0<br>";}
       return 0
       } #note: tests previous call
-if($debug) {print TROUBLE "Previous RecursiveRemoveCells was Solvable. Contiuing.<br>"}
+if($debug) {print DEBUG "Previous RecursiveRemoveCells was Solvable. Contiuing.<br>"}
 
-#if($debug) { print TROUBLE "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules is:</br>" }
-#if($debug) { print TROUBLE &PrintProbArrayDebug() }
-#if($debug) { print TROUBLE "TempGameArray is:</br>" }
-#if($debug) { print TROUBLE &PrintTempGameArrayDebug() }
-if($debug) { print TROUBLE "GameArray is:</br>" }
-if($debug) { print TROUBLE &PrintGameArrayDebug() }
+#if($debug) { print DEBUG "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules is:</br>" }
+#if($debug) { print DEBUG &PrintProbArrayDebug() }
+#if($debug) { print DEBUG "TempGameArray is:</br>" }
+#if($debug) { print DEBUG &PrintTempGameArrayDebug() }
+if($debug) { print DEBUG "GameArray is:</br>" }
+if($debug) { print DEBUG &PrintGameArrayDebug() }
 
-if( (time() - $starttime) >= $timetotry ) {if($debug) {print TROUBLE "Time limit reached. Return 1<br>";}; return 1;} #Test for time
+if( (time() - $starttime) >= $timetotry ) {if($debug) {print DEBUG "Time limit reached. Return 1<br>";}; return 1;} #Test for time
 if($blanksquares >= $target)
       {
-      if($debug) {print TROUBLE "Reached target. Return 1<br>";}
+      if($debug) {print DEBUG "Reached target. Return 1<br>";}
       return 1
       } #Test for $target
 do
@@ -519,10 +537,11 @@ do
             #$TempGameArray[$x][$y] = $RemovedList{$cell};
             $GameArray[$x][$y] = $RemovedList{$cell};
             delete $RemovedList{$cell}; #otherwise %$RemovedList piles up and we get errors
+            push @CellsToRemove , [$x,$y]; # restore removed cells to list so we can remove them AGAIN 
             $blanksquares--;
-            if($debug) {print TROUBLE "Restoring $RemovedList{$cell} to \$GameArray[$x][$y].<br>";}
+            if($debug) {print DEBUG "Restoring $RemovedList{$cell} to \$GameArray[$x][$y].<br>";}
             }
-      #if($debug) {print TROUBLE "Restoring \%RemovedList if any.<br>";}
+      #if($debug) {print DEBUG "Restoring \%RemovedList if any.<br>";}
       #try to remove some random cells
       for (my $count = 0; $count < $NumberOfPicks ; $count++) #loop to remove a bunch at one time
             {
@@ -536,15 +555,15 @@ do
                   next;
                   } #no need to try and remove an already removed spot
             $RemovedList{"$x$y"} = $GameArray[$x][$y]; #add to remove list. we may need to restore them if we can't solve board
-            if($debug) {print TROUBLE "$GameArray[$x][$y] removed at $x,$y : ";}
+            if($debug) {print DEBUG "$GameArray[$x][$y] removed at $x,$y : ";}
             #delete $TempGameArray[$x][$y]; #remove picked number
             delete $GameArray[$x][$y]; #remove picked number
-            if($debug) {print TROUBLE "Deleting $GameArray[$x][$y] from both TempGameArray and GameArray.<br>";}
+            if($debug) {print DEBUG "Deleting $GameArray[$x][$y] from both TempGameArray and GameArray.<br>";}
             $blanksquares++;
             }
-      #if($debug) {print TROUBLE "Solvable: continuing...<br>";}
+      #if($debug) {print DEBUG "Solvable: continuing...<br>";}
       #and test in &RecursiveRemoveCells()
-      if($debug) {print TROUBLE "Calling next \&RecursiveRemoveCells.<br>"}
+      if($debug) {print DEBUG "Calling next \&RecursiveRemoveCells.<br>"}
       }
 until( &RecursiveRemoveCells(@CellsToRemove) );
 return 1; #cascade back
@@ -570,37 +589,37 @@ if (scalar(@RemainingBlankCells) == 0)
       } #no more cells. done
 my $Cell = shift @RemainingBlankCells;
 my ($x , $y) = @{ $Cell };
-if($debug) { print TROUBLE "Entering RecursiveSolveTempGameArray. Shift $x,$y off RemainingBlankCells. RemainingBlankCells is now @RemainingBlankCells<br>" }
+if($debug) { print DEBUG "Entering RecursiveSolveTempGameArray. Shift $x,$y off RemainingBlankCells. RemainingBlankCells is now @RemainingBlankCells<br>" }
 my $result = &SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
 if ( $result == 0 )
       {
-      if($debug) { print TROUBLE "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules returned 0 at $x,$y<br>" }
+      if($debug) { print DEBUG "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules returned 0 at $x,$y<br>" }
       return(0)
       }
-if($debug) { print TROUBLE "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules is:</br>" }
-if($debug) { print TROUBLE &PrintProbArrayDebug() }
-if($debug) { print TROUBLE "TempGameArray is:</br>" }
-if($debug) { print TROUBLE &PrintTempGameArrayDebug() }
+if($debug) { print DEBUG "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules is:</br>" }
+if($debug) { print DEBUG &PrintProbArrayDebug() }
+if($debug) { print DEBUG "TempGameArray is:</br>" }
+if($debug) { print DEBUG &PrintTempGameArrayDebug() }
 my @CellPossibilities = keys %{ $PossibleNumberArray[$x][$y] } ;
 do
       {
       #if we are here, we are either: forging ahead or returning from an failed recurse attempt.  blank $GameArray[$x][$y] and try another choice if available
-      if($debug) { print TROUBLE "deleted $TempGameArray[$x][$y] in TempGameArray[$x][$y]<br>" }
+      if($debug) { print DEBUG "deleted $TempGameArray[$x][$y] in TempGameArray[$x][$y]<br>" }
       delete $TempGameArray[$x][$y];
-      if($debug) { print TROUBLE "@CellPossibilities are posibilities at $x,$y <br>" }
+      if($debug) { print DEBUG "@CellPossibilities are posibilities at $x,$y <br>" }
       #if (scalar @CellPossibilities == 0) allows for incorrect game grids
       if (scalar @CellPossibilities != 1)
             {
-            if($debug) { print TROUBLE "No Possibilities left at $x,$y Returning 0<br>" }
+            if($debug) { print DEBUG "No Possibilities left at $x,$y Returning 0<br>" }
             return(0);
             }
       my $choice = shift @CellPossibilities;
-      if($debug) { print TROUBLE "Trying $choice at in TempGameArray[$x][$y] and then calling next RemainingBlankCells with RecursiveSolveTempGameArray with @RemainingBlankCells<br>" }
+      if($debug) { print DEBUG "Trying $choice at in TempGameArray[$x][$y] and then calling next RemainingBlankCells with RecursiveSolveTempGameArray with @RemainingBlankCells<br>" }
       $TempGameArray[$x][$y] = $choice; #set $choice
       }
 until( &RecursiveSolveTempGameArray( @RemainingBlankCells ) );
 #we are done calculating so we MUST remove solved square as they are actually meant to be blank ones
-if($debug) { print TROUBLE "Puzzle is solved and backtracking so deleting TempGameArray $TempGameArray[$x][$y] at $x,$y </br>" }
+if($debug) { print DEBUG "Puzzle is solved and backtracking so deleting TempGameArray $TempGameArray[$x][$y] at $x,$y </br>" }
 delete $TempGameArray[$x][$y];
 return(1); #cascade
 }
@@ -615,7 +634,7 @@ my $countIR;
 #remove that possibility everywhere else in the bound box region
 foreach my $region ( 'col' , 'row' )
       {
-      for my $RegionValue (0 .. 8)
+      foreach my $RegionValue (0 .. 8)
             {
             #Step 1: go through each cell in each col and row
             #build up $PossibilityLocationsInRegion{$PossibleNumber}{'squares'} = 012 joining squ's. One lone number is a winner
@@ -631,6 +650,7 @@ foreach my $region ( 'col' , 'row' )
                         {
                         #$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = xyxyxyxy...
                         #if =xyxy then $PossibleNumber is in two locations
+                        #$PossibilityLocationsInRegion{$PossibleNumber}{'squares'} will be a string containing all the squares the $PossibleNumber is in for this region
                         my $squ = $IAmIn{'squ'}{$x}{$y};
                         $PossibilityLocationsInRegion{$PossibleNumber}{'squares'} = "$PossibilityLocationsInRegion{$PossibleNumber}{'squares'}" . "$squ";
                         $PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = "$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'}" . "$x$y";
@@ -678,7 +698,7 @@ my $countIR;
 #remove that possibility everywhere else in the bound box region
 foreach my $region ( 'squ' )
       {
-      for my $RegionValue (0 .. 8)
+      foreach my $RegionValue (0 .. 8)
             {
             #Step 1: go through each cell in each col and row
             #build up $PossibilityLocationsInRegion{$PossibleNumber}{'squares'} = 012 joining squ's. One lone number is a winner
@@ -694,6 +714,7 @@ foreach my $region ( 'squ' )
                         {
                         #$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = xyxyxyxy...
                         #if =xyxy then $PossibleNumber is in two locations
+                        #$PossibilityLocationsInRegion{$PossibleNumber}{'row'} will be a string of all rows the $PossibleNumber is in
                         my $row = $IAmIn{'row'}{$x}{$y};
                        $PossibilityLocationsInRegion{$PossibleNumber}{'row'} = "$PossibilityLocationsInRegion{$PossibleNumber}{'row'}" . "$row";
                         my $col = $IAmIn{'col'}{$x}{$y};
@@ -706,7 +727,7 @@ foreach my $region ( 'squ' )
                   my $rows = $PossibilityLocationsInRegion{$PossibleNumber}{'row'};
                   my $cols = $PossibilityLocationsInRegion{$PossibleNumber}{'col'};
                   my $xyxyxy = $PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'};
-                  if (length($rows)==1)
+                  if (length($rows)==1) #is this  $PossibleNumber in just one row
                         {
                          if ( (length($xyxyxy)==4) or (length($xyxyxy)==6) )
                               {#found a IR2 for this $PossibleNumber
@@ -902,7 +923,7 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                               #$TempGameArray[$x][$y] = $PossibleNumber;  #set @TempGameArray
                               delete $PossibleNumberArray[$x][$y]; #clear @PossibleNumberArray
                               $PossibleNumberArray[$x][$y]{$PossibleNumber} = 1; #set @PossibleNumberArray
-                              if ($debug) {print TROUBLE "Found HS $PossibleNumber at $x,$y <br>"}
+                              if ($debug) {print DEBUG "Found HS $PossibleNumber at $x,$y <br>"}
                               }
                         }
             }
