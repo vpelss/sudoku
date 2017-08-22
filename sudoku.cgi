@@ -5,6 +5,12 @@
 #still have not implemented XWing or YWing searches
 #maybe run a brute force generic solvable routine after all the other tests? too slow!
 
+#try with blank Possibility Array, all blank. Then work backwards. Ex: 
+
+#try with full Possibility Array, all blank. Then work backwards. Ex: set single grid # if ns works there by not creating a spot with no possibilitis!
+#faster? and more direct and we can target types of searches
+
+#INTERFACE: right click brings up phone like number pad with all possibilities. 
 
 use strict;
 use List::Util qw(shuffle);
