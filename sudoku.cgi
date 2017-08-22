@@ -47,7 +47,7 @@ my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns
 my $RemoveAttempCount;
 my $starttime;
 my $timetotry = 5;
-my $NumberOfPicks = 5; #how many numbers should we try to remove and then test at once?
+my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once?
 my $target = 57;
 my $debug = 1;
 
@@ -97,6 +97,8 @@ $starttime = time();
 $blanksquares = 0;
 #start removing numbers from game grid
 my $result;
+$result = &RecursiveRemoveCells( @AllCells ) ;
+=pod
 do
       {
       $result = &RecursiveRemoveCells( @AllCells ) ;
@@ -109,6 +111,7 @@ do
             }
       }
 until ($result);
+=cut
 if($result==0){die "could not solve"};
 
 #count blank squares. required?
@@ -520,10 +523,10 @@ if($debug) {print DEBUG "Previous RecursiveRemoveCells was Solvable. Contiuing.<
 #if($debug) { print DEBUG &PrintProbArrayDebug() }
 #if($debug) { print DEBUG "TempGameArray is:</br>" }
 #if($debug) { print DEBUG &PrintTempGameArrayDebug() }
-if($debug) { print DEBUG "GameArray is:</br>" }
-if($debug) { print DEBUG &PrintGameArrayDebug() }
+#if($debug) { print DEBUG "GameArray is:</br>" }
+#if($debug) { print DEBUG &PrintGameArrayDebug() }
 
-if( (time() - $starttime) >= $timetotry ) {if($debug) {print DEBUG "Time limit reached. Return 1<br>";}; return 1;} #Test for time
+#if( (time() - $starttime) >= $timetotry ) {if($debug) {print DEBUG "Time limit reached. Return 1<br>";}; return 1;} #Test for time
 if($blanksquares >= $target)
       {
       if($debug) {print DEBUG "Reached target. Return 1<br>";}
@@ -541,6 +544,7 @@ do
             $blanksquares--;
             if($debug) {print DEBUG "Restoring $RemovedList{$cell} to \$GameArray[$x][$y].<br>";}
             }
+      if( (time() - $starttime) >= $timetotry ) {if($debug) {print DEBUG "Time limit reached. Return 1<br>";}; return 1;} #Test for time
       #if($debug) {print DEBUG "Restoring \%RemovedList if any.<br>";}
       #try to remove some random cells
       for (my $count = 0; $count < $NumberOfPicks ; $count++) #loop to remove a bunch at one time
