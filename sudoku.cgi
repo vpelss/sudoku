@@ -47,7 +47,7 @@ my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns
 my $RemoveAttempCount;
 my $starttime;
 my $timetotry = 5;
-my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once?
+my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once? too big and we overshoot and fall back a lot 2 is good
 my $target = 57;
 my $debug = 1;
 
