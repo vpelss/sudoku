@@ -62,13 +62,19 @@ $in{difficulty} = 'Difficult';
 %in = &ParseForm; #get input arguments
 if ( $debug ) { open (DEBUG, ">../aaa.html") }
 &CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
-&CreateFullSudokuGrid();
-if ( $debug ) {
+
+#&RecursiveBuild(@AllCells);
+#exit;
+
+&CreateFullSudokuGridRecursive( @AllCells );
+&CopyGameArrays( \@TempGameArray , \@FullGameArray );
+&CopyGameArrays( \@TempGameArray , \@GameArray );
+if ( $debug )
+      {
       print DEBUG "<p>Game Array Created</p>";
       print DEBUG &PrintTempGameArrayDebug();
       }
-&CopyGameArrays( \@TempGameArray , \@FullGameArray );
-&CopyGameArrays( \@TempGameArray , \@GameArray );
+
 if ($in{difficulty} eq '') {$in{difficulty} = 'Medium'}
 if ($in{difficulty} eq 'Simple')
      {
@@ -232,14 +238,93 @@ for (my $y = 0; $y < 9 ; $y++)
       }
 }
 
-sub CreateFullSudokuGrid()
+sub RecursiveBuild()
 {
-#fully fill in global $gameArray with valid sudoku numbers
-&SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules(); #require to prime RecursiveChoice
-&RecursiveCellSet( @AllCells );
+#recursively go through each @AllCells
+#randomly choose a possible value
+#test, said value, to ensure that all cells still have valid possibilities
+&PrintProbArrayHTML();
+my @RemainingCells = @_;
+if (scalar(@RemainingCells) == 0)
+      {
+      return(1)
+      } #no more cells. done
+my $Cell = shift @RemainingCells;
+my ($x , $y) = @{ $Cell };
+my $result = &_SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
+if($debug) { print DEBUG &PrintProbArrayDebug() }
+if($debug) { print DEBUG &PrintTempGameArrayDebug() }
+if($debug) { print DEBUG &PrintGameArrayDebug() }
+if($debug) { print DEBUG &PrintTestDebug() }
+if ( $result == 0 )
+      {
+      if($debug) { print DEBUG "No Possibilities Somewhere Returning<br>" }
+      return(0)
+      }
+my @CellPossibilities = shuffle keys %{ $PossibleNumberArray[$x][$y] } ;
+do
+      {
+     #if we are here, we are either:
+      #forging ahead
+      #returning from an failed recurse attempt. blank $GameArray[$x][$y] and try another choice if available
+      delete $TempGameArray[$x][$y];
+      delete $GameArray[$x][$y];
+      if (scalar @CellPossibilities == 0)
+            {
+            if($debug) { print DEBUG "No Possibilities left at $x,$y Returning<br>" }
+            return(0);
+            }
+      
+      my $choice = shift @CellPossibilities;
+      if(scalar @CellPossibilities != 0) {$GameArray[$x][$y] = $choice;}
+      $TempGameArray[$x][$y] = $choice; #remove choice from $PossibleNumberArray[$x][$y]
+      #if($debug) { print DEBUG &PrintTempGameArrayDebug() }
+      }
+until( &RecursiveBuild( @RemainingCells ) );
+return(1); #cascade
 }
 
-sub RecursiveCellSet()
+sub _SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules()
+{
+#IMPORTANT totally rebuilds/wipes @PossibleNumberArray
+#fill up @PossibleNumberArray based on values in @$gameArray for each $row,$col,$squ
+#if any cell has no possibility return 0 - fail - indicates not a valid sudoku
+#DOES NOT SET $gameArray here
+#that will be done in another routine
+&FillPossibilityArray1to9();
+foreach my $cell ( @AllCells )
+      {
+      my ($x,$y) = @{ $cell };
+      my $choice = $TempGameArray[$x][$y];
+      if ($choice != undef)
+            {
+            foreach my $region ( 'col' , 'row' , 'squ' )
+                  {
+                  my $RegionValue = $IAmIn{$region}{$x}{$y} ;
+                  my @list = @{ $CellsIn{$region}{$RegionValue} };
+                  foreach my $cell ( @list)
+                        {
+                        my ($x,$y) = @{ $cell };
+                        if ( $TempGameArray[$x][$y] != undef )
+                              {#$TempGameArray[$x][$y] is already set for this cell so no possibility to set here ()
+                              delete $PossibleNumberArray[$x][$y];
+                              }
+                        else
+                              {#remove the $choice from the cell
+                              delete $PossibleNumberArray[$x][$y]{$choice};
+                              my @Possibilities = keys %{ $PossibleNumberArray[$x][$y] };
+                              #is the @Possibilities set empty - fail
+                              if ( scalar(@Possibilities) == 0 ) {return(0)}
+                              }
+                        }
+                  }
+            }
+      }
+return (1); #all cells have at least 1 possibility!
+}
+
+
+sub CreateFullSudokuGridRecursive()
 {
 #recursively go through each @AllCells
 #randomly choose a possible value
@@ -255,26 +340,26 @@ my $result = &SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
 if($debug) { print DEBUG &PrintProbArrayDebug() }
 if ( $result == 0 )
       {
-      if($debug) { print DEBUG "No Probabilities Somewhere Returning<br>" }
+      if($debug) { print DEBUG "No Possibilities Somewhere Returning<br>" }
       return(0)
       }
-my @CellProbabilities = shuffle keys %{ $PossibleNumberArray[$x][$y] } ;
+my @CellPossibilities = shuffle keys %{ $PossibleNumberArray[$x][$y] } ;
 do
       {
       #if we are here, we are either:
       #forging ahead
       #returning from an failed recurse attempt. blank $GameArray[$x][$y] and try another choice if available
       delete $TempGameArray[$x][$y];
-      if (scalar @CellProbabilities == 0)
+      if (scalar @CellPossibilities == 0)
             {
-            if($debug) { print DEBUG "No Probabilities left at $x,$y Returning<br>" }
+            if($debug) { print DEBUG "No Possibilities left at $x,$y Returning<br>" }
             return(0);
             }
-      my $choice = shift @CellProbabilities;
+      my $choice = shift @CellPossibilities;
       $TempGameArray[$x][$y] = $choice; #remove choice from $PossibleNumberArray[$x][$y]
       if($debug) { print DEBUG &PrintTempGameArrayDebug() }
       }
-until( &RecursiveCellSet( @RemainingCells ) );
+until( &CreateFullSudokuGridRecursive( @RemainingCells ) );
 return(1); #cascade
 }
 
@@ -306,9 +391,9 @@ foreach my $cell ( @AllCells )
                         else
                               {#remove the $choice from the cell
                               delete $PossibleNumberArray[$x][$y]{$choice};
-                              my @Probabilities = keys %{ $PossibleNumberArray[$x][$y] };
-                              #is the @Probabilities set empty - fail
-                              if ( scalar(@Probabilities) == 0 ) {return(0)}
+                              my @Possibilities = keys %{ $PossibleNumberArray[$x][$y] };
+                              #is the @Possibilities set empty - fail
+                              if ( scalar(@Possibilities) == 0 ) {return(0)}
                               }
                         }
                   }
@@ -505,7 +590,7 @@ my @CellsToRemove = shuffle @_; #will get shorter each loop by $NumberOfPicks
 my %RemovedList;
 $RemoveAttempCount++;
 if($debug) {print DEBUG "Entering RecursiveRemoveCells. Count $RemoveAttempCount. With @CellsToRemove<br>";}
-if($debug) { print DEBUG "GameArray is:</br>" }
+#if($debug) { print DEBUG "GameArray is:</br>" }
 if($debug) { print DEBUG &PrintGameArrayDebug() }
 
 if($debug) {print DEBUG "Testing IsPuzzleSolvable.<br>";}
@@ -996,7 +1081,7 @@ return(0);
 
 sub PrintTempGameArrayDebug()
 {        #for game array
-my $string = "";
+my $string = "TempGameArray:</br>";
 
 $string .=  "<table border='1'>";
 
@@ -1018,7 +1103,7 @@ return $string;
 
 sub PrintGameArrayDebug()
 {        #for game array
-my $string = "";
+my $string = "GameArray: </br>";
 
 $string .=  "<table border='1'>";
 
@@ -1035,6 +1120,29 @@ for (my $y = 0; $y < 9 ; $y++)
       }
 $string .=  "</table>";
 
+return $string;
+}
+
+sub PrintTestDebug()
+{        #for game array
+my $string = "<pre>";
+
+for (my $y = 0; $y < 9 ; $y++)
+      {
+      for (my $x = 0; $x < 9 ; $x++)
+            {
+            if($GameArray[$x][$y] != undef)
+                  {
+                  $string .=  "$GameArray[$x][$y]";      
+                  }
+            else
+                  {
+                  $string .=  "-";     
+                  }
+            }
+      $string .=  "\r";
+      }
+$string .=  "</pre>";
 return $string;
 }
 
@@ -1090,7 +1198,7 @@ close HTML;
 
 sub PrintProbArrayDebug()
 { #for prob array
-my $string = "";
+my $string = "PossibilityArray:</br>";
 
 $string .=  "<table border='1'>";
 
