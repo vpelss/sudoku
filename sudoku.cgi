@@ -120,6 +120,8 @@ until ($result);
 =cut
 if($result==0){die "could not solve"};
 
+if ( $debug ) { print DEBUG &PrintTextGameArrayDebug(); }
+
 #count blank squares. required?
 $blanksquares = 0;
 foreach my $cell ( @AllCells )
@@ -1123,7 +1125,7 @@ $string .=  "</table>";
 return $string;
 }
 
-sub PrintTestDebug()
+sub PrintTextGameArrayDebug()
 {        #for game array
 my $string = "<pre>";
 
@@ -1134,6 +1136,52 @@ for (my $y = 0; $y < 9 ; $y++)
             if($GameArray[$x][$y] != undef)
                   {
                   $string .=  "$GameArray[$x][$y]";      
+                  }
+            else
+                  {
+                  $string .=  "-";     
+                  }
+            }
+      $string .=  "\r";
+      }
+$string .=  "</pre>";
+return $string;
+}
+
+sub PrintTextTempGameArrayDebug()
+{        #for game array
+my $string = "<pre>";
+
+for (my $y = 0; $y < 9 ; $y++)
+      {
+      for (my $x = 0; $x < 9 ; $x++)
+            {
+            if($TempGameArray[$x][$y] != undef)
+                  {
+                  $string .=  "$TempGameArray[$x][$y]";      
+                  }
+            else
+                  {
+                  $string .=  "-";     
+                  }
+            }
+      $string .=  "\r";
+      }
+$string .=  "</pre>";
+return $string;
+}
+
+sub PrintTextPossibilityArrayDebug()
+{        #for game array
+my $string = "<pre>";
+
+for (my $y = 0; $y < 9 ; $y++)
+      {
+      for (my $x = 0; $x < 9 ; $x++)
+            {
+            if($PossibleNumberArray[$x][$y] != undef)
+                  {
+                  $string .=  "$PossibleNumberArray[$x][$y]";      
                   }
             else
                   {
