@@ -63,8 +63,9 @@ $in{difficulty} = 'Difficult';
 if ( $debug ) { open (DEBUG, ">../aaa.html") }
 &CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
 
-#&RecursiveBuild(@AllCells);
-#exit;
+&RecursiveBuild(@AllCells);
+print DEBUG &PrintTextGameArrayDebug();
+exit;
 
 &CreateFullSudokuGridRecursive( @AllCells );
 &CopyGameArrays( \@TempGameArray , \@FullGameArray );
@@ -246,18 +247,22 @@ sub RecursiveBuild()
 #randomly choose a possible value
 #test, said value, to ensure that all cells still have valid possibilities
 &PrintProbArrayHTML();
-my @RemainingCells = @_;
-if (scalar(@RemainingCells) == 0)
+my @RemainingCells = shuffle @_;
+if ( &IsPuzzleSolvable() )
       {
       return(1)
-      } #no more cells. done
+      } #solvable. done
+if ( scalar @RemainingCells == 0 )
+      {
+      return(1)
+      } #error. done
 my $Cell = shift @RemainingCells;
 my ($x , $y) = @{ $Cell };
-my $result = &_SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
+my $result = &SetPossibilityArrayBasedOnGameArrayValuesUsingSudokuRules();
 if($debug) { print DEBUG &PrintProbArrayDebug() }
 if($debug) { print DEBUG &PrintTempGameArrayDebug() }
 if($debug) { print DEBUG &PrintGameArrayDebug() }
-if($debug) { print DEBUG &PrintTestDebug() }
+#if($debug) { print DEBUG &PrintTestDebug() }
 if ( $result == 0 )
       {
       if($debug) { print DEBUG "No Possibilities Somewhere Returning<br>" }
@@ -269,7 +274,7 @@ do
      #if we are here, we are either:
       #forging ahead
       #returning from an failed recurse attempt. blank $GameArray[$x][$y] and try another choice if available
-      delete $TempGameArray[$x][$y];
+      #delete $TempGameArray[$x][$y];
       delete $GameArray[$x][$y];
       if (scalar @CellPossibilities == 0)
             {
@@ -279,14 +284,14 @@ do
       
       my $choice = shift @CellPossibilities;
       if(scalar @CellPossibilities != 0) {$GameArray[$x][$y] = $choice;}
-      $TempGameArray[$x][$y] = $choice; #remove choice from $PossibleNumberArray[$x][$y]
+      #$TempGameArray[$x][$y] = $choice; #remove choice from $PossibleNumberArray[$x][$y]
       #if($debug) { print DEBUG &PrintTempGameArrayDebug() }
       }
 until( &RecursiveBuild( @RemainingCells ) );
 return(1); #cascade
 }
 
-sub _SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules()
+sub SetPossibilityArrayBasedOnGameArrayValuesUsingSudokuRules()
 {
 #IMPORTANT totally rebuilds/wipes @PossibleNumberArray
 #fill up @PossibleNumberArray based on values in @$gameArray for each $row,$col,$squ
@@ -297,7 +302,7 @@ sub _SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules()
 foreach my $cell ( @AllCells )
       {
       my ($x,$y) = @{ $cell };
-      my $choice = $TempGameArray[$x][$y];
+      my $choice = $GameArray[$x][$y];
       if ($choice != undef)
             {
             foreach my $region ( 'col' , 'row' , 'squ' )
@@ -307,7 +312,7 @@ foreach my $cell ( @AllCells )
                   foreach my $cell ( @list)
                         {
                         my ($x,$y) = @{ $cell };
-                        if ( $TempGameArray[$x][$y] != undef )
+                        if ( $GameArray[$x][$y] != undef )
                               {#$TempGameArray[$x][$y] is already set for this cell so no possibility to set here ()
                               delete $PossibleNumberArray[$x][$y];
                               }
