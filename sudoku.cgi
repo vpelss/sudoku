@@ -243,6 +243,15 @@ for (my $y = 0; $y < 9 ; $y++)
       }
 }
 
+sub IsPzzleSolvableFast()
+{
+my $i;
+    
+$_=$`.$_.$'.<>;
+split//;
+${/[@_[map{$i-($i="@-")%9+$_,9*$_+$i%9,9*$_%26+$i-$i%27+$i%9-$i%3}0..8]]/o||do$0}
+for/0/||print..9 
+}
 sub RecursiveBuild()
 {
 #recursively go through each @AllCells
@@ -251,7 +260,7 @@ sub RecursiveBuild()
 #my %RemovedList;
 my $choice;
 
-&PrintProbArrayHTML();
+&PrintPossibilityArrayHTML();
 &PrintGameArrayHTML();
 my @RemainingCells = shuffle @_;
 &CopyGameArrays( \@GameArray , \@TempGameArray );
@@ -269,7 +278,7 @@ my $x =  int(rand(9));
 my $y =  int(rand(9));
 
 my $result = &SetPossibilityArrayBasedOnGameArrayValuesUsingSudokuRules();
-if($debug) { print DEBUG &PrintTempProbArrayDebug() }
+if($debug) { print DEBUG &PrintTempPossibilityArrayDebug() }
 #if($debug) { print DEBUG &PrintTempGameArrayDebug() }
 if($debug) { print DEBUG &PrintGameArrayDebug() }
 #if($debug) { print DEBUG &PrintTestDebug() }
@@ -374,7 +383,7 @@ if (scalar(@RemainingCells) == 0)
 my $Cell = shift @RemainingCells;
 my ($x , $y) = @{ $Cell };
 my $result = &SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
-if($debug) { print DEBUG &PrintProbArrayDebug() }
+if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
 if ( $result == 0 )
       {
       if($debug) { print DEBUG "No Possibilities Somewhere Returning<br>" }
@@ -632,7 +641,7 @@ for (my $y = 0; $y < 9 ; $y++)
 sub RecursiveRemoveCells()
 {
 &PrintGameArrayHTML();
-&PrintProbArrayHTML();
+&PrintPossibilityArrayHTML();
 
 
 my @CellsToRemove = shuffle @_; #will get shorter each loop by $NumberOfPicks
@@ -654,7 +663,7 @@ if (&IsPuzzleSolvable()==0)
 if($debug) {print DEBUG "Previous RecursiveRemoveCells was Solvable. Contiuing.<br>"}
 
 #if($debug) { print DEBUG "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules is:</br>" }
-#if($debug) { print DEBUG &PrintProbArrayDebug() }
+#if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
 #if($debug) { print DEBUG "TempGameArray is:</br>" }
 #if($debug) { print DEBUG &PrintTempGameArrayDebug() }
 #if($debug) { print DEBUG "GameArray is:</br>" }
@@ -714,7 +723,7 @@ sub RecursiveSolveTempGameArray()
 #It tests for solve all in one! cannot be used with other solve methods.
 
 #recursively go through each @AllBlankCells
-#try a possibility from ProbabilityArray
+#try a possibility from PossibilityArray
 #test, said value, to ensure that all cells still have valid possibilities
 #true - set tempgamearray next recursive
 #false - try another possibility
@@ -735,7 +744,7 @@ if ( $result == 0 )
       return(0)
       }
 if($debug) { print DEBUG "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules is:</br>" }
-if($debug) { print DEBUG &PrintProbArrayDebug() }
+if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
 if($debug) { print DEBUG "TempGameArray is:</br>" }
 if($debug) { print DEBUG &PrintTempGameArrayDebug() }
 my @CellPossibilities = keys %{ $PossibleNumberArray[$x][$y] } ;
@@ -1266,8 +1275,8 @@ close HTML;
 #return $string;
 }
 
-sub PrintProbArrayHTML()
-{ #for prob array
+sub PrintPossibilityArrayHTML()
+{ #for poss array
 open (HTML, ">./PossibilityArray.html");  
 
 my $string .=  "<table border='1'>";
@@ -1291,8 +1300,8 @@ print HTML $string;
 close HTML;
 }
 
-sub PrintProbArrayDebug()
-{ #for prob array
+sub PrintPossibilityArrayDebug()
+{ #for poss array
 my $string = "PossibilityArray:</br>";
 
 $string .=  "<table border='1'>";
@@ -1315,8 +1324,8 @@ $string .=  "</table>";
 return $string;
 }
 
-sub PrintTempProbArrayDebug()
-{ #for prob array
+sub PrintTempPossibilityArrayDebug()
+{ #for poss array
 my $string = "TempPossibilityArray:</br>";
 
 $string .=  "<table border='1'>";
