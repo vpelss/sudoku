@@ -65,7 +65,7 @@ if ( $debug ) { open (DEBUG, ">../aaa.html") }
 &CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
 
 &FillTempPossibilityArray1to9();
-&RecursiveBuild(@AllCells);
+&RecursiveBuild(shuffle @AllCells);
 print DEBUG &PrintTextGameArrayDebug();
 exit;
 
@@ -243,15 +243,18 @@ for (my $y = 0; $y < 9 ; $y++)
       }
 }
 
-sub IsPzzleSolvableFast()
+sub IsPuzzleSolvableFast()
 {
+=pod
 my $i;
     
 $_=$`.$_.$'.<>;
 split//;
 ${/[@_[map{$i-($i="@-")%9+$_,9*$_+$i%9,9*$_%26+$i-$i%27+$i%9-$i%3}0..8]]/o||do$0}
 for/0/||print..9 
+=cut
 }
+
 sub RecursiveBuild()
 {
 #recursively go through each @AllCells
@@ -262,65 +265,56 @@ my $choice;
 
 &PrintPossibilityArrayHTML();
 &PrintGameArrayHTML();
-my @RemainingCells = shuffle @_;
+my @RemainingCells = @_;
 &CopyGameArrays( \@GameArray , \@TempGameArray );
 if ( &IsPuzzleSolvable() )
       {
       return(1)
       } #solvable. done
+else
+    {
+    if($debug) { print DEBUG "Not solvable. <br>" }    
+    }
 if ( scalar @RemainingCells == 0 )
       {
       return(1)
       } #error. done
-#my $Cell = shift @RemainingCells;
-#my ($x , $y) = @{ $Cell };
-my $x =  int(rand(9));
-my $y =  int(rand(9));
+my $Cell = shift @RemainingCells;
+my ($x , $y) = @{ $Cell };
 
 my $result = &SetPossibilityArrayBasedOnGameArrayValuesUsingSudokuRules();
-if($debug) { print DEBUG &PrintTempPossibilityArrayDebug() }
-#if($debug) { print DEBUG &PrintTempGameArrayDebug() }
 if($debug) { print DEBUG &PrintGameArrayDebug() }
-#if($debug) { print DEBUG &PrintTestDebug() }
+if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
 if ( $result == 0 )
       {
       if($debug) { print DEBUG "No Possibilities Somewhere based on GameArray Returning<br>" }
       return(0)
       }
-my @CellPossibilities = shuffle keys %{ $TempPossibleNumberArray[$x][$y] } ;
+my @CellPossibilities = shuffle keys %{ $PossibleNumberArray[$x][$y] } ;
 do
     {
+    if($debug) { print DEBUG "CellPossibilities: @CellPossibilities at $x,$y<br>" }
     #if we are here, we are either:
     #forging ahead
-    #returning from an failed recurse attempt. blank $GameArray[$x][$y] and try another choice if available
-    #delete $TempGameArray[$x][$y];
-    if ( (scalar @CellPossibilities != 1) and ($GameArray[$x][$y] == undef) ) #already set, ignore!!!!
-        {
-        if ($choice != undef)
+    #returning from an failed recurse attempt. blank $GameArray[$x][$y] and try another choice if available 
+    $PossibleNumberArray[$x][$y]{ $GameArray[$x][$y] } = 1; #restore old possibility on fail
+    if($debug) { print DEBUG "Possibility $choice replaced at $x,$y<br>" }      
+    delete $GameArray[$x][$y];  
+    if (scalar @CellPossibilities == 0)
           {
-          $TempPossibleNumberArray[$x][$y]{$choice} = 1; #restore old possibility on fail
-          if($debug) { print DEBUG "Possibility $choice replaced at $x,$y<br>" }
-          }
-        delete $GameArray[$x][$y];  
-        if (scalar @CellPossibilities == 0)
-              {
-              if($debug) { print DEBUG "No Possibilities left at $x,$y Returning<br>" }
-              return(0);
-              }
-        
-        $choice = shift @CellPossibilities;
-        delete $TempPossibleNumberArray[$x][$y]{$choice}; #remove chosen possibility
-        if($debug) { print DEBUG "Removing Possibility $choice at $x,$y<br>" }
-        if(scalar @CellPossibilities == 0)
-          {
-          $GameArray[$x][$y] = $choice;
-          if($debug) { print DEBUG "Seting GameArray at $x,$y with $choice<br>" }
-          }
-        }
-    else
-        {
-        if($debug) { print DEBUG "GameArray is already set at  $x,$y<br>" }    
-        }
+          if($debug) { print DEBUG "No Possibilities left at $x,$y Returning<br>" }
+          return(0);
+          }    
+    $choice = shift @CellPossibilities;
+    #delete $TempPossibleNumberArray[$x][$y]{$choice}; #remove chosen possibility
+    if($debug) { print DEBUG "Removing Possibility $choice at $x,$y<br>" }
+    #if(scalar @CellPossibilities == 0)
+      {
+      $GameArray[$x][$y] = $choice;
+      if($debug) { print DEBUG "Seting GameArray at $x,$y with $choice<br>" }
+      }
+    
+
     #$TempGameArray[$x][$y] = $choice; #remove choice from $PossibleNumberArray[$x][$y]
     #if($debug) { print DEBUG &PrintTempGameArrayDebug() }
     if($debug) { print DEBUG "Next Recursion<br>" }
@@ -350,18 +344,12 @@ foreach my $cell ( @AllCells )
                   foreach my $cell ( @list)
                         {
                         my ($x,$y) = @{ $cell };
-                        if ( $GameArray[$x][$y] != undef )
-                              {#$TempGameArray[$x][$y] is already set for this cell so no possibility to set here ()
-                              #delete $PossibleNumberArray[$x][$y];
-                              $PossibleNumberArray[$x][$y]{$GameArray[$x][$y]}=1;
-                              }
-                        else
-                              {#remove the $choice from the cell
-                              delete $PossibleNumberArray[$x][$y]{$choice};
-                              my @Possibilities = keys %{ $PossibleNumberArray[$x][$y] };
-                              #is the @Possibilities set empty - fail
-                              if ( scalar(@Possibilities) == 0 ) {return(0)}
-                              }
+                        #remove the $choice from the cell
+                        delete $PossibleNumberArray[$x][$y]{$choice};
+                        my @Possibilities = keys %{ $PossibleNumberArray[$x][$y] };
+                        #is the @Possibilities set empty - fail
+                        if ( scalar(@Possibilities) == 0 ) {return(0)}
+                
                         }
                   }
             }
@@ -430,6 +418,8 @@ foreach my $cell ( @AllCells )
                   foreach my $cell ( @list)
                         {
                         my ($x,$y) = @{ $cell };
+                        #WHY DO WE DO $TempGameArray[$x][$y] check again!!!!!!!!!!!!!!
+                        #look at: SetPossibilityArrayBasedOnGameArrayValuesUsingSudokuRules
                         if ( $TempGameArray[$x][$y] != undef )
                               {#$TempGameArray[$x][$y] is already set for this cell so no possibility to set here ()
                               delete $PossibleNumberArray[$x][$y];
@@ -503,7 +493,7 @@ foreach my $cell ( @AllCells )
 
 sub IsPuzzleSolvable()
 {
-      $debug = 0;
+$debug = 0;
 #this takes a partially filled @TempGameArray and continually try to solve it by various techniques, IR, NP, HS and finally NS
 #it fails if there is no progress on one loop
 my $AnyProgress = 1; #set so we can enter loop
