@@ -47,6 +47,7 @@ my @TempPossibleNumberArray; #global for recursive routines. $PossibleNumberArra
 my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns,hs,np,ir
 my $RemoveAttempCount;
 my $starttime;
+my $TimeTaken;
 my $timetotry = 5;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once? too big and we overshoot and fall back a lot 2 is good
 my $target = 58;
@@ -61,27 +62,6 @@ sub Main()
 print "Content-type: text/html\n\n";
 $in{difficulty} = 'Difficult';
 %in = &ParseForm; #get input arguments
-if ( $debug ) { open (DEBUG, ">../aaa.html") }
-&CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
-
-#&FillTempPossibilityArray1to9();
-#RecursiveBuild(shuffle @AllCells);
-#print DEBUG &PrintTextGameArrayDebug();
-#exit;
-
-$starttime = time();
-&CreateFullSudokuGridRecursive( @AllCells );
-my $TimeTaken = time() - $starttime;
-if ( $debug ){  print DEBUG "Time for CreateFullSudokuGridRecursive: $TimeTaken</br>";}
-
-&CopyGameArrays( \@TempGameArray , \@FullGameArray );
-&CopyGameArrays( \@TempGameArray , \@GameArray );
-if ( $debug )
-      {
-      print DEBUG "<p>Game Array Created</p>";
-      print DEBUG &PrintTempGameArrayDebug();
-      }
-
 if ($in{difficulty} eq '') {$in{difficulty} = 'Medium'}
 if ($in{difficulty} eq 'Simple')
      {
@@ -105,6 +85,31 @@ if ($in{difficulty} eq 'Difficult')
      $methods{hs} = 1;
      $methods{ir} = 1;
      }
+
+if ( $debug ) { open (DEBUG, ">../aaa.html") }
+&CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
+
+$starttime = time();
+#&FillTempPossibilityArray1to9();
+RecursiveBuild(@AllCells);
+$TimeTaken = time() - $starttime;
+if ( $debug ){  print DEBUG "Time for CreateFullSudokuGridRecursive: $TimeTaken</br>";}
+print DEBUG &PrintTextGameArrayDebug();
+exit;
+
+$starttime = time();
+&CreateFullSudokuGridRecursive( @AllCells );
+$TimeTaken = time() - $starttime;
+if ( $debug ){  print DEBUG "Time for CreateFullSudokuGridRecursive: $TimeTaken</br>";}
+
+&CopyGameArrays( \@TempGameArray , \@FullGameArray );
+&CopyGameArrays( \@TempGameArray , \@GameArray );
+if ( $debug )
+      {
+      print DEBUG "<p>Game Array Created</p>";
+      print DEBUG &PrintTempGameArrayDebug();
+      }
+
 
 $starttime = time();
 $blanksquares = 0;
@@ -233,7 +238,7 @@ for (my $y = 0; $y < 9 ; $y++)
       }
 }
 
-sub IsPuzzleSolvableFast()
+sub _IsPuzzleSolvableFast()
 {
 =pod
 my $i;
@@ -255,25 +260,25 @@ my $choice;
 
 &PrintPossibilityArrayHTML();
 &PrintGameArrayHTML();
-my @RemainingCells = @_;
+my @RemainingCells = shuffle @_;
 &CopyGameArrays( \@GameArray , \@TempGameArray );
-if ( &IsPuzzleSolvable() )
+if($debug) { print DEBUG "moved GameArray to TempGameArray. Checking if TempGameArray is solvable. <br>" }
+if ( &IsPuzzleSolvable() == 1 )
       {
-      return(1)
+      return(1);
       } #solvable. done
-else
-    {
-    if($debug) { print DEBUG "Not solvable. <br>" }    
-    }
+if($debug) { print DEBUG "Not solvable. <br>" }    
 if ( scalar @RemainingCells == 0 )
-      {
-      return(1)
-      } #error. done
+    {
+    if($debug) { print DEBUG "Ran out of AllCells/ Error condition. <br>" } 
+    return(1);
+    } #error. done
 my $Cell = shift @RemainingCells;
 my ($x , $y) = @{ $Cell };
-
+if($debug) { print DEBUG "Setting PossibilityArray based on GameArray using sudoku rules. <br>" }   
 my $result = &SetPossibilityArrayBasedOnGameArrayValuesUsingSudokuRules();
 if($debug) { print DEBUG &PrintGameArrayDebug() }
+if($debug) { print DEBUG &PrintTempGameArrayDebug() }
 if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
 if ( $result == 0 )
       {
@@ -334,12 +339,17 @@ foreach my $cell ( @AllCells )
                   foreach my $cell ( @list)
                         {
                         my ($x,$y) = @{ $cell };
-                        #remove the $choice from the cell
-                        delete $PossibleNumberArray[$x][$y]{$choice};
-                        my @Possibilities = keys %{ $PossibleNumberArray[$x][$y] };
-                        #is the @Possibilities set empty - fail
-                        if ( scalar(@Possibilities) == 0 ) {return(0)}
-                
+                        if ( $GameArray[$x][$y] != undef )
+                              {#$TempGameArray[$x][$y] is already set for this cell so no possibility to set here ()
+                              delete $PossibleNumberArray[$x][$y];
+                              }
+                        else
+                              {#remove the $choice from the cell
+                              delete $PossibleNumberArray[$x][$y]{$choice};
+                              my @Possibilities = keys %{ $PossibleNumberArray[$x][$y] };
+                              #is the @Possibilities set empty - fail
+                              if ( scalar(@Possibilities) == 0 ) {return(0)}
+                              }
                         }
                   }
             }
