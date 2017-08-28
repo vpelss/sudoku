@@ -98,8 +98,10 @@ print DEBUG &PrintTextGameArrayDebug();
 #exit;
 
 $starttime = time();
+$debug = 0;
 &CreateFullSudokuGridRecursive( @AllCells );
 $TimeTaken = time() - $starttime;
+$debug = 1;
 if ( $debug ){  print DEBUG "Time for CreateFullSudokuGridRecursive: $TimeTaken</br>";}
 
 &CopyGameArrays( \@TempGameArray , \@FullGameArray );
@@ -555,6 +557,8 @@ $IR2 = 0;
 &Reduce1_9PossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
 #OR
 #&SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
+if($debug) { print DEBUG &PrintTempGameArrayDebug() }
+if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
 
 $AnyProgress = 1;
 $blanksquaresleft = 1; #get us in the 'while' door
