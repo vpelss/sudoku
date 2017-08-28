@@ -11,7 +11,7 @@
 #faster? and more direct and we can target types of searches
 
 #INTERFACE: right click brings up phone like number pad with all possibilities. 
-
+#use English;
 use strict;
 use List::Util qw(shuffle);
 use sudokuvars;
@@ -91,11 +91,11 @@ if ( $debug ) { open (DEBUG, ">../aaa.html") }
 
 $starttime = time();
 #&FillTempPossibilityArray1to9();
-RecursiveBuild(@AllCells);
+#RecursiveBuild(@AllCells);
 $TimeTaken = time() - $starttime;
 if ( $debug ){  print DEBUG "Time for CreateFullSudokuGridRecursive: $TimeTaken</br>";}
 print DEBUG &PrintTextGameArrayDebug();
-exit;
+#exit;
 
 $starttime = time();
 &CreateFullSudokuGridRecursive( @AllCells );
@@ -240,12 +240,15 @@ for (my $y = 0; $y < 9 ; $y++)
 
 sub _IsPuzzleSolvableFast()
 {
-=pod
+
 my $i;
     
-$_=$`.$_.$'.<>;
-split//;
-${/[@_[map{$i-($i="@-")%9+$_,9*$_+$i%9,9*$_%26+$i-$i%27+$i%9-$i%3}0..8]]/o||do$0}
+# $_=$`.$_.$'.<>;split//;${/[@_[map{$i-($i="@-")%9+$_,9*$_+$i%
+# 9,9*$_%26+$i-$i%27+$i%9-$i%3}0..8]]/o||do$0}for/0/||print..9
+=pod    
+$ARG=$PREMATCH.$ARG.$'.$POSTMATCH.<>;
+$ARG=split//$_;
+${/[@_[map{$i-($i="@-")%9+$_,9*$_+$i%9,9*$_%26+$i-$i%27+$i%9-$i%3}0..8]]/o||do $PROGRAM_NAME}
 for/0/||print..9 
 =cut
 }
@@ -308,13 +311,11 @@ do
       $GameArray[$x][$y] = $choice;
       if($debug) { print DEBUG "Seting GameArray at $x,$y with $choice<br>" }
       }
-    
-
     #$TempGameArray[$x][$y] = $choice; #remove choice from $PossibleNumberArray[$x][$y]
     #if($debug) { print DEBUG &PrintTempGameArrayDebug() }
     if($debug) { print DEBUG "Next Recursion<br>" }
     }
-until( &RecursiveBuild( @RemainingCells ) );
+until( &RecursiveBuild(@RemainingCells ) );
 return(1); #cascade
 }
 
@@ -436,6 +437,44 @@ foreach my $cell ( @AllCells )
 return (1); #all cells have at least 1 possibility!
 }
 
+sub Reduce1_9PossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules()
+{
+#IMPORTANT totally rebuilds/wipes @PossibleNumberArray
+#fill up @PossibleNumberArray based on values in @$gameArray for each $row,$col,$squ
+#if any cell has no possibility return 0 - fail - indicates not a valid sudoku
+#DOES NOT SET $gameArray here
+#that will be done in another routine
+foreach my $cell ( @AllCells )
+      {
+      my ($x,$y) = @{ $cell };
+      my $choice = $TempGameArray[$x][$y];
+      if ($choice != undef)
+            {
+            foreach my $region ( 'col' , 'row' , 'squ' )
+                  {
+                  my $RegionValue = $IAmIn{$region}{$x}{$y} ;
+                  my @list = @{ $CellsIn{$region}{$RegionValue} };
+                  foreach my $cell ( @list)
+                        {
+                        my ($x,$y) = @{ $cell };
+                        if ( $TempGameArray[$x][$y] != undef )
+                              {#$TempGameArray[$x][$y] is already set for this cell so no possibility to set here ()
+                              delete $PossibleNumberArray[$x][$y];
+                              }
+                        else
+                              {#remove the $choice from the cell
+                              delete $PossibleNumberArray[$x][$y]{$choice};
+                              my @Possibilities = keys %{ $PossibleNumberArray[$x][$y] };
+                              #is the @Possibilities set empty - fail
+                              if ( scalar(@Possibilities) == 0 ) {return(0)}
+                              }
+                        }
+                  }
+            }
+      }
+return (1); #all cells have at least 1 possibility!
+}
+
 sub FillPossibilityArray1to9()
 {
 foreach my $cell ( @AllCells )
@@ -491,7 +530,7 @@ foreach my $cell ( @AllCells )
 
 sub IsPuzzleSolvable()
 {
-$debug = 0;
+#$debug = 0;
 #this takes a partially filled @TempGameArray and continually try to solve it by various techniques, IR, NP, HS and finally NS
 #it fails if there is no progress on one loop
 my $AnyProgress = 1; #set so we can enter loop
@@ -512,7 +551,11 @@ $IR = 0;
 $IR1 = 0;
 $IR2 = 0;
 
-&SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
+&FillPossibilityArray1to9();
+&Reduce1_9PossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
+#OR
+#&SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
+
 $AnyProgress = 1;
 $blanksquaresleft = 1; #get us in the 'while' door
 while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time until we get a run where all squares are filled
