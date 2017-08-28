@@ -49,7 +49,7 @@ my $RemoveAttempCount;
 my $starttime;
 my $timetotry = 5;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once? too big and we overshoot and fall back a lot 2 is good
-my $target = 57;
+my $target = 58;
 my $debug = 1;
 
 eval { &Main(); };                            # Trap any fatal errors so the program hopefully
@@ -64,12 +64,16 @@ $in{difficulty} = 'Difficult';
 if ( $debug ) { open (DEBUG, ">../aaa.html") }
 &CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
 
-&FillTempPossibilityArray1to9();
-&RecursiveBuild(shuffle @AllCells);
-print DEBUG &PrintTextGameArrayDebug();
-exit;
+#&FillTempPossibilityArray1to9();
+#RecursiveBuild(shuffle @AllCells);
+#print DEBUG &PrintTextGameArrayDebug();
+#exit;
 
+$starttime = time();
 &CreateFullSudokuGridRecursive( @AllCells );
+my $TimeTaken = time() - $starttime;
+if ( $debug ){  print DEBUG "Time for CreateFullSudokuGridRecursive: $TimeTaken</br>";}
+
 &CopyGameArrays( \@TempGameArray , \@FullGameArray );
 &CopyGameArrays( \@TempGameArray , \@GameArray );
 if ( $debug )
@@ -107,22 +111,9 @@ $blanksquares = 0;
 #start removing numbers from game grid
 my $result;
 $result = &RecursiveRemoveCells( @AllCells ) ;
-=pod
-do
-      {
-      $result = &RecursiveRemoveCells( @AllCells ) ;
-      if($result==0)
-            {
-            my $r = 9;
-            if($debug) { print DEBUG "GameArray is:</br>" }
-            if($debug) { print DEBUG &PrintGameArrayDebug() }
-            die "ouch";
-            }
-      }
-until ($result);
-=cut
-if($result==0){die "could not solve"};
 
+if($result==0){die "could not solve"};
+$TimeTaken = (time() - $starttime);
 if ( $debug ) { print DEBUG &PrintTextGameArrayDebug(); }
 
 #count blank squares. required?
@@ -134,7 +125,6 @@ foreach my $cell ( @AllCells )
       if ($choice == '') {$blanksquares++}
       }
       
-my $TimeTaken = (time() - $starttime);
 my $exposedsquares = 81 - $blanksquares;
 $globalstring = " RemoveAttempCount: $RemoveAttempCount | NS: $NS | HS: $HS | NP: $NP | IR1: $IR1  | IR2: $IR2 | Blank: $blanksquares | Time: $TimeTaken";
 $difficulty = "Simple";
@@ -418,8 +408,6 @@ foreach my $cell ( @AllCells )
                   foreach my $cell ( @list)
                         {
                         my ($x,$y) = @{ $cell };
-                        #WHY DO WE DO $TempGameArray[$x][$y] check again!!!!!!!!!!!!!!
-                        #look at: SetPossibilityArrayBasedOnGameArrayValuesUsingSudokuRules
                         if ( $TempGameArray[$x][$y] != undef )
                               {#$TempGameArray[$x][$y] is already set for this cell so no possibility to set here ()
                               delete $PossibleNumberArray[$x][$y];
