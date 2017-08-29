@@ -599,8 +599,8 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
               }
             $AnyProgress += $LpIR2;
             }
-
-                  if ($methods{np})
+$debug =0;
+        if ($methods{np})
             {
             $LpNP = &SetNP(); #Set NP method 1 for Local regions
             if ($LpNP > 0)
@@ -641,7 +641,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
                   if ($debug) {print DEBUG "Set $LpNS NS<br>"}
                   }
            }
-
+$debug = 1;
       #lets see if we are done yet
       $blanksquaresleft = &AreThereBlankSquares();
       $loopcount++;
@@ -684,7 +684,7 @@ my %RemovedList;
 $RemoveAttempCount++;
 if($debug) {print DEBUG "Entering RecursiveRemoveCells. Count $RemoveAttempCount. With @CellsToRemove<br>";}
 #if($debug) { print DEBUG "GameArray is:</br>" }
-if($debug) { print DEBUG &PrintGameArrayDebug() }
+#if($debug) { print DEBUG &PrintGameArrayDebug() }
 
 if($debug) {print DEBUG "Testing IsPuzzleSolvable.<br>";}
 &CopyGameArrays( \@GameArray  , \@TempGameArray );
@@ -834,26 +834,38 @@ foreach my $region ( 'col' , 'row' )
                         #if =xyxy then $PossibleNumber is in two locations
                         #$PossibilityLocationsInRegion{$PossibleNumber}{'squares'} will be a string containing all the squares the $PossibleNumber is in for this region
                         my $squ = $IAmIn{'squ'}{$x}{$y};
-                        $PossibilityLocationsInRegion{$PossibleNumber}{'squares'} = "$PossibilityLocationsInRegion{$PossibleNumber}{'squares'}" . "$squ";
+                        #$PossibilityLocationsInRegion{$PossibleNumber}{'squares'} = "$PossibilityLocationsInRegion{$PossibleNumber}{'squares'}" . "$squ";
+                        $PossibilityLocationsInRegion{$PossibleNumber}{'squares'}{$squ} = 1;
                         $PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = "$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'}" . "$x$y";
+                        
+                        $PossibilityLocationsInRegion{$PossibleNumber}{$region}{$RegionValue}{"$x$y"} = 1;
                         }
                   }
             foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion )
                   {
-                  my $squares = $PossibilityLocationsInRegion{$PossibleNumber}{'squares'};
+                  #my $squares = $PossibilityLocationsInRegion{$PossibleNumber}{'squares'};
+                  my @squares = keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'squares'}};
+                  
                   my $xyxyxy = $PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'};
-                  if (length($squares)==1)
+                  if (scalar @squares == 1)
                         {
+                        my $square = shift @squares;
+                        #print DEBUG "IR1: Only one square $square for possibility $PossibleNumber at locations $xyxyxy  and $region $RegionValue <br>";    
                         #if ( (length($xyxyxy)==2) or  (length($xyxyxy)==4) or (length($xyxyxy)==6) )
                         if ( (length($xyxyxy)==4) or (length($xyxyxy)==6) )
-                              {#found a IR1 for this $PossibleNumber
+                            {#found a IR1 for this $PossibleNumber
                               #remove $PossibleNumber from $squ, then restore to $xyxyxy locations
-                              $countIR++;
-                              my @list = @{ $CellsIn{'squ'}{$squares} };
-                              foreach my $cell ( @list)
+                              #print DEBUG "IR1: 2 or 3 locations in square $square for possibility $PossibleNumber at locations $xyxyxy  and $region $RegionValue <br>";
+                            my @list = @{ $CellsIn{'squ'}{$square} };
+                            foreach my $cell ( @list)
                                     {
                                     my ($x,$y) = @{ $cell };
-                                    delete  $PossibleNumberArray[$x][$y]{$PossibleNumber};
+                                    if( $PossibleNumberArray[$x][$y]{$PossibleNumber} != undef ) #only count removed cells
+                                        {
+                                        print DEBUG "IR1: $PossibleNumber deleted at $x,$y as 2 or 3 locations in square $square for possibility $PossibleNumber at locations $xyxyxy  and $region $RegionValue <br>";
+                                        delete  $PossibleNumberArray[$x][$y]{$PossibleNumber};
+                                        #$countIR++;
+                                        }
                                     }
                               #restore to $xyxyxy locations
                               @list = split('' , $xyxyxy); #locations to restore $PossibleNumber
@@ -892,7 +904,7 @@ foreach my $region ( 'squ' )
             foreach my $cell ( @list)
                   {
                   my ($x,$y) = @{ $cell };
-                  foreach my $PossibleNumber ( keys %{ $PossibleNumberArray[$x][$y] } )
+                  foreach my $PossibleNumber ( sort keys %{ $PossibleNumberArray[$x][$y] } )
                         {
                         #$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = xyxyxyxy...
                         #if =xyxy then $PossibleNumber is in two locations
