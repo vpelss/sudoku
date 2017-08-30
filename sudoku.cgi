@@ -873,27 +873,28 @@ foreach my $region ( 'squ' )
         my %PossibilityLocationsInRegion;
         my @list = @{ $CellsIn{$region}{$RegionValue} };
         foreach my $cell ( @list) #for each cell in square
+            {
+            my ($x,$y) = @{ $cell };
+            foreach my $PossibleNumber ( keys %{ $PossibleNumberArray[$x][$y] } ) #for each possibility in the cell in the square
               {
-              my ($x,$y) = @{ $cell };
-              foreach my $PossibleNumber ( sort keys %{ $PossibleNumberArray[$x][$y] } ) #for each possibility in the cell in the square
-                    {
-                    my $row = $IAmIn{'row'}{$x}{$y};
-                   $PossibilityLocationsInRegion{$PossibleNumber}{'row'}{$row} = 1;
-                    my $col = $IAmIn{'col'}{$x}{$y};
-                    $PossibilityLocationsInRegion{$PossibleNumber}{'col'}{$col} = 1;
-                    $PossibilityLocationsInRegion{$PossibleNumber}{'cells'}{"$x$y"} = 1;
-                    }
+              my $row = $IAmIn{'row'}{$x}{$y};
+              $PossibilityLocationsInRegion{$PossibleNumber}{'row'}{$row}++;
+              my $col = $IAmIn{'col'}{$x}{$y};
+              $PossibilityLocationsInRegion{$PossibleNumber}{'col'}{$col}++;
+              $PossibilityLocationsInRegion{$PossibleNumber}{'cells'}{"$x$y"} = 1;
               }
+            }
         foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each possibility
             {
             my $NumberOfPossibilitiesInSquare = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
             if ( $NumberOfPossibilitiesInSquare > 1 ) #2-3 $PossibleNumber found in squ
                 {
-                foreach my $region ( 'col' , 'row' )
+                foreach my $region ('col' , 'row')
                     {
                     foreach my $RegionValue (0 .. 8) #for each row and col
                         {
-                        if($NumberOfPossibilitiesInSquare == scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{$region}{$RegionValue}})   
+                        #my $count = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{$region}{$RegionValue}}; 
+                        if($NumberOfPossibilitiesInSquare == $PossibilityLocationsInRegion{$PossibleNumber}{$region}{$RegionValue})   
                             {#found possibilities that is bound by a "SINGLE" row or col region                             
                             my @list = @{ $CellsIn{$region}{$RegionValue} };
                             foreach my $cell ( @list) #for each cell in col or row
@@ -916,7 +917,7 @@ foreach my $region ( 'squ' )
             }
         }
     }
-return $countIR; #return the number of HS hidden singles
+return $countIR; #return the number of IR2
 };
 
 sub SetNP()
