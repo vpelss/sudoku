@@ -837,7 +837,7 @@ foreach my $region ( 'col' , 'row' )
                         {
                         my $square = shift @squares;
                         my $NumberOfPossibilitiesInSquare = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
-                        if ( $NumberOfPossibilitiesInSquare > 1 ) #2-3 $PossibleNumber fond in this col or row and squ
+                        if ( $NumberOfPossibilitiesInSquare > 1 ) #2-3 $PossibleNumber found in this col or row and squ
                             {
                             my @list = @{ $CellsIn{'squ'}{$square} };
                             foreach my $cell ( @list) #for each cell in squ
@@ -863,92 +863,61 @@ return $countIR; #return the number of IR1
 
 sub SetIR2()
 {
-#for each square look for 2-3 possibilities that are bound by one row or column region
-#when found, remove all other possibilities for all non intersecting cells in that row or column region
 my $countIR;
-#for each col or row region if 1 - 3 possibilities exist for a number that is bound by a box region
-#remove that possibility everywhere else in the bound box region
+#for each square region if 2 - 3 possibilities exist that is bound by a "SINGLE" row or col region
+#remove that possibility everywhere else in the bound col or row region
 foreach my $region ( 'squ' )
-      {
-      foreach my $RegionValue (0 .. 8)
+    {
+    foreach my $RegionValue (0 .. 8) #for each square
+        {
+        my %PossibilityLocationsInRegion;
+        my @list = @{ $CellsIn{$region}{$RegionValue} };
+        foreach my $cell ( @list) #for each cell in square
+              {
+              my ($x,$y) = @{ $cell };
+              foreach my $PossibleNumber ( sort keys %{ $PossibleNumberArray[$x][$y] } ) #for each possibility in the cell in the square
+                    {
+                    my $row = $IAmIn{'row'}{$x}{$y};
+                   $PossibilityLocationsInRegion{$PossibleNumber}{'row'}{$row} = 1;
+                    my $col = $IAmIn{'col'}{$x}{$y};
+                    $PossibilityLocationsInRegion{$PossibleNumber}{'col'}{$col} = 1;
+                    $PossibilityLocationsInRegion{$PossibleNumber}{'cells'}{"$x$y"} = 1;
+                    }
+              }
+        foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each possibility
             {
-            #Step 1: go through each cell in each col and row
-            #build up $PossibilityLocationsInRegion{$PossibleNumber}{'squares'} = 012 joining squ's. One lone number is a winner
-            #$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = "xyxyxyx" count and location
-            my %PossibilityLocationsInRegion;
-            #$PossibilityLocationsInRegion{Possibility #} = xyxyxyxy... (appended).
-            #The length gives the frequency count, eg xyxy means $PossibleNumber occurs twice
-            my @list = @{ $CellsIn{$region}{$RegionValue} };
-            foreach my $cell ( @list)
-                  {
-                  my ($x,$y) = @{ $cell };
-                  foreach my $PossibleNumber ( sort keys %{ $PossibleNumberArray[$x][$y] } )
+            my $NumberOfPossibilitiesInSquare = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
+            if ( $NumberOfPossibilitiesInSquare > 1 ) #2-3 $PossibleNumber found in squ
+                {
+                foreach my $region ( 'col' , 'row' )
+                    {
+                    foreach my $RegionValue (0 .. 8) #for each row and col
                         {
-                        #$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = xyxyxyxy...
-                        #if =xyxy then $PossibleNumber is in two locations
-                        #$PossibilityLocationsInRegion{$PossibleNumber}{'row'} will be a string of all rows the $PossibleNumber is in
-                        my $row = $IAmIn{'row'}{$x}{$y};
-                       $PossibilityLocationsInRegion{$PossibleNumber}{'row'} = "$PossibilityLocationsInRegion{$PossibleNumber}{'row'}" . "$row";
-                        my $col = $IAmIn{'col'}{$x}{$y};
-                        $PossibilityLocationsInRegion{$PossibleNumber}{'col'} = "$PossibilityLocationsInRegion{$PossibleNumber}{'col'}" . "$col";
-                        $PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'} = "$PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'}" . "$x$y";
+                        if($NumberOfPossibilitiesInSquare == scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{$region}{$RegionValue}})   
+                            {#found possibilities that is bound by a "SINGLE" row or col region                             
+                            my @list = @{ $CellsIn{$region}{$RegionValue} };
+                            foreach my $cell ( @list) #for each cell in col or row
+                                {
+                                my ($x,$y) = @{ $cell };
+                                if( $PossibilityLocationsInRegion{$PossibleNumber}{'cells'}{"$x$y"} == undef ) #ignore our trigger cells
+                                    {
+                                    if($PossibleNumberArray[$x][$y]{$PossibleNumber} == 1) #only count cells where we will be removing something!
+                                        {
+                                        #print DEBUG "IR2: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at 2 or 3 locations in square $square and $region $RegionValue <br>";
+                                        delete  $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
+                                        $countIR++;
+                                        }
+                                    }
+                                } 
+                            }
                         }
-                  }
-            foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion )
-                  {
-                  my $rows = $PossibilityLocationsInRegion{$PossibleNumber}{'row'};
-                  my $cols = $PossibilityLocationsInRegion{$PossibleNumber}{'col'};
-                  my $xyxyxy = $PossibilityLocationsInRegion{$PossibleNumber}{'xyxyxy'};
-                  if (length($rows)==1) #is this  $PossibleNumber in just one row
-                        {
-                         if ( (length($xyxyxy)==4) or (length($xyxyxy)==6) )
-                              {#found a IR2 for this $PossibleNumber
-                              #remove $PossibleNumber from $row, then restore to $xyxyxy locations
-                              $countIR++;
-                              my @list = @{ $CellsIn{'row'}{$rows} };
-                              foreach my $cell ( @list)
-                                    {
-                                    my ($x,$y) = @{ $cell };
-                                    delete  $PossibleNumberArray[$x][$y]{$PossibleNumber};
-                                    }
-                              #restore to $xyxyxy locations
-                              @list = split('' , $xyxyxy); #locations to restore $PossibleNumber
-                              until(scalar(@list) == 0)
-                                    {
-                                    my $x = shift @list;
-                                    my $y = shift @list;
-                                    $PossibleNumberArray[$x][$y]{$PossibleNumber}=1;
-                                    }
-                              }
-                        }
-                  if (length($cols)==1)
-                        {
-                        if ( (length($xyxyxy)==4) or (length($xyxyxy)==6) )
-                              {#found a IR2 for this $PossibleNumber
-                              #remove $PossibleNumber from $col, then restore to $xyxyxy locations
-                              $countIR++;
-                              my @list = @{ $CellsIn{'col'}{$cols} };
-                              foreach my $cell ( @list)
-                                    {
-                                    my ($x,$y) = @{ $cell };
-                                    delete  $PossibleNumberArray[$x][$y]{$PossibleNumber};
-                                    }
-                              #restore to $xyxyxy locations
-                              @list = split('' , $xyxyxy); #locations to restore $PossibleNumber
-                              until(scalar(@list) == 0)
-                                    {
-                                    my $x = shift @list;
-                                    my $y = shift @list;
-                                    $PossibleNumberArray[$x][$y]{$PossibleNumber}=1;
-                                    }
-                              }
-                        }
-                  }
+                    }
+                }
             }
-      }
+        }
+    }
 return $countIR; #return the number of HS hidden singles
 };
-
 
 sub SetNP()
 {
