@@ -682,7 +682,7 @@ sub RecursiveRemoveCells()
 my @CellsToRemove = shuffle @_; #will get shorter each loop by $NumberOfPicks
 my %RemovedList;
 $RemoveAttempCount++;
-if($debug) {print DEBUG "Entering RecursiveRemoveCells. Count $RemoveAttempCount. With @CellsToRemove<br>";}
+if($debug) {print DEBUG "Entering RecursiveRemoveCells. Count $RemoveAttempCount.<br>";}
 #if($debug) { print DEBUG "GameArray is:</br>" }
 #if($debug) { print DEBUG &PrintGameArrayDebug() }
 
@@ -696,14 +696,6 @@ if (&IsPuzzleSolvable()==0)
       return 0
       } #note: tests previous call
 if($debug) {print DEBUG "Previous RecursiveRemoveCells was Solvable. Contiuing.<br>"}
-
-#if($debug) { print DEBUG "SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules is:</br>" }
-#if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
-#if($debug) { print DEBUG "TempGameArray is:</br>" }
-#if($debug) { print DEBUG &PrintTempGameArrayDebug() }
-#if($debug) { print DEBUG "GameArray is:</br>" }
-#if($debug) { print DEBUG &PrintGameArrayDebug() }
-
 #if( (time() - $starttime) >= $timetotry ) {if($debug) {print DEBUG "Time limit reached. Return 1<br>";}; return 1;} #Test for time
 if($blanksquares >= $target)
       {
@@ -837,7 +829,7 @@ foreach my $region ( 'col' , 'row' )
                         {
                         my $square = shift @squares;
                         my $NumberOfPossibilitiesInSquare = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
-                        if ( $NumberOfPossibilitiesInSquare > 1 ) #2-3 $PossibleNumber found in this col or row and squ
+                        if ( ($NumberOfPossibilitiesInSquare > 1) and ($NumberOfPossibilitiesInSquare < 4) ) #2-3 $PossibleNumber found in this col or row and squ
                             {
                             my @list = @{ $CellsIn{'squ'}{$square} };
                             foreach my $cell ( @list) #for each cell in squ
@@ -847,7 +839,7 @@ foreach my $region ( 'col' , 'row' )
                                     {
                                     if($PossibleNumberArray[$x][$y]{$PossibleNumber} == 1) #only count cells where we will be removing something!
                                         {
-                                        #print DEBUG "IR1: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at 2 or 3 locations in square $square and $region $RegionValue <br>";
+                                        print DEBUG "IR1: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at $NumberOfPossibilitiesInSquare locations in $region $RegionValue and square $square<br>";
                                         delete  $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
                                         $countIR++;
                                         }
@@ -870,6 +862,7 @@ foreach my $region ( 'squ' )
     {
     foreach my $RegionValue (0 .. 8) #for each square
         {
+        my $GlobalSquare = $RegionValue;
         my %PossibilityLocationsInRegion;
         my @list = @{ $CellsIn{$region}{$RegionValue} };
         foreach my $cell ( @list) #for each cell in square
@@ -887,13 +880,12 @@ foreach my $region ( 'squ' )
         foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each possibility
             {
             my $NumberOfPossibilitiesInSquare = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
-            if ( $NumberOfPossibilitiesInSquare > 1 ) #2-3 $PossibleNumber found in squ
+            if (  ($NumberOfPossibilitiesInSquare > 1) and ($NumberOfPossibilitiesInSquare < 4)  ) #2-3 $PossibleNumber found in squ
                 {
                 foreach my $region ('col' , 'row')
                     {
                     foreach my $RegionValue (0 .. 8) #for each row and col
                         {
-                        #my $count = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{$region}{$RegionValue}}; 
                         if($NumberOfPossibilitiesInSquare == $PossibilityLocationsInRegion{$PossibleNumber}{$region}{$RegionValue})   
                             {#found possibilities that is bound by a "SINGLE" row or col region                             
                             my @list = @{ $CellsIn{$region}{$RegionValue} };
@@ -904,7 +896,7 @@ foreach my $region ( 'squ' )
                                     {
                                     if($PossibleNumberArray[$x][$y]{$PossibleNumber} == 1) #only count cells where we will be removing something!
                                         {
-                                        #print DEBUG "IR2: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at 2 or 3 locations in square $square and $region $RegionValue <br>";
+                                        print DEBUG "IR2: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at $NumberOfPossibilitiesInSquare locations in square $GlobalSquare and $region $RegionValue  <br>";
                                         delete  $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
                                         $countIR++;
                                         }
