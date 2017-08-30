@@ -878,7 +878,7 @@ foreach my $region ( 'squ' )
               }
             }
         foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each possibility
-            {
+            { 
             my $NumberOfPossibilitiesInSquare = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
             if (  ($NumberOfPossibilitiesInSquare > 1) and ($NumberOfPossibilitiesInSquare < 4)  ) #2-3 $PossibleNumber found in squ
                 {
