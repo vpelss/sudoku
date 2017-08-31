@@ -88,6 +88,7 @@ if ($in{difficulty} eq 'Difficult')
 
 if ( $debug ) { open (DEBUG, ">../aaa.html") }
 &CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
+#print DEBUG &PrintSquareLocations();
 
 $starttime = time();
 #&FillTempPossibilityArray1to9();
@@ -238,6 +239,27 @@ for (my $y = 0; $y < 9 ; $y++)
             $IAmIn{'squ'}{$x}{$y} = $squ;
             }
       }
+}
+sub PrintSquareLocations()
+{        #for game array
+my $string = "Square Locations:</br>";
+
+$string .=  "<table border='1'>";
+
+for (my $y = 0; $y < 9 ; $y++)
+      {
+      $string .=  "<tr>";
+      for (my $x = 0; $x < 9 ; $x++)
+            {
+            $string .=  "<td border='1'>";
+            $string .=  $IAmIn{'squ'}{$x}{$y};
+            $string .=  "</td>";
+            }
+      $string .=  "</tr>";
+      }
+$string .=  "</table>";
+
+return $string;
 }
 
 sub _IsPuzzleSolvableFast()
@@ -599,7 +621,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
               }
             $AnyProgress += $LpIR2;
             }
-$debug =0;
+
         if ($methods{np})
             {
             $LpNP = &SetNP(); #Set NP method 1 for Local regions
@@ -641,7 +663,7 @@ $debug =0;
                   if ($debug) {print DEBUG "Set $LpNS NS<br>"}
                   }
            }
-$debug = 1;
+
       #lets see if we are done yet
       $blanksquaresleft = &AreThereBlankSquares();
       $loopcount++;
@@ -875,11 +897,18 @@ foreach my $region ( 'squ' )
               my $col = $IAmIn{'col'}{$x}{$y};
               $PossibilityLocationsInRegion{$PossibleNumber}{'col'}{$col}++;
               $PossibilityLocationsInRegion{$PossibleNumber}{'cells'}{"$x$y"} = 1;
+              #print DEBUG "IR2: SQU: $RegionValue \$PossibleNumber: $PossibleNumber added $x$y to <br>";
               }
             }
         foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each possibility
-            { 
-            my $NumberOfPossibilitiesInSquare = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
+            {
+            #my @squares = keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
+            #my @ref = $PossibilityLocationsInRegion{$PossibleNumber}{'cells'};
+            my $NumberOfPossibilitiesInSquare = scalar keys % {$PossibilityLocationsInRegion{$PossibleNumber}{'cells'} };
+            #my @foo =  keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
+                              #my $test = " @foo";
+            #print DEBUG "IR2: squ: $RegionValue \$PossibleNumber: $PossibleNumber \$NumberOfPossibilitiesInSquare: $NumberOfPossibilitiesInSquare and @foo <br>";
+            
             if (  ($NumberOfPossibilitiesInSquare > 1) and ($NumberOfPossibilitiesInSquare < 4)  ) #2-3 $PossibleNumber found in squ
                 {
                 foreach my $region ('col' , 'row')
@@ -1057,7 +1086,7 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                               #$TempGameArray[$x][$y] = $PossibleNumber;  #set @TempGameArray
                               delete $PossibleNumberArray[$x][$y]; #clear @PossibleNumberArray
                               $PossibleNumberArray[$x][$y]{$PossibleNumber} = 1; #set @PossibleNumberArray
-                              if ($debug) {print DEBUG "Found HS $PossibleNumber at $x,$y <br>"}
+                              if ($debug) {print DEBUG "Found HS $PossibleNumber at $x,$y setting PossibleNumberArray to $PossibleNumber<br>"}
                               }
                         }
             }
