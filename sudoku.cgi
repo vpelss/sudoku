@@ -88,7 +88,6 @@ if ($in{difficulty} eq 'Difficult')
 
 if ( $debug ) { open (DEBUG, ">../aaa.html") }
 &CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
-#print DEBUG &PrintSquareLocations();
 
 $starttime = time();
 #&FillTempPossibilityArray1to9();
@@ -239,27 +238,6 @@ for (my $y = 0; $y < 9 ; $y++)
             $IAmIn{'squ'}{$x}{$y} = $squ;
             }
       }
-}
-sub PrintSquareLocations()
-{        #for game array
-my $string = "Square Locations:</br>";
-
-$string .=  "<table border='1'>";
-
-for (my $y = 0; $y < 9 ; $y++)
-      {
-      $string .=  "<tr>";
-      for (my $x = 0; $x < 9 ; $x++)
-            {
-            $string .=  "<td border='1'>";
-            $string .=  $IAmIn{'squ'}{$x}{$y};
-            $string .=  "</td>";
-            }
-      $string .=  "</tr>";
-      }
-$string .=  "</table>";
-
-return $string;
 }
 
 sub _IsPuzzleSolvableFast()
@@ -943,12 +921,13 @@ return $countIR; #return the number of IR2
 
 sub SetNP()
 {
+ must split np1 and 2 . Not compatable!!!!   9 ; 
 #Naked Pairs 1 and 2
 #NP1 The first version of Naked Pairs searches each region (row, column and 3 x 3 square) for two possibility values that occur only twice in, and share two cells, which may or may not contain other possibilities. Because they occur
 #only in these two cells, one of them must go in one cell and the other in the second. Therefore, any other values in these two cells may be eliminated.
 #or
-#NP2 if in a region, two cells share two possibilities that are not in another cell in this region,
-#we can eliminate all other possibilities in these two cells
+#NP2 if in a region, two cells share ONLY two possibilities,
+#we can eliminate all other possibilities in this region.
 my $countNP;
 foreach my $region ( 'col' , 'row' , 'squ' )
       {
@@ -1003,6 +982,7 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                         #if only two values in $PossibleNumberArray[$x1][$y1], then ignore as NP is already set
                         if ( scalar( keys %{ $PossibleNumberArray[$x1][$y1] } ) != 2  ) #ignore if only two values already
                               {
+                            if ($debug) {print DEBUG "NP1: More than 2 possibiliyies at cell $x1,$y1 set to $value1,$value2 <br>"}
                               delete $PossibleNumberArray[$x1][$y1]; #get rid of old ones
                               $PossibleNumberArray[$x1][$y1]{$value1} = 1; #restore NP
                               $PossibleNumberArray[$x1][$y1]{$value2} = 1;
@@ -1010,6 +990,7 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                               }
                         if ( scalar( keys %{ $PossibleNumberArray[$x2][$y2] } ) != 2  )
                               {
+                            if ($debug) {print DEBUG "NP1: More than 2 possibiliyies at cell $x2,$y2 set to $value1,$value2<br>"}
                               delete $PossibleNumberArray[$x2][$y2]; #get rid of old ones
                               $PossibleNumberArray[$x2][$y2]{$value1} = 1; #restore NP
                               $PossibleNumberArray[$x2][$y2]{$value2} = 1;
@@ -1030,7 +1011,6 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                                     if ($PossibleNumberArray[$x][$y]{$value1} == 1)
                                           {
                                           delete $PossibleNumberArray[$x][$y]{$value1};
-
                                           }
                                     if ($PossibleNumberArray[$x][$y]{$value2} == 1)
                                           {
@@ -1117,6 +1097,7 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                         $countNS++;
                         my ($PossibleNumber) = keys %{ $PossibleNumberArray[$x][$y] };
                         $TempGameArray[$x][$y] = $PossibleNumber;
+                        if ($debug) {print DEBUG "NS found at $x,$y for possibility $PossibleNumber for row col squ . Removing $PossibleNumber for row $IAmIn{'row'}{$x}{$y} col $IAmIn{'col'}{$x}{$y} squ $IAmIn{'squ'}{$x}{$y}<br>"}
                         #wipe $PossibleNumber from all affected $row,$col,$squ
                         foreach my $region ( 'col' , 'row' , 'squ' )
                               {
@@ -1125,10 +1106,9 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                               foreach my $cell ( @list)
                                     {
                                     my ($x1,$y1) = @{ $cell };
-                                    #if ( ($x != $x1) and ($y != $y1) ) #ignore our cell
-                                          {
-                                          delete $PossibleNumberArray[$x1][$y1]{$PossibleNumber};
-                                          }
+                                        {
+                                        delete $PossibleNumberArray[$x1][$y1]{$PossibleNumber};
+                                        }
                                     }
                               }
                         }
