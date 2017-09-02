@@ -569,8 +569,9 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
       $AnyProgress = 0; #set it up to fail. if any possibility is removed using any technique, it still might be solvable
       #these should be first as they do not narrow possibilities down to one. Nor do they set a square on it's own. Give them a chance
 
-$methods{ir} =0;
-$methods{hs} = 0;
+#$methods{ir} =0;
+#$methods{hs} = 0;
+if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
 
        if ($methods{ir})
             {
@@ -612,7 +613,7 @@ $methods{hs} = 0;
                   if ( $debug )
                         {
                         print DEBUG "Set $LpNP NP <br>";
-                        if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
+                        #if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
                         }
                   }
             }
@@ -632,7 +633,6 @@ $methods{hs} = 0;
                   }
             }
 
-$debug = 0;
         #clears up all single possibilities. that is why it is last!
       if ($methods{ns})
             {
@@ -645,7 +645,6 @@ $debug = 0;
                   if ($debug) {print DEBUG "Set $LpNS NS<br>"}
                   }
            }
-$debug = 1;
 
       #lets see if we are done yet
       $blanksquaresleft = &AreThereBlankSquares();
@@ -963,7 +962,9 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
                 #NP2
                 #note that $NP2SortedPossibilityString may NOT be 2 possibilities. We will filter later
                 $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString} = "$NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}" . "$x$y";                    
+                #if ($debug) {print DEBUG "$NP2SortedPossibilityString at $x,$y |"}
                 }
+            #if ($debug) {print DEBUG "<br>"}
             #NP1
             foreach my $PossibleNumber ( keys %NP1PossibilityLocations )
                 {
@@ -1015,7 +1016,7 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
                                     delete $PossibleNumberArray[$x][$y]{$Poss1}; 
                                     delete $PossibleNumberArray[$x][$y]{$Poss2};
                                     $NPCountOnce{2}=1;
-                                    if ($debug) {print DEBUG "NP2: Poss$Poss1,$Poss2 at $x1,$y1 and $x2,$y2 Removing all other poss at cell $x,$y $region $RegionValue<br>"}
+                                    if ($debug) {print DEBUG "NP2: Poss$Poss1,$Poss2($NP2SortedPossibilityString) at $x1,$y1 and $x2,$y2 ($NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}) Removing all other poss at cell $x,$y $region $RegionValue<br>"}
                                     }
                                 }
                             }
