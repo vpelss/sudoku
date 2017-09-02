@@ -983,6 +983,7 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
                     $PossibleNumberArray[$x1][$y1]{$Poss2} = 1;
                     $PossibleNumberArray[$x2][$y2]{$Poss1} = 1;
                     $PossibleNumberArray[$x2][$y2]{$Poss2} = 1;
+                    if ($debug) {print DEBUG "NP1: Poss @SharedPossibilites at $xyxy Removing all other poss at $xyxy in $region $RegionValue<br>"}
                     $NPCountOnce{1}=1;
                     }    
                 }
@@ -1006,7 +1007,9 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
                     $PossibleNumberArray[$x2][$y2]{$Poss1} = 1;
                     $PossibleNumberArray[$x2][$y2]{$Poss2} = 1;
                     $NPCountOnce{2}=1;
+                    if ($debug) {print DEBUG "NP2: Poss$Poss1,$Poss2 at $x1,$y1 and $x2,$y2 Removing all other poss at $region $RegionValue<br>"}
                     }
+                }
             if($NPCountOnce{1}==1){$countNP++}
             if($NPCountOnce{2}==1){$countNP++}
             }  
