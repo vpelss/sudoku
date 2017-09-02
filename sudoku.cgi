@@ -940,7 +940,7 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
             my %NP1PossibilitesThatOccurTwice;
             # NP1: Then we create $CellsWithTwoPossibilities{"$x$y$x$y"}{"Poss1 2 etc"}=1 if just Poss1 and Poss2 then NP1 condition
             my %NP2ExclusivePossibilityPairs;
-            # NP2: $NP2ExclusivePossibilityPairs{"$Poss1$Poss2..."}{"$x1$y1 or 2, 3..."} = 1
+            # NP2: $NP2ExclusivePossibilityPairs{"$Poss1$Poss2..."} = "$x1$y1$x2$y2..."}
             #"$Poss1$Poss2 MUST be sorted so we can compare!
             #two $Poss1$Poss2 AND a $x1$y1 and $x2$y2 is a NP2 case           
             foreach my $cell ( @list)
@@ -954,8 +954,12 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
                     #NP2:
                     $NP2SortedPossibilityString = "$NP2SortedPossibilityString$PossibleNumber";
                     }
-                    #NP2
-                    $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}{"$x$y"} = 1;
+                #NP2
+                if(length $NP2SortedPossibilityString == 2)
+                    {
+                    #$NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}{"$x$y"} = 1;
+                    $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString} = "$NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}" . "$x$y";
+                    }
                 }
             #NP1
             foreach my $PossibleNumber ( keys %NP1PossibilityLocations )
@@ -983,83 +987,31 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
                     }    
                 }
             #look for NP2
-            
-            
-            
-            #Step 2: for this region delete values that don't occur twice
-            foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion )
-                  {
-                  my $xyxy = $PossibilityLocationsInRegion{$PossibleNumber};
-                  if ( length($xyxy) != 4 )
+            foreach my $NP2SortedPossibilityString (keys %NP2ExclusivePossibilityPairs)
+                {
+                if(length $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString} == 4) #pair of cells found
+                    {
+                    #remove possibility pair from all other cells in region
+                    my ($Poss1,$Poss2) =  split('' , $NP2SortedPossibilityString);
+                    my ($x1,$y1,$x2,$y2) = split('' , $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString});
+                    foreach my $cell ( @list)
                         {
-                        delete $PossibilityLocationsInRegion{$PossibleNumber};
+                        my ($x,$y) = @{ $cell };
+                        delete $PossibleNumberArray[$x][$y]{$Poss1}; 
+                        delete $PossibleNumberArray[$x][$y]{$Poss2};
                         }
-                  else
-                        {
-                        #Step 3: look for $PossibilityLocationsInRegion{$PossibleNumber} that are in same locations by:
-                        #converting to $PossibilitiesInRegion2{xyxyxy}{$PossibleNumber(s)} = 1.
-                        #If there are two $PossibilitiesInRegion2{$xyxy}{'possiblenumbers'}{$PossibleNumber} we will have found a NP
-                        $PossibilitiesInRegion2{$xyxy}{'possiblenumbers'}{$PossibleNumber} = 1; #if we have two {$PossibleNumber}, we have a winner
-                        $PossibilitiesInRegion2{$xyxy}{'count'}++;
-                        }
-                  }
-            #Step 4: Look for winners, $PossibilitiesInRegion2{$xyxy}'possiblenumbers'}{$PossibleNumber} with 2 $PossibleNumber keys, and set
-            foreach my $xyxy ( keys %PossibilitiesInRegion2 )
-                  {
-                  if ($PossibilitiesInRegion2{$xyxy}{'count'} == 2)
-                        {
-                        my ($x1,$y1,$x2,$y2) = split('' , $xyxy); #locations of NP pair
-                        my ($value1,$value2) = keys %{ $PossibilitiesInRegion2{$xyxy}{'possiblenumbers'} }; #values of NP pair
-                        #NP1
-                        #only in these two cells, one of them must go in one cell and the other in the second. Therefore, any other values in these two cells may be eliminated.
-                        #if only two values in $PossibleNumberArray[$x1][$y1], then ignore as NP is already set
-                        if ( scalar( keys %{ $PossibleNumberArray[$x1][$y1] } ) != 2  ) #ignore if only two values already
-                              {
-                            if ($debug) {print DEBUG "NP1: More than 2 possibiliyies at cell $x1,$y1 set to $value1,$value2 <br>"}
-                              delete $PossibleNumberArray[$x1][$y1]; #get rid of old ones
-                              $PossibleNumberArray[$x1][$y1]{$value1} = 1; #restore NP
-                              $PossibleNumberArray[$x1][$y1]{$value2} = 1;
-                              $NPCountOnce{1}=1;
-                              }
-                        if ( scalar( keys %{ $PossibleNumberArray[$x2][$y2] } ) != 2  )
-                              {
-                            if ($debug) {print DEBUG "NP1: More than 2 possibiliyies at cell $x2,$y2 set to $value1,$value2<br>"}
-                              delete $PossibleNumberArray[$x2][$y2]; #get rid of old ones
-                              $PossibleNumberArray[$x2][$y2]{$value1} = 1; #restore NP
-                              $PossibleNumberArray[$x2][$y2]{$value2} = 1;
-                              $NPCountOnce{1}=1;
-                              }
-                        #NP2
-                        #The second version scans each region (row, column and 3 x 3 square) for two cells,
-                        #each containing ONLY the same two possibilities.
-                        #Because one of these values must occur in each of the two cells,
-                        #they cannot occur anywhere else in that region, and may be eliminated from the lists
-                        #of possibilities for every other cell in the region.
-                        #remove all $value1 and $value2 from $PossibleNumberArray[$x2][$y2] , excluding $x1,$y1 and $x2,y2
-                        foreach my $cell ( @list)
-                              {
-                              my ($x,$y) = @{ $cell };
-                              if(("$x$y" ne "$x1$y1") and ("$x$y" ne "$x2$y2")) #excluding $x1,$y1 and $x2,y2
-                                    {
-                                    if ($PossibleNumberArray[$x][$y]{$value1} == 1)
-                                          {
-                                          delete $PossibleNumberArray[$x][$y]{$value1};
-                                          }
-                                    if ($PossibleNumberArray[$x][$y]{$value2} == 1)
-                                          {
-                                          delete $PossibleNumberArray[$x][$y]{$value2};
-                                          $NPCountOnce{2}=1;
-                                          }
-                                    }
-                              }
-                        }
-
-                  }
+                    #add back trigger possibilities
+                    $PossibleNumberArray[$x1][$y1]{$Poss1} = 1;
+                    $PossibleNumberArray[$x1][$y1]{$Poss2} = 1;
+                    $PossibleNumberArray[$x2][$y2]{$Poss1} = 1;
+                    $PossibleNumberArray[$x2][$y2]{$Poss2} = 1;
+                    $NPCountOnce{2}=1;
+                    }
             if($NPCountOnce{1}==1){$countNP++}
             if($NPCountOnce{2}==1){$countNP++}
-           }
-      }
-return $countNP; #return the number of HP
+            }  
+        }
+return $countNP; #return the number of NP
 };
 
 sub SetHS()
