@@ -935,9 +935,9 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
             {
             my %NPCountOnce; # set $NPCountOnce{1 for np1} = 1 $NPCountOnce{2 for np2} = 1 for each region, so we only count NP once or twice per region
             my @list = @{ $CellsIn{$region}{$RegionValue} };
-            my %PossibilityLocations;
+            my %NP1PossibilityLocations;
             # NP1: $PossibilityLocations{"Possibility"}={"x1y1x2y2.."} #xyxy indicates 2 cells for possibility
-            my %CellsWithTwoPossibilities;
+            my %NP1PossibilitesThatOccurTwice;
             # NP1: Then we create $CellsWithTwoPossibilities{"$x$y$x$y"}{"Poss1 2 etc"}=1 if just Poss1 and Poss2 then NP1 condition
             my %NP2ExclusivePossibilityPairs;
             # NP2: $NP2ExclusivePossibilityPairs{"$Poss1$Poss2..."}{"$x1$y1 or 2, 3..."} = 1
@@ -946,18 +946,46 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
             foreach my $cell ( @list)
                 {
                 my ($x,$y) = @{ $cell };
-                my $SortedPossibilityString;
+                my $NP2SortedPossibilityString; 
                 foreach my $PossibleNumber ( sort keys %{ $PossibleNumberArray[$x][$y] } ) #must sort for NP2 data structure!!!
                     {
                     #NP1
-                    $PossibilityLocations{$PossibleNumber} = "$PossibilityLocations{$PossibleNumber}" . "$x$y";
+                    $NP1PossibilityLocations{$PossibleNumber} = "$NP1PossibilityLocations{$PossibleNumber}" . "$x$y";
                     #NP2:
-                    $SortedPossibilityString = "$SortedPossibilityString$PossibleNumber";
+                    $NP2SortedPossibilityString = "$NP2SortedPossibilityString$PossibleNumber";
                     }
                     #NP2
-                    $NP2ExclusivePossibilityPairs{$SortedPossibilityString}{"$x$y"} = 1;
+                    $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}{"$x$y"} = 1;
                 }
-                
+            #NP1
+            foreach my $PossibleNumber ( keys %NP1PossibilityLocations )
+                {
+                if(length $NP1PossibilityLocations{$PossibleNumber} == 4) #only want possibilities in 2 cells
+                    {
+                    $NP1PossibilitesThatOccurTwice{"$NP1PossibilityLocations{$PossibleNumber}"}{$PossibleNumber} = 1;
+                    }
+                }          
+            #look for NP1
+            foreach my $xyxy (keys %NP1PossibilitesThatOccurTwice)
+                {
+                my @SharedPossibilites =  keys %{ $NP1PossibilitesThatOccurTwice{$xyxy} };
+                if( scalar @SharedPossibilites == 2 ) #and now in SHARE those locations with another Possibility
+                    {
+                    #replace Possibilities in xyxy cells with Poss1 and Poss2 EXCLUSIVELY
+                    my ($Poss1,$Poss2) =  @SharedPossibilites;
+                    my ($x1,$y1,$x2,$y2) = split('',$xyxy);
+                    delete $PossibleNumberArray[$x1][$y1];
+                    $PossibleNumberArray[$x1][$y1]{$Poss1} = 1;
+                    $PossibleNumberArray[$x1][$y1]{$Poss2} = 1;
+                    $PossibleNumberArray[$x2][$y2]{$Poss1} = 1;
+                    $PossibleNumberArray[$x2][$y2]{$Poss2} = 1;
+                    $NPCountOnce{1}=1;
+                    }    
+                }
+            #look for NP2
+            
+            
+            
             #Step 2: for this region delete values that don't occur twice
             foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion )
                   {
