@@ -569,6 +569,8 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
       $AnyProgress = 0; #set it up to fail. if any possibility is removed using any technique, it still might be solvable
       #these should be first as they do not narrow possibilities down to one. Nor do they set a square on it's own. Give them a chance
 
+$methods{ir} =0;
+$methods{hs} = 0;
 
        if ($methods{ir})
             {
@@ -610,6 +612,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
                   if ( $debug )
                         {
                         print DEBUG "Set $LpNP NP <br>";
+                        if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
                         }
                   }
             }
@@ -629,6 +632,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
                   }
             }
 
+$debug = 0;
         #clears up all single possibilities. that is why it is last!
       if ($methods{ns})
             {
@@ -641,6 +645,7 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
                   if ($debug) {print DEBUG "Set $LpNS NS<br>"}
                   }
            }
+$debug = 1;
 
       #lets see if we are done yet
       $blanksquaresleft = &AreThereBlankSquares();
@@ -929,6 +934,7 @@ sub SetNP()
 #NP2 if in a region, two cells share ONLY two possibilities,
 #we can eliminate all other possibilities in this region.
 my $countNP;
+if ($debug) {print DEBUG "ENTERING NP<br>"}
 foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
       {
       for my $RegionValue (0 .. 8) #for each region
@@ -952,14 +958,11 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
                     #NP1
                     $NP1PossibilityLocations{$PossibleNumber} = "$NP1PossibilityLocations{$PossibleNumber}" . "$x$y";
                     #NP2:
-                    $NP2SortedPossibilityString = "$NP2SortedPossibilityString$PossibleNumber";
+                    $NP2SortedPossibilityString = "$NP2SortedPossibilityString" . "$PossibleNumber";
                     }
                 #NP2
-                if(length $NP2SortedPossibilityString == 2)
-                    {
-                    #$NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}{"$x$y"} = 1;
-                    $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString} = "$NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}" . "$x$y";
-                    }
+                #note that $NP2SortedPossibilityString may NOT be 2 possibilities. We will filter later
+                $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString} = "$NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}" . "$x$y";                    
                 }
             #NP1
             foreach my $PossibleNumber ( keys %NP1PossibilityLocations )
@@ -978,42 +981,52 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
                     #replace Possibilities in xyxy cells with Poss1 and Poss2 EXCLUSIVELY
                     my ($Poss1,$Poss2) =  @SharedPossibilites;
                     my ($x1,$y1,$x2,$y2) = split('',$xyxy);
-                    delete $PossibleNumberArray[$x1][$y1];
-                    $PossibleNumberArray[$x1][$y1]{$Poss1} = 1;
-                    $PossibleNumberArray[$x1][$y1]{$Poss2} = 1;
-                    $PossibleNumberArray[$x2][$y2]{$Poss1} = 1;
-                    $PossibleNumberArray[$x2][$y2]{$Poss2} = 1;
-                    if ($debug) {print DEBUG "NP1: Poss @SharedPossibilites at $xyxy Removing all other poss at $xyxy in $region $RegionValue<br>"}
-                    $NPCountOnce{1}=1;
+                    #only count (and remove) is there are Possibilities to remove!
+                    if( scalar keys % { $PossibleNumberArray[$x1][$y1] } > 2 )    
+                        {                   
+                        delete $PossibleNumberArray[$x1][$y1];
+                        delete $PossibleNumberArray[$x2][$y2];
+                        $PossibleNumberArray[$x1][$y1]{$Poss1} = 1;
+                        $PossibleNumberArray[$x1][$y1]{$Poss2} = 1;
+                        $PossibleNumberArray[$x2][$y2]{$Poss1} = 1;
+                        $PossibleNumberArray[$x2][$y2]{$Poss2} = 1;
+                        if ($debug) {print DEBUG "NP1: Poss @SharedPossibilites at $xyxy Removing all other poss at $xyxy in $region $RegionValue<br>"}
+                        $NPCountOnce{1}=1;
+                        }
                     }    
                 }
             #look for NP2
             foreach my $NP2SortedPossibilityString (keys %NP2ExclusivePossibilityPairs)
                 {
-                if(length $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString} == 4) #pair of cells found
+                if(length $NP2SortedPossibilityString == 2) # only look at cells with two possibilities
                     {
-                    #remove possibility pair from all other cells in region
-                    my ($Poss1,$Poss2) =  split('' , $NP2SortedPossibilityString);
-                    my ($x1,$y1,$x2,$y2) = split('' , $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString});
-                    foreach my $cell ( @list)
+                    if(length $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString} == 4) #pair of cells found
                         {
-                        my ($x,$y) = @{ $cell };
-                        delete $PossibleNumberArray[$x][$y]{$Poss1}; 
-                        delete $PossibleNumberArray[$x][$y]{$Poss2};
+                        #remove possibility pair from all other cells in region
+                        my ($Poss1,$Poss2) =  split('' , $NP2SortedPossibilityString);
+                        my ($x1,$y1,$x2,$y2) = split('' , $NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString});
+                        foreach my $cell ( @list)
+                            {
+                            my ($x,$y) = @{ $cell };                      
+                            if( ("$x$y" ne "$x1$y1") and ("$x$y" ne "$x2$y2") )  #ignore trigger cells
+                                {
+                                if( $PossibleNumberArray[$x][$y]{$Poss1}==1 or $PossibleNumberArray[$x][$y]{$Poss2}==1 ) 
+                                    { #only count (and remove) is there are Possibilities to remove!
+                                    delete $PossibleNumberArray[$x][$y]{$Poss1}; 
+                                    delete $PossibleNumberArray[$x][$y]{$Poss2};
+                                    $NPCountOnce{2}=1;
+                                    if ($debug) {print DEBUG "NP2: Poss$Poss1,$Poss2 at $x1,$y1 and $x2,$y2 Removing all other poss at cell $x,$y $region $RegionValue<br>"}
+                                    }
+                                }
+                            }
                         }
-                    #add back trigger possibilities
-                    $PossibleNumberArray[$x1][$y1]{$Poss1} = 1;
-                    $PossibleNumberArray[$x1][$y1]{$Poss2} = 1;
-                    $PossibleNumberArray[$x2][$y2]{$Poss1} = 1;
-                    $PossibleNumberArray[$x2][$y2]{$Poss2} = 1;
-                    $NPCountOnce{2}=1;
-                    if ($debug) {print DEBUG "NP2: Poss$Poss1,$Poss2 at $x1,$y1 and $x2,$y2 Removing all other poss at $region $RegionValue<br>"}
                     }
                 }
             if($NPCountOnce{1}==1){$countNP++}
             if($NPCountOnce{2}==1){$countNP++}
             }  
         }
+if ($debug) {print DEBUG "LEAVING NP<br>"}
 return $countNP; #return the number of NP
 };
 
