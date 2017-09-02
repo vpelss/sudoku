@@ -921,7 +921,7 @@ return $countIR; #return the number of IR2
 
 sub SetNP()
 {
- must split np1 and 2 . Not compatable!!!!   9 ; 
+
 #Naked Pairs 1 and 2
 #NP1 The first version of Naked Pairs searches each region (row, column and 3 x 3 square) for two possibility values that occur only twice in, and share two cells, which may or may not contain other possibilities. Because they occur
 #only in these two cells, one of them must go in one cell and the other in the second. Therefore, any other values in these two cells may be eliminated.
@@ -929,30 +929,35 @@ sub SetNP()
 #NP2 if in a region, two cells share ONLY two possibilities,
 #we can eliminate all other possibilities in this region.
 my $countNP;
-foreach my $region ( 'col' , 'row' , 'squ' )
+foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
       {
-      for my $RegionValue (0 .. 8)
+      for my $RegionValue (0 .. 8) #for each region
             {
-            #Step 1: go through each cell in each region
-            #for each region count number of possibilities for numbers 1-9 so we can find possibilities
-            #that exist in this region twice later
             my %NPCountOnce; # set $NPCountOnce{1 for np1} = 1 $NPCountOnce{2 for np2} = 1 for each region, so we only count NP once or twice per region
-            my %PossibilityLocationsInRegion;
-            #$PossibilityLocationsInRegion{Possibility #} = xyxyxyxy... (appended).
-            #The length gives the frequency count, so xyxy occurs twice
-            #The pattern xyxy gives a simple comparison method
-            my %PossibilitiesInRegion2;
             my @list = @{ $CellsIn{$region}{$RegionValue} };
+            my %PossibilityLocations;
+            # NP1: $PossibilityLocations{"Possibility"}={"x1y1x2y2.."} #xyxy indicates 2 cells for possibility
+            my %CellsWithTwoPossibilities;
+            # NP1: Then we create $CellsWithTwoPossibilities{"$x$y$x$y"}{"Poss1 2 etc"}=1 if just Poss1 and Poss2 then NP1 condition
+            my %NP2ExclusivePossibilityPairs;
+            # NP2: $NP2ExclusivePossibilityPairs{"$Poss1$Poss2..."}{"$x1$y1 or 2, 3..."} = 1
+            #"$Poss1$Poss2 MUST be sorted so we can compare!
+            #two $Poss1$Poss2 AND a $x1$y1 and $x2$y2 is a NP2 case           
             foreach my $cell ( @list)
-                  {
-                  my ($x,$y) = @{ $cell };
-                  foreach my $PossibleNumber ( keys %{ $PossibleNumberArray[$x][$y] } )
-                        {
-                        #$PossibilityLocationsInRegion{$PossibleNumber} = xyxyxyxy...
-                        #if =xyxy then $PossibleNumber is in two locations
-                        $PossibilityLocationsInRegion{$PossibleNumber} = "$PossibilityLocationsInRegion{$PossibleNumber}" . "$x$y";
-                        }
-                  }
+                {
+                my ($x,$y) = @{ $cell };
+                my $SortedPossibilityString;
+                foreach my $PossibleNumber ( sort keys %{ $PossibleNumberArray[$x][$y] } ) #must sort for NP2 data structure!!!
+                    {
+                    #NP1
+                    $PossibilityLocations{$PossibleNumber} = "$PossibilityLocations{$PossibleNumber}" . "$x$y";
+                    #NP2:
+                    $SortedPossibilityString = "$SortedPossibilityString$PossibleNumber";
+                    }
+                    #NP2
+                    $NP2ExclusivePossibilityPairs{$SortedPossibilityString}{"$x$y"} = 1;
+                }
+                
             #Step 2: for this region delete values that don't occur twice
             foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion )
                   {
