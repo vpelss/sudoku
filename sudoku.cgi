@@ -48,9 +48,9 @@ my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns
 my $RemoveAttempCount;
 my $starttime;
 my $TimeTaken;
-my $timetotry = 5;
+my $timetotry = 10;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once? too big and we overshoot and fall back a lot 2 is good
-my $target = 58;
+my $target = 60;
 my $debug = 1;
 
 eval { &Main(); };                            # Trap any fatal errors so the program hopefully
@@ -679,9 +679,8 @@ for (my $y = 0; $y < 9 ; $y++)
 
 sub RecursiveRemoveCells()
 {
-&PrintGameArrayHTML();
-&PrintPossibilityArrayHTML();
-
+#&PrintGameArrayHTML();
+#&PrintPossibilityArrayHTML();
 
 my @CellsToRemove = shuffle @_; #will get shorter each loop by $NumberOfPicks
 my %RemovedList;
@@ -925,7 +924,6 @@ return $countIR; #return the number of IR2
 
 sub SetNP()
 {
-
 #Naked Pairs 1 and 2
 #NP1 The first version of Naked Pairs searches each region (row, column and 3 x 3 square) for two possibility values that occur only twice in, and share two cells, which may or may not contain other possibilities. Because they occur
 #only in these two cells, one of them must go in one cell and the other in the second. Therefore, any other values in these two cells may be eliminated.
