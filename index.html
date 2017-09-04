@@ -92,7 +92,8 @@ function gup( name )
 				<OPTION VALUE="1">Simple</OPTION> 
 				<OPTION VALUE="2">Easy</OPTION> 
 				<OPTION VALUE="3" SELECTED="SELECTED">Medium</OPTION> 
-				<OPTION VALUE="4">Difficult</OPTION> 
+				<OPTION VALUE="4">Hard</OPTION> 
+				<OPTION VALUE="5">Difficult</OPTION> 
 			 </SELECT></P> <SCRIPT>
 
 var Diff =[];
@@ -104,6 +105,7 @@ Diff[1] = function()
 	document.getElementById('HS').checked = false;
 	document.getElementById('NP').checked = false;
 	document.getElementById('IR').checked = false;
+	document.getElementById('XW').checked = false;
 	}
 
 Diff[2] = function()
@@ -113,6 +115,7 @@ Diff[2] = function()
 	document.getElementById('HS').checked = true;
 	document.getElementById('NP').checked = false;
 	document.getElementById('IR').checked = false;
+	document.getElementById('XW').checked = false;	
 	}
 
 Diff[3] = function()
@@ -122,6 +125,7 @@ Diff[3] = function()
 	document.getElementById('HS').checked = true;
 	document.getElementById('NP').checked = true;
 	document.getElementById('IR').checked = false;
+	document.getElementById('XW').checked = false;	
 	}
 
 Diff[4] = function()
@@ -131,21 +135,24 @@ Diff[4] = function()
 	document.getElementById('HS').checked = true;
 	document.getElementById('NP').checked = true;
 	document.getElementById('IR').checked = true;
+	document.getElementById('XW').checked = false;	
 	}
 
 Diff[5] = function()
 	{ 
-	document.getElementById('TimeToTry').value = 10;
-	document.getElementById('NumberOfSquares').value = 65;
+	document.getElementById('TimeToTry').value = 15;
+	document.getElementById('NumberOfSquares').value = 67;
 	document.getElementById('HS').checked = true;
 	document.getElementById('NP').checked = true;
 	document.getElementById('IR').checked = true;
+	document.getElementById('XW').checked = true;	
 	}
 
 </SCRIPT> 
 		  <P>Time to generate puzzle:
 			 <INPUT TYPE="TEXT" NAME="TimeToTry" VALUE="5" SIZE="4" ID="TimeToTry"></P> 
-		  <P>IR: <INPUT TYPE="CHECKBOX" NAME="IR" ID="IR" VALUE="1"> NP:
+		  <P>XW: <INPUT TYPE="CHECKBOX" NAME="XW" VALUE="1" ID="XW"> IR:
+			 <INPUT TYPE="CHECKBOX" NAME="IR" ID="IR" VALUE="1"> NP:
 			 <INPUT TYPE="CHECKBOX" NAME="NP" CHECKED="CHECKED" ID="NP" VALUE="1"> HS:
 			 <INPUT TYPE="CHECKBOX" NAME="HS" CHECKED="CHECKED" ID="HS" VALUE="1"></P> 
 		  <P>Number of Blank Squares:<INPUT TYPE="TEXT" NAME="NumberOfSquares"

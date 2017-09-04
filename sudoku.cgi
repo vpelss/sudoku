@@ -32,6 +32,7 @@ my $NP;
 my $IR = 0;
 my $IR1 = 0;
 my $IR2 = 0;
+my $XW = 0;
 #NEW
 my %in;
 my %CellsIn; # $CellsIn{'row' | 'col' | 'squ'}{0 - 8} will return ( (x,y) , (x,y) , () , ... )
@@ -67,6 +68,7 @@ $methods{ns} = 1; #always on
 if($in{'HS'}) {$methods{hs} = 1;}
 if($in{'NP'}) {$methods{np} = 1;}
 if($in{'IR'}) {$methods{ir} = 1;}
+if($in{'XW'}) {$methods{xw} = 1;}
 $timetotry = $in{'TimeToTry'};
 $timetotry =~ s/\D*//g;
 if($timetotry > 20){$timetotry = 20}
@@ -532,6 +534,7 @@ my $LpHS = 0;
 my $LpNP = 0;
 my $LpIR1 = 0;
 my $LpIR2 = 0;
+my $LpXW = 0;
 my $string;
 $HS = 0;
 $NS = 0;
@@ -539,6 +542,7 @@ $NP =0;
 $IR = 0;
 $IR1 = 0;
 $IR2 = 0;
+$XW = 0;
 
 &FillPossibilityArray1to9();
 &Reduce1_9PossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
@@ -559,6 +563,21 @@ while ( ($blanksquaresleft == 1) and ($AnyProgress > 0) ) #start fresh each time
 #$methods{ir} =0;
 #$methods{hs} = 0;
 if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
+
+      if ($methods{xw})
+            {
+            $LpIR1 = &SetXW(); #Set XW
+            $XW += $LpIR1;
+            #$IR1 += $LpIR1;
+            if ($LpXW)
+              {
+              if ( $debug )
+                  {
+                  print DEBUG "Set XP<br>";
+                  }
+              }
+            $AnyProgress += $LpXW;
+            }
 
        if ($methods{ir})
             {
