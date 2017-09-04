@@ -48,7 +48,7 @@ my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns
 my $RemoveAttempCount;
 my $starttime;
 my $TimeTaken;
-my $timetotry = 10;
+my $timetotry = 5;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once? too big and we overshoot and fall back a lot 2 is good
 my $target = 60;
 my $debug = 1;
@@ -62,29 +62,17 @@ sub Main()
 print "Content-type: text/html\n\n";
 $in{difficulty} = 'Difficult';
 %in = &ParseForm; #get input arguments
-if ($in{difficulty} eq '') {$in{difficulty} = 'Medium'}
-if ($in{difficulty} eq 'Simple')
-     {
-     $methods{ns} = 1;
-     }
-if ($in{difficulty} eq 'Easy')
-     {
-     $methods{ns} = 1;
-     $methods{hs} = 1;
-     }
-if ($in{difficulty} eq 'Medium')
-     {
-     $methods{ns} = 1;
-     $methods{np} = 1;
-     $methods{hs} = 1;
-     }
-if ($in{difficulty} eq 'Difficult')
-     {
-     $methods{ns} = 1;
-     $methods{np} = 1;
-     $methods{hs} = 1;
-     $methods{ir} = 1;
-     }
+
+$methods{ns} = 1; #always on
+if($in{'HS'}) {$methods{hs} = 1;}
+if($in{'NP'}) {$methods{np} = 1;}
+if($in{'IR'}) {$methods{ir} = 1;}
+$timetotry = $in{'TimeToTry'};
+$timetotry =~ s/\D*//g;
+if($timetotry > 20){$timetotry = 20}
+$target = $in{'NumberOfSquares'};
+$target =~ s/\D*//g;
+if($target > 60){$target = 60}
 
 if ( $debug ) { open (DEBUG, ">../aaa.html") }
 &CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
@@ -111,7 +99,6 @@ if ( $debug )
       print DEBUG "<p>Game Array Created</p>";
       print DEBUG &PrintTempGameArrayDebug();
       }
-
 
 $starttime = time();
 $blanksquares = 0;
