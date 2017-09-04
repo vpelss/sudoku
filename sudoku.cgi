@@ -813,37 +813,56 @@ sub SetXW()
 #if the two possibilities match columns, we can remove that possibility from the remaining cells in the columns
 #do the same for columns!
 my $countXW;
-#for each col or row region if 2 - 3 possibilities exist for a number that is bound by a box region
-#remove that possibility everywhere else in the bound box region
+my %TwoValues;
 my %opposite;
 $opposite{'row'} = 'col';
 $opposite{'col'}='row';
 foreach my $region ( 'row' , 'col' )
-      {
-      foreach my $RegionValue (0 .. 8) #for each row and col
+    {
+    foreach my $RegionValue (0 .. 8) #for each row and col
+        {
+        my %PossibilityLocationsInRegion = {};
+        my @list = @{ $CellsIn{$region}{$RegionValue} };
+        #my $ColString ;
+        foreach my $cell ( @list) #for each cell
             {
-            my %PossibilityLocationsInRegion;
-            my @list = @{ $CellsIn{$region}{$RegionValue} };
-            my $ColString ;
-            foreach my $cell ( @list) #for each cell
-                {
-                my ($x,$y) = @{ $cell };
-                my $opposite = $opposite{$region};
-                my $OppositeRegion = $IAmIn{$opposite}{$x}{$y};                
-                
-                foreach my $PossibleNumber (keys %{ $PossibleNumberArray[$x][$y] } ) #for each Possibility
-                    {
-                    $PossibilityLocationsInRegion{$PossibleNumber}{$OppositeRegion} = 1; #record our col or row found 
-                    }
-                }
-            foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each found $PossibleNumber in row or col
-                {
-                my @OppositeRegions = keys %{$PossibilityLocationsInRegion{$PossibleNumber}{$region}};
-                $TwoValues{}
-                }
+            my ($x,$y) = @{ $cell };
+            my $opposite = $opposite{$region};
+            my $OppositeRegion = $IAmIn{$opposite}{$x}{$y};                
             
+            foreach my $PossibleNumber (keys %{ $PossibleNumberArray[$x][$y] } ) #for each Possibility
+                {
+                $PossibilityLocationsInRegion{$PossibleNumber}{$OppositeRegion} = 1; #record our col or row found 
+                }
             }
+        foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each found $PossibleNumber in row or col
+            {
+            my @OppositeRegions = keys %{ $PossibilityLocationsInRegion{$PossibleNumber} };      
+            if(scalar @OppositeRegions == 2) #found two 
+                {
+                my ($OR1,$OR2) = @OppositeRegions;
+                #$TwoValues{$PossibleNumber}{"$OR1$OR2"}{$RegionValue} = 1; # later,if we have 2 or more values, we have a hit!  
+                $TwoValues{$PossibleNumber}{"$OR1$OR2"} = $TwoValues{$PossibleNumber}{"$OR1$OR2"} . "$RegionValue"; # later,if we have length 2 or more values, we have a hit!  
+                }
+            }
+        }
+    #look for xwing
+    foreach my $PossibleNumber ( keys %TwoValues  ) #for each found $PossibleNumber in row or col
+        {
+        foreach my $ORPair ( keys %{ $TwoValues{$PossibleNumber} } ) #for each found $PossibleNumber in row or col
+            {# $ORPair will aways be two as we tested for 2 previously. Do not test again           
+            my $CurrentRegions = $TwoValues{$PossibleNumber}{$ORPair};
+                if(length $CurrentRegions == 2) 
+                    {#XW hit!
+                    
+                                           
+                    }                
+            }       
+        }
+    }
             
+print DEBUG "XW: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at $NumberOfPossibilitiesInSquare locations in $region $RegionValue and square $square<br>";
+
             
                  $ColString = "$ColString " . "$OppositeRegion";          
                         $PossibilityLocationsInRegion{$PossibleNumber}{}
@@ -880,7 +899,7 @@ foreach my $region ( 'row' , 'col' )
                   }
             }
       }
-return $countIR; #return the number of IR1
+return $countXW; #return the number of IR1
 };
 
 sub SetIR1()
