@@ -807,6 +807,82 @@ delete $TempGameArray[$x][$y];
 return(1); #cascade
 }
 
+sub SetXW()
+{
+#Find Possibility that occurs twice in one row, then another row
+#if the two possibilities match columns, we can remove that possibility from the remaining cells in the columns
+#do the same for columns!
+my $countXW;
+#for each col or row region if 2 - 3 possibilities exist for a number that is bound by a box region
+#remove that possibility everywhere else in the bound box region
+my %opposite;
+$opposite{'row'} = 'col';
+$opposite{'col'}='row';
+foreach my $region ( 'row' , 'col' )
+      {
+      foreach my $RegionValue (0 .. 8) #for each row and col
+            {
+            my %PossibilityLocationsInRegion;
+            my @list = @{ $CellsIn{$region}{$RegionValue} };
+            my $ColString ;
+            foreach my $cell ( @list) #for each cell
+                {
+                my ($x,$y) = @{ $cell };
+                my $opposite = $opposite{$region};
+                my $OppositeRegion = $IAmIn{$opposite}{$x}{$y};                
+                
+                foreach my $PossibleNumber (keys %{ $PossibleNumberArray[$x][$y] } ) #for each Possibility
+                    {
+                    $PossibilityLocationsInRegion{$PossibleNumber}{$OppositeRegion} = 1; #record our col or row found 
+                    }
+                }
+            foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each found $PossibleNumber in row or col
+                {
+                my @OppositeRegions = keys %{$PossibilityLocationsInRegion{$PossibleNumber}{$region}};
+                $TwoValues{}
+                }
+            
+            }
+            
+            
+                 $ColString = "$ColString " . "$OppositeRegion";          
+                        $PossibilityLocationsInRegion{$PossibleNumber}{}
+                        
+                        $PossibilityLocationsInRegion{$PossibleNumber}{'squares'}{$squ} = 1; #track squares for $PossibleNumber
+                        $PossibilityLocationsInRegion{$PossibleNumber}{'cells'}{"$x$y"} = 1; #track cells for $PossibleNumber
+                        
+                  
+            foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each found $PossibleNumber in row or col
+                  {
+                  my @squares = keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'squares'}};
+                  if (scalar @squares == 1) #$PossibleNumber only found in one intersecting square!
+                        {
+                        my $square = shift @squares;
+                        my $NumberOfPossibilitiesInSquare = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
+                        if ( ($NumberOfPossibilitiesInSquare > 1) and ($NumberOfPossibilitiesInSquare < 4) ) #2-3 $PossibleNumber found in this col or row and squ
+                            {
+                            my @list = @{ $CellsIn{'squ'}{$square} };
+                            foreach my $cell ( @list) #for each cell in squ
+                                {
+                                my ($x,$y) = @{ $cell };
+                                if( $PossibilityLocationsInRegion{$PossibleNumber}{'cells'}{"$x$y"} == undef ) #ignore our trigger cells
+                                    {
+                                    if($PossibleNumberArray[$x][$y]{$PossibleNumber} == 1) #only count cells where we will be removing something!
+                                        {
+                                        print DEBUG "IR1: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at $NumberOfPossibilitiesInSquare locations in $region $RegionValue and square $square<br>";
+                                        delete  $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
+                                        $countIR++;
+                                        }
+                                    }
+                                }
+                              }
+                        }
+                  }
+            }
+      }
+return $countIR; #return the number of IR1
+};
+
 sub SetIR1()
 {
 #First, it scans each row or col region for all possibilities.
