@@ -122,7 +122,7 @@ foreach my $cell ( @AllCells )
       }
       
 my $exposedsquares = 81 - $blanksquares;
-$globalstring = " RemoveAttempCount: $RemoveAttempCount | NS: $NS | HS: $HS | NP: $NP | IR1: $IR1  | IR2: $IR2 | Blank: $blanksquares | Time: $TimeTaken";
+$globalstring = " RemoveAttempCount: $RemoveAttempCount | NS: $NS | HS: $HS | NP: $NP | IR1: $IR1  | IR2: $IR2 | XW: $XW | Blank: $blanksquares | Time: $TimeTaken";
 $difficulty = "Simple";
 if ($HS > 0 )
       {$difficulty = "Easy";}
@@ -549,7 +549,7 @@ $XW = 0;
 #OR
 #&SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
 if($debug) { print DEBUG &PrintTempGameArrayDebug() }
-if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
+#if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
 
 $AnyProgress = 1;
 $blanksquaresleft = 1; #get us in the 'while' door
@@ -568,7 +568,6 @@ if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
             {
             $LpIR1 = &SetXW(); #Set XW
             $XW += $LpIR1;
-            #$IR1 += $LpIR1;
             if ($LpXW)
               {
               if ( $debug )
@@ -578,7 +577,7 @@ if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
               }
             $AnyProgress += $LpXW;
             }
-
+$debug=0;
        if ($methods{ir})
             {
             $LpIR1 = &SetIR1(); #Set IR1 for rows and columns
@@ -588,7 +587,7 @@ if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
               {
               if ( $debug )
                   {
-                  print DEBUG "Set IR1<br>$string";
+                  print DEBUG "Set IR1<br>";
                   }
               }
             $AnyProgress += $LpIR1;
@@ -603,7 +602,7 @@ if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
               {
               if ( $debug )
                   {
-                  print DEBUG "Set IR2<br>$string";
+                  print DEBUG "Set IR2<br>";
                   }
               }
             $AnyProgress += $LpIR2;
@@ -651,6 +650,7 @@ if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
                   if ($debug) {print DEBUG "Set $LpNS NS<br>"}
                   }
            }
+$debug=1;
 
       #lets see if we are done yet
       $blanksquaresleft = &AreThereBlankSquares();
@@ -828,9 +828,8 @@ foreach my $region ( 'row' , 'col' )
             {
             my ($x,$y) = @{ $cell };
             my $opposite = $opposite{$region};
-            my $OppositeRegion = $IAmIn{$opposite}{$x}{$y};                
-            
-            foreach my $PossibleNumber (keys %{ $PossibleNumberArray[$x][$y] } ) #for each Possibility
+            my $OppositeRegion = $IAmIn{$opposite}{$x}{$y};                           
+            foreach my $PossibleNumber ( keys %{ $PossibleNumberArray[$x][$y] } ) #for each Possibility
                 {
                 $PossibilityLocationsInRegion{$PossibleNumber}{$OppositeRegion} = 1; #record our col or row found 
                 }
@@ -840,9 +839,10 @@ foreach my $region ( 'row' , 'col' )
             my @OppositeRegions = keys %{ $PossibilityLocationsInRegion{$PossibleNumber} };      
             if(scalar @OppositeRegions == 2) #found two 
                 {
-                my ($OR1,$OR2) = @OppositeRegions;
+                my ($OR1,$OR2) = sort @OppositeRegions;
                 #$TwoValues{$PossibleNumber}{"$OR1$OR2"}{$RegionValue} = 1; # later,if we have 2 or more values, we have a hit!  
                 $TwoValues{$PossibleNumber}{"$OR1$OR2"} = $TwoValues{$PossibleNumber}{"$OR1$OR2"} . "$RegionValue"; # later,if we have length 2 or more values, we have a hit!  
+print DEBUG "XW: Possibility $PossibleNumber found at $region $RegionValue and $opposite{$region}'s $OR1,$OR2<br>";
                 }
             }
         }
@@ -875,7 +875,7 @@ foreach my $region ( 'row' , 'col' )
                     my $Keep3 = "$Col2$Row1";
                     my $Keep4 = "$Col2$Row2"; 
                     #try to remove $PossibleNumber from $CellsIn{ $opposite{'$CurrentRegions'} }{Or1 and Or2} }
-                    my $OR = $opposite{'$CurrentRegions'};
+                    my $OR = $opposite{$region};
                     foreach my $RegionNumber ($OR1,$OR2)
                         {
                         my @list = @{ $CellsIn{$OR}{$RegionNumber} };
@@ -887,8 +887,8 @@ foreach my $region ( 'row' , 'col' )
                                     {#don't remove ours
                                     if($PossibleNumberArray[$x][$y]{$PossibleNumber} == 1) #only count cells where we will be removing something!
                                         {
-print DEBUG "XW: Possibility $PossibleNumber deleted at cell $x,$y as triggered at Cols: $Col1,$Col2 and Rows: $Row1,$Row2<br>";
-                                        delete  $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
+print DEBUG "XW found: Possibility $PossibleNumber deleted at cell $x,$y as triggered at Cols: $Col1,$Col2 and Rows: $Row1,$Row2<br>";
+                                        delete $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
                                         $countXW++;
                                         }
                                     }    
@@ -945,7 +945,7 @@ foreach my $region ( 'col' , 'row' )
                                     {
                                     if($PossibleNumberArray[$x][$y]{$PossibleNumber} == 1) #only count cells where we will be removing something!
                                         {
-                                        print DEBUG "IR1: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at $NumberOfPossibilitiesInSquare locations in $region $RegionValue and square $square<br>";
+print DEBUG "IR1: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at $NumberOfPossibilitiesInSquare locations in $region $RegionValue and square $square<br>";
                                         delete  $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
                                         $countIR++;
                                         }
@@ -1092,7 +1092,7 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
                         $PossibleNumberArray[$x1][$y1]{$Poss2} = 1;
                         $PossibleNumberArray[$x2][$y2]{$Poss1} = 1;
                         $PossibleNumberArray[$x2][$y2]{$Poss2} = 1;
-                        if ($debug) {print DEBUG "NP1: Poss @SharedPossibilites at $xyxy Removing all other poss at $xyxy in $region $RegionValue<br>"}
+if ($debug) {print DEBUG "NP1: Poss @SharedPossibilites at $xyxy Removing all other poss at $xyxy in $region $RegionValue<br>"}
                         $NPCountOnce{1}=1;
                         }
                     }    
@@ -1117,7 +1117,7 @@ foreach my $region ( 'col' , 'row' , 'squ' ) #for each region type
                                     delete $PossibleNumberArray[$x][$y]{$Poss1}; 
                                     delete $PossibleNumberArray[$x][$y]{$Poss2};
                                     $NPCountOnce{2}=1;
-                                    if ($debug) {print DEBUG "NP2: Poss$Poss1,$Poss2($NP2SortedPossibilityString) at $x1,$y1 and $x2,$y2 ($NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}) Removing all other poss at cell $x,$y $region $RegionValue<br>"}
+if ($debug) {print DEBUG "NP2: Poss$Poss1,$Poss2($NP2SortedPossibilityString) at $x1,$y1 and $x2,$y2 ($NP2ExclusivePossibilityPairs{$NP2SortedPossibilityString}) Removing all other poss at cell $x,$y $region $RegionValue<br>"}
                                     }
                                 }
                             }
@@ -1200,7 +1200,7 @@ foreach my $region ( 'col' , 'row' , 'squ' )
                         $countNS++;
                         my ($PossibleNumber) = keys %{ $PossibleNumberArray[$x][$y] };
                         $TempGameArray[$x][$y] = $PossibleNumber;
-                        if ($debug) {print DEBUG "NS found at $x,$y for possibility $PossibleNumber for row col squ . Removing $PossibleNumber for row $IAmIn{'row'}{$x}{$y} col $IAmIn{'col'}{$x}{$y} squ $IAmIn{'squ'}{$x}{$y}<br>"}
+if ($debug) {print DEBUG "NS found at $x,$y for possibility $PossibleNumber for row col squ . Removing $PossibleNumber for row $IAmIn{'row'}{$x}{$y} col $IAmIn{'col'}{$x}{$y} squ $IAmIn{'squ'}{$x}{$y}<br>"}
                         #wipe $PossibleNumber from all affected $row,$col,$squ
                         foreach my $region ( 'col' , 'row' , 'squ' )
                               {
@@ -1220,8 +1220,6 @@ foreach my $region ( 'col' , 'row' , 'squ' )
       }
 return $countNS;
 };
-
-
 
 sub AreThereBlankSquares
 {
