@@ -851,54 +851,56 @@ foreach my $region ( 'row' , 'col' )
         {
         foreach my $ORPair ( keys %{ $TwoValues{$PossibleNumber} } ) #for each found $PossibleNumber in row or col
             {# $ORPair will aways be two as we tested for 2 previously. Do not test again           
-            my $CurrentRegions = $TwoValues{$PossibleNumber}{$ORPair};
+            my $CurrentRegions = $TwoValues{$PossibleNumber}{$ORPair}; #rows if we are doing rows, cols if doing cols
                 if(length $CurrentRegions == 2) 
                     {#XW hit!
-                    
-                                           
+                    my ($Row1,$Row2);
+                    my ($Col1,$Col2);
+                    my ($OR1,$OR2); #Other Region
+                    if($region eq 'row')
+                        {
+                        ($Row1,$Row2) = split('',$CurrentRegions);
+                        ($Col1,$Col2) = split('',$ORPair);
+                        ($OR1,$OR2) = ($Col1,$Col2);
+                        }
+                    else
+                        {
+                        ($Row1,$Row2) = split('',$ORPair);
+                        ($Col1,$Col2) = split('',$CurrentRegions);
+                        ($OR1,$OR2) = ($Row1,$Row2);
+                        }
+                    #Ignore our trigger cells
+                    my $Keep1 = "$Col1$Row1";
+                    my $Keep2 = "$Col1$Row2";
+                    my $Keep3 = "$Col2$Row1";
+                    my $Keep4 = "$Col2$Row2"; 
+                    #try to remove $PossibleNumber from $CellsIn{ $opposite{'$CurrentRegions'} }{Or1 and Or2} }
+                    my $OR = $opposite{'$CurrentRegions'};
+                    foreach my $RegionNumber ($OR1,$OR2)
+                        {
+                        my @list = @{ $CellsIn{$OR}{$RegionNumber} };
+                            foreach my $cell ( @list) #for each cell in squ
+                                {
+                                my ($x,$y) = @{ $cell };
+                                my $xy = "$x$y";
+                                if( ($xy ne $Keep1) and ($xy ne $Keep2) and ($xy ne $Keep3) and ($xy ne $Keep4) )
+                                    {#don't remove ours
+                                    if($PossibleNumberArray[$x][$y]{$PossibleNumber} == 1) #only count cells where we will be removing something!
+                                        {
+print DEBUG "XW: Possibility $PossibleNumber deleted at cell $x,$y as triggered at Cols: $Col1,$Col2 and Rows: $Row1,$Row2<br>";
+                                        delete  $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
+                                        $countXW++;
+                                        }
+                                    }    
+                                }
+                        }
                     }                
             }       
         }
     }
             
-print DEBUG "XW: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at $NumberOfPossibilitiesInSquare locations in $region $RegionValue and square $square<br>";
+#print DEBUG "XW: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at $NumberOfPossibilitiesInSquare locations in $region $RegionValue and square $square<br>";
 
-            
-                 $ColString = "$ColString " . "$OppositeRegion";          
-                        $PossibilityLocationsInRegion{$PossibleNumber}{}
-                        
-                        $PossibilityLocationsInRegion{$PossibleNumber}{'squares'}{$squ} = 1; #track squares for $PossibleNumber
-                        $PossibilityLocationsInRegion{$PossibleNumber}{'cells'}{"$x$y"} = 1; #track cells for $PossibleNumber
-                        
-                  
-            foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each found $PossibleNumber in row or col
-                  {
-                  my @squares = keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'squares'}};
-                  if (scalar @squares == 1) #$PossibleNumber only found in one intersecting square!
-                        {
-                        my $square = shift @squares;
-                        my $NumberOfPossibilitiesInSquare = scalar keys %{$PossibilityLocationsInRegion{$PossibleNumber}{'cells'}};
-                        if ( ($NumberOfPossibilitiesInSquare > 1) and ($NumberOfPossibilitiesInSquare < 4) ) #2-3 $PossibleNumber found in this col or row and squ
-                            {
-                            my @list = @{ $CellsIn{'squ'}{$square} };
-                            foreach my $cell ( @list) #for each cell in squ
-                                {
-                                my ($x,$y) = @{ $cell };
-                                if( $PossibilityLocationsInRegion{$PossibleNumber}{'cells'}{"$x$y"} == undef ) #ignore our trigger cells
-                                    {
-                                    if($PossibleNumberArray[$x][$y]{$PossibleNumber} == 1) #only count cells where we will be removing something!
-                                        {
-                                        print DEBUG "IR1: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at $NumberOfPossibilitiesInSquare locations in $region $RegionValue and square $square<br>";
-                                        delete  $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
-                                        $countIR++;
-                                        }
-                                    }
-                                }
-                              }
-                        }
-                  }
-            }
-      }
 return $countXW; #return the number of IR1
 };
 
