@@ -813,6 +813,7 @@ sub SetXW()
 #if the two possibilities match columns, we can remove that possibility from the remaining cells in the columns
 #do the same for columns!
 my $countXW;
+my $XWCountOnce;
 my %TwoValues;
 my %opposite;
 $opposite{'row'} = 'col';
@@ -889,12 +890,13 @@ print DEBUG "XW: Possibility $PossibleNumber found at $region $RegionValue and $
                                     if($PossibleNumberArray[$x][$y]{$PossibleNumber} == 1) #only count cells where we will be removing something!
                                         {
 print DEBUG "XW found: Possibility $PossibleNumber deleted at cell $x,$y as triggered at Cols: $Col1,$Col2 and Rows: $Row1,$Row2<br>";
-                                        delete $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
-                                        $countXW++;
+                                        delete $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ         
+                                        $XWCountOnce=1;
                                         }
                                     }    
                                 }
                         }
+                    if($XWCountOnce==1){$countXW++;$XWCountOnce=0;}
                     }                
             }       
         }
@@ -1125,8 +1127,8 @@ if ($debug) {print DEBUG "NP2: Poss$Poss1,$Poss2($NP2SortedPossibilityString) at
                         }
                     }
                 }
-            if($NPCountOnce{1}==1){$countNP++}
-            if($NPCountOnce{2}==1){$countNP++}
+            if($NPCountOnce{1}==1){$countNP++;$NPCountOnce{1}=0;}
+            if($NPCountOnce{2}==1){$countNP++;$NPCountOnce{2}=0;}
             }  
         }
 if ($debug) {print DEBUG "LEAVING NP<br>"}
