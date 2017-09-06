@@ -1,5 +1,3 @@
-vp
-
 #!c:\perl64\bin\perl.exe -d
 
 #!/usr/bin/perl -d
