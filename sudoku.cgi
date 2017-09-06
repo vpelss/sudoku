@@ -819,6 +819,7 @@ $opposite{'row'} = 'col';
 $opposite{'col'}='row';
 foreach my $region ( 'row' , 'col' )
     {
+    my %TwoValues = {};
     foreach my $RegionValue (0 .. 8) #for each row and col
         {
         my %PossibilityLocationsInRegion = {};
