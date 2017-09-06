@@ -907,6 +907,106 @@ print DEBUG "XW found: Possibility $PossibleNumber deleted at cell $x,$y as trig
 return $countXW; #return the number of IR1
 };
 
+sub _OLDSetXW()
+{
+#Find Possibility that occurs twice in one row, then another row
+#if the two possibilities match columns, we can remove that possibility from the remaining cells in the columns
+#do the same for columns!
+my $countXW;
+my $XWCountOnce;
+my %TwoValues;
+my %opposite;
+$opposite{'row'} = 'col';
+$opposite{'col'}='row';
+foreach my $region ( 'row' , 'col' )
+    {
+    my %TwoValues = {};
+    foreach my $RegionValue (0 .. 8) #for each row and col
+        {
+        my %PossibilityLocationsInRegion = {};
+        my @list = @{ $CellsIn{$region}{$RegionValue} };
+        #my $ColString ;
+        foreach my $cell ( @list) #for each cell
+            {
+            my ($x,$y) = @{ $cell };
+            my $opposite = $opposite{$region};
+            my $OppositeRegion = $IAmIn{$opposite}{$x}{$y};
+            foreach my $PossibleNumber ( keys %{ $PossibleNumberArray[$x][$y] } ) #for each Possibility
+                {
+                $PossibilityLocationsInRegion{$PossibleNumber}{$OppositeRegion} = 1; #record our col or row found
+                }
+            }
+        foreach my $PossibleNumber ( keys %PossibilityLocationsInRegion ) #for each found $PossibleNumber in row or col
+            {
+            my @OppositeRegions = keys %{ $PossibilityLocationsInRegion{$PossibleNumber} };
+            if(scalar @OppositeRegions == 2) #found two
+                {
+                my ($OR1,$OR2) = sort @OppositeRegions;
+                #$TwoValues{$PossibleNumber}{"$OR1$OR2"}{$RegionValue} = 1; # later,if we have 2 or more values, we have a hit!
+                $TwoValues{$PossibleNumber}{"$OR1$OR2"} = $TwoValues{$PossibleNumber}{"$OR1$OR2"} . "$RegionValue"; # later,if we have length 2 or more values, we have a hit!
+print DEBUG "XW: Possibility $PossibleNumber found at $region $RegionValue and $opposite{$region}'s $OR1,$OR2<br>";
+                }
+            }
+        }
+    #look for xwing
+    foreach my $PossibleNumber ( keys %TwoValues  ) #for each found $PossibleNumber in row or col
+        {
+        foreach my $ORPair ( keys %{ $TwoValues{$PossibleNumber} } ) #for each found $PossibleNumber in row or col
+            {# $ORPair will aways be two as we tested for 2 previously. Do not test again
+            my $CurrentRegions = $TwoValues{$PossibleNumber}{$ORPair}; #rows if we are doing rows, cols if doing cols
+                if(length $CurrentRegions == 2)
+                    {#XW hit!
+                    my ($Row1,$Row2);
+                    my ($Col1,$Col2);
+                    my ($OR1,$OR2); #Other Region
+                    if($region eq 'row')
+                        {
+                        ($Row1,$Row2) = split('',$CurrentRegions);
+                        ($Col1,$Col2) = split('',$ORPair);
+                        ($OR1,$OR2) = ($Col1,$Col2);
+                        }
+                    else
+                        {
+                        ($Row1,$Row2) = split('',$ORPair);
+                        ($Col1,$Col2) = split('',$CurrentRegions);
+                        ($OR1,$OR2) = ($Row1,$Row2);
+                        }
+                    #Ignore our trigger cells
+                    my $Keep1 = "$Col1$Row1";
+                    my $Keep2 = "$Col1$Row2";
+                    my $Keep3 = "$Col2$Row1";
+                    my $Keep4 = "$Col2$Row2";
+                    #try to remove $PossibleNumber from $CellsIn{ $opposite{'$CurrentRegions'} }{Or1 and Or2} }
+                    my $OR = $opposite{$region};
+                    foreach my $RegionNumber ($OR1,$OR2)
+                        {
+                        my @list = @{ $CellsIn{$OR}{$RegionNumber} };
+                            foreach my $cell ( @list) #for each cell in squ
+                                {
+                                my ($x,$y) = @{ $cell };
+                                my $xy = "$x$y";
+                                if( ($xy ne $Keep1) and ($xy ne $Keep2) and ($xy ne $Keep3) and ($xy ne $Keep4) )
+                                    {#don't remove ours
+                                    if($PossibleNumberArray[$x][$y]{$PossibleNumber} == 1) #only count cells where we will be removing something!
+                                        {
+print DEBUG "XW found: Possibility $PossibleNumber deleted at cell $x,$y as triggered at Cols: $Col1,$Col2 and Rows: $Row1,$Row2<br>";
+                                        delete $PossibleNumberArray[$x][$y]{$PossibleNumber}; #removing $PossibleNumber from other cells in squ
+                                        $XWCountOnce=1;
+                                        }
+                                    }
+                                }
+                        }
+                    if($XWCountOnce==1){$countXW++;$XWCountOnce=0;}
+                    }
+            }
+        }
+    }
+
+#print DEBUG "XW: Possibility $PossibleNumber deleted at cell $x,$y as $PossibleNumber was at $NumberOfPossibilitiesInSquare locations in $region $RegionValue and square $square<br>";
+
+return $countXW; #return the number of IR1
+};
+
 sub SetIR1()
 {
 #First, it scans each row or col region for all possibilities.
@@ -1142,8 +1242,6 @@ sub SetHS()
 #for each number 1-9 check each region 0-8 (squ row col) and  see if that number exists only once in @PossibleNumberArray
 #if so, that number is at the only possible location in that region.
 #remove all possibilities except than number for that location
-#set number for that location in @TempGameArray (done later in NS)
-#later remove that possibility number from all other affected overlapping regions (done in NS)
 my $countHS;
 foreach my $region ( 'col' , 'row' , 'squ' )
       {
