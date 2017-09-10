@@ -229,18 +229,44 @@ for (my $y = 0; $y < 9 ; $y++)
       }
 }
 
+my %G;
+sub c
+{
+int( ( $_[0] - 1 ) / 3 ) * 3;
+}
+sub G()
+{
+my @A;
+for my $y (@A)
+    {
+    for my $x (@A)
+        {
+        my $p = my $t = $G{ my $c = $y . $x } && next;
+        $t .= $G{ $_ . $x } . $G{ $y . $_ } for @A;
+        for $f ( 1 .. 3 ) { $t .= $G{ c($y) + $f . c($x) + $_ } for 1 .. 3 }
+        G( $G{$c} = $_ ) && return for grep $t !~ m/$_/, @A;
+        return $G{$c} = 0;
+        }
+    }
+die map { $G{$_} } 9 .. 99;
+}
 sub _IsPuzzleSolvableFast()
 {
+my %G;
+my $a = 8;
+$G{ int( ++$a / 9 ) . $a % 9 + 1 } = $_ for split //, <>;
+@A = 1 .. 9;
 
-my $i;
 
-# $_=$`.$_.$'.<>;split//;${/[@_[map{$i-($i="@-")%9+$_,9*$_+$i%
-# 9,9*$_%26+$i-$i%27+$i%9-$i%3}0..8]]/o||do$0}for/0/||print..9
+
+
+G
+
 =pod
-$ARG=$PREMATCH.$ARG.$'.$POSTMATCH.<>;
-$ARG=split//$_;
-${/[@_[map{$i-($i="@-")%9+$_,9*$_+$i%9,9*$_%26+$i-$i%27+$i%9-$i%3}0..8]]/o||do $PROGRAM_NAME}
-for/0/||print..9
+echo 000010000301400860900500200700160000020805010000097004003004006048006907000080000 | perl sudoku.pl
+
+$_=$`.$_.$'.<>;split//;${/[@_[map{$i-($i="@-")%9+$_,9*$_+$i%
+9,9*$_%26+$i-$i%27+$i%9-$i%3}0..8]]/o||do$0}for/0/||print..9
 =cut
 }
 

@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+  <head><script type="text/javascript" src="/static/js/analytics.js?v=1504952612.0" charset="utf-8"></script>
+
+<script type="text/javascript">archive_analytics.values.service='wb';archive_analytics.values.server_name='wwwb-app16.us.archive.org';archive_analytics.values.server_ms=466;</script><script type="text/javascript" src="/static/js/wbhack.js?v=1504952612.0" charset="utf-8"></script>
+
+<script type="text/javascript">
+__wbhack.init('https://web.archive.org/web');
+</script>
+<link rel="stylesheet" type="text/css" href="/static/css/banner-styles.css?v=1504952612.0" />
+<link rel="stylesheet" type="text/css" href="/static/css/iconochive.css?v=1504952612.0" />
+
+<!-- End Wayback Rewrite JS Include -->
+    <title>Sudoku solver in four lines</title>
+    <link href="/web/20060513232943cs_/http://www.ecclestoad.co.uk:80/main.css" rel="stylesheet" type="text/css">
+    <link rel="alternate" type="application/rss+xml" title="Edmund von der Burg's blog" href="https://web.archive.org/web/20060513232943/http://www.ecclestoad.co.uk/blog/rss.xml"/>
+
+    
+  </head>
+  <body><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/timestamp.js?v=1504952612.0" charset="utf-8"></script>
+<script type="text/javascript" src="/static/js/graph-calc.js?v=1504952612.0" charset="utf-8"></script>
+<script type="text/javascript" src="/static/js/auto-complete.js?v=1504952612.0" charset="utf-8"></script>
+<script type="text/javascript" src="/static/js/toolbar.js?v=1504952612.0" charset="utf-8"></script>
+
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  /*min-width:800px !important;*/
+}
+.wb-autocomplete-suggestions {
+    text-align: left; cursor: default; border: 1px solid #ccc; border-top: 0; background: #fff; box-shadow: -1px 1px 3px rgba(0,0,0,.1);
+    position: absolute; display: none; z-index: 2147483647; max-height: 254px; overflow: hidden; overflow-y: auto; box-sizing: border-box;
+}
+.wb-autocomplete-suggestion { position: relative; padding: 0 .6em; line-height: 23px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.02em; color: #333; }
+.wb-autocomplete-suggestion b { font-weight: bold; }
+.wb-autocomplete-suggestion.selected { background: #f0f0f0; }
+</style>
+<div id="wm-ipp" lang="en" style="display:none;direction:ltr;">
+<div style="position:fixed;left:0;top:0;right:0;">
+<div id="wm-ipp-inside">
+  <div style="position:relative;">
+    <div id="wm-logo" style="float:left;width:130px;padding-top:10px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+    </div>
+    <div class="r" style="float:right;">
+      <div id="wm-btns" style="text-align:right;height:25px;">
+	<a href="http://faq.web.archive.org/" title="Get some help using the Wayback Machine" style="top:-5px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+	<a id="wm-tb-close" href="#close" onclick="__wm.h(event);return false;" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" style="text-align:right;">
+	<a href="#" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=https://web.archive.org/web/20060513232943/http://www.ecclestoad.co.uk:80/blog/2005/05/25/sudoku_solver_in_four_lines.html', '', 'height=400,width=600'); return false;" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+	<a href="#" onclick="window.open('https://twitter.com/intent/tweet?text=https://web.archive.org/web/20060513232943/http://www.ecclestoad.co.uk:80/blog/2005/05/25/sudoku_solver_in_four_lines.html&amp;via=internetarchive', '', 'height=400,width=600'); return false;" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+    </div>
+    <table class="c" style="">
+      <tbody>
+	<tr>
+	  <td class="u" colspan="2">
+	    <form target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://www.ecclestoad.co.uk:80/blog/2005/05/25/sudoku_solver_in_four_lines.html" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20060513232943" /><input type="submit" value="Go" /></form>
+	  </td>
+	  <td class="n" rowspan="2" style="width:110px;">
+	    <table>
+	      <tbody>
+		<!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+		<tr class="m">
+		  <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20060217130558/http://www.ecclestoad.co.uk:80/blog/2005/05/25/sudoku_solver_in_four_lines.html" title="17 Feb 2006"><strong>Feb</strong></a></td>
+		  <td class="c" id="displayMonthEl" title="You are here: 23:29:43 May 13, 2006">MAY</td>
+		  <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20060618000932/http://www.ecclestoad.co.uk:80/blog/2005/05/25/sudoku_solver_in_four_lines.html" title="18 Jun 2006"><strong>Jun</strong></a></td>
+		</tr>
+		<!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+		<tr class="d">
+		  <td class="b" nowrap="nowrap"><a href="https://web.archive.org/web/20060426135849/http://www.ecclestoad.co.uk:80/blog/2005/05/25/sudoku_solver_in_four_lines.html" title="13:58:49 Apr 26, 2006"><img src="/static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a></td>
+		  <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 23:29:43 May 13, 2006">13</td>
+		  <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20060618000932/http://www.ecclestoad.co.uk:80/blog/2005/05/25/sudoku_solver_in_four_lines.html" title="00:09:32 Jun 18, 2006"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a></td>
+		</tr>
+		<!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+		<tr class="y">
+		  <td class="b" nowrap="nowrap">2005</td>
+		  <td class="c" id="displayYearEl" title="You are here: 23:29:43 May 13, 2006">2006</td>
+		  <td class="f" nowrap="nowrap"><a href="https://web.archive.org/web/20070703070645/http://www.ecclestoad.co.uk/blog/2005/05/25/sudoku_solver_in_four_lines.html" title="03 Jul 2007"><strong>2007</strong></a></td>
+		</tr>
+	      </tbody>
+	    </table>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="s">
+	    	    <div id="wm-nav-captures">
+	      	      <a class="t" href="/web/20060513232943*/http://www.ecclestoad.co.uk:80/blog/2005/05/25/sudoku_solver_in_four_lines.html" title="See a list of every capture for this URL">30 captures</a>
+	      <div class="r" title="Timespan for captures of this URL">30 Jun 2005 - 05 Jun 2013</div>
+	      </div>
+	  </td>
+	  <td class="k">
+	    <a href="" id="wm-graph-anchor">
+	      <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+		<canvas id="wm-sparkline-canvas" width="550" height="27" border="0"></canvas>
+	      </div>
+	    </a>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+    <div style="position:absolute;bottom:0;right:2px;text-align:right;">
+      <a id="wm-expand" class="wm-btn" href="#expand" onclick="__wm.ex(event);return false;"><span class="iconochive-down-solid"></span> <span style="font-size:80%">About this capture</span></a>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none;">
+            <div style="background-color:#353535;color:#aaa;font-weight:bold;text-align:center;"><a class="wm-selector selected" href="javascript:void(0)">COLLECTED BY</a></div>
+    <div style="padding:3px;position:relative;">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexa_ei)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/alexa_ei" target="_new"><span class="wm-title">Alexa Crawl EI</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Crawl EI from Alexa Internet.  This data is currently not publicly accessible.
+	</div>
+	      </div>
+    </div></div></div></div></div><script type="text/javascript">
+__wm.bt(550,27,25,2,"web","http://www.ecclestoad.co.uk:80/blog/2005/05/25/sudoku_solver_in_four_lines.html","2006-05-13",1996);
+</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<div class="header-wrapper">
+  <img src="/web/20060513232943im_/http://www.ecclestoad.co.uk:80/i/eccles_and_toad.gif" alt="Eccles &amp; Toad" align="left">
+
+    <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/">home</a>
+~ <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/blog/">blog</a>
+~ <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/perl/">perl</a>
+~ <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/projects/">projects</a>
+~ <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/employ-me/">employ me</a>
+
+  <br>
+
+  You are here: <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/">home</a> &gt; <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/blog/">blog</a> &gt; <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/blog/2005">2005</a> &gt; <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/blog/2005/05">05</a> &gt; <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/blog/2005/05/25">25</a> &gt; <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/blog/2005/05/25/sudoku_solver_in_four_lines.html">Sudoku solver in four lines</a>
+  <br clear="all">
+
+</div>
+
+<div class="google-ads">
+<script type="text/javascript"><!--
+google_ad_client = "pub-7132662714982338";
+google_ad_width = 120;
+google_ad_height = 600;
+google_ad_format = "120x600_as";
+google_ad_type = "text";
+google_ad_channel ="";
+google_color_border = "CCCCCC";
+google_color_bg = "FFFFFF";
+google_color_link = "999999";
+google_color_url = "99CCFF";
+google_color_text = "999999";
+//--></script>
+<script type="text/javascript" src="https://web.archive.org/web/20060513232943js_/http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+
+
+<h1>Sudoku solver in four lines</h1>
+
+<p>Slightly silly perhaps but I thought it would be fun to write a
+piece of code to solve these sudoku puzzles that keep popping up. As
+that appeared to be trivial I decided to see if it could be done in
+four lines or less. Here it is:</p>
+
+<pre>
+$a=8;$G{int(++$a/9).$a%9+1}=$_ for split//,&lt;&gt;;@A=1..9;sub c{int(($_[0]-1
+)/3)*3}sub G{for$y(@A){for$x(@A){$p=$t=$G{my$c=$y.$x}&amp;&next;$t.=$G{$_.$x
+}.$G{$y.$_}for@A;for$f(1..3){$t.=$G{c($y)+$f.c($x)+$_}for 1..3}G($G{$c}=
+$_)&amp;&return; for grep$t!~m/$_/,@A;return$G{$c}=0}}die map{$G{$_}}9..99}G
+</pre>
+
+<p><b>Update</b> - there is also an <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/blog/2005/05/27/obfuscation_as_a_learning_tool.html">explanation
+of this code</a> and a <a href="/web/20060513232943/http://www.ecclestoad.co.uk:80/blog/2005/06/02/sudoku_solver_in_three_lines_explained.html">three
+line version</a>.</p>
+
+<p>It is slightly arcane in it's usage but what do you expect from
+four lines of Perl? The best way to run it is to save it to a file (eg
+<tt>sudoku.pl</tt>). You need to feed it the start grid as well. This
+is one long line with the top row first, the second row next and so
+on. Use zeros for the blanks. Do not separate the rows with a space,
+just push them all together.</p>
+
+<p>For example the following puzzle was given in the Economist (21 May
+2005) on page 75:</p>
+
+<pre>
+. . . . 1 . . . .
+3 . 1 4 . . 8 6 .
+9 . . 5 . . 2 . .
+7 . . 1 6 . . . .
+. 2 . 8 . 5 . 1 .   (dots are used for the blanks)
+. . . . 9 7 . . 4
+. . 3 . . 4 . . 6
+. 4 8 . . 6 9 . 7
+. . . . 8 . . . .
+</pre>
+
+
+<p>This would give you the following line for input:</p>
+
+<pre>
+000010000301400860900500200700160000020805010000097004003004006048006907000080000
+</pre>
+
+<p>If you saved the input in a file called <tt>input.txt</tt> you could
+then run the solver like this:</p>
+
+<pre>perl sudoku.pl &lt; input.txt</pre>
+
+<p>The output is the same format as the input - that is to say all the
+rows on one line.</p>
+
+<p>It will only work for 9x9 grids containing numbers 1 to 9. Hope you
+enjoy it.</p>
+
+
+<div class="footer-wrapper">
+  &copy; 2005 Eccles &amp; Toad ~
+  <a class="grey" href="https://web.archive.org/web/20060513232943/mailto:evdb@ecclestoad.co.uk">evdb@ecclestoad.co.uk</a>
+</div>
+
+  </body>
+</html>
+
