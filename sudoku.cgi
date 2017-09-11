@@ -46,6 +46,8 @@ my @TempGameArray; #simple $TempGameArray[$x][$y] = $value | undef
 my @PossibleNumberArray; #global for recursive routines. $PossibleNumberArray[$x][$y]{0 - 9} = 1|undef Note: Final value is a series of hashes = 1 so we can easily remove them = undef
 my @TempPossibleNumberArray; #global for recursive routines. $PossibleNumberArray[$x][$y]{0 - 9} = 1|undef Note: Final value is a series of hashes = 1 so we can easily remove them = undef
 my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns,hs,np,ir
+my %GridFast;
+my @OneToNine = 1 .. 9;
 my $RemoveAttempCount;
 my $starttime;
 my $TimeTaken;
@@ -229,35 +231,55 @@ for (my $y = 0; $y < 9 ; $y++)
       }
 }
 
-my %G;
-my @A = 1 .. 9;
 sub c
 {
+# returns 0, 3 or 6 for 1..3, 4..6 or 7..9.
+# ip 1,2or3 op 0
+#ip 4,5,6 op 3
+#ip 7,8,9 op 6
 int( ( $_[0] - 1 ) / 3 ) * 3;
 }
-sub G()
+sub TryToSolve()
 {
-for my $y (@A)
+# $G{$y$x}
+for my $y (@OneToNine)
     {
-    for my $x (@A)
+    for my $x (@OneToNine)
         {
-        my $p = my $t = $G{ my $c = $y . $x } && next;
-        $t .= $G{ $_ . $x } . $G{ $y . $_ } for @A;
-        for my $f ( 1 .. 3 ) { $t .= $G{ c($y) + $f . c($x) + $_ } for 1 .. 3 }
-        &G( $G{$c} = $_ ) && return for grep $t !~ m/$_/, @A;
-        return $G{$c} = 0;
+        my $CurrentCell = my $t = $GridFast{ my $c = $y . $x } && next;
+        $t .= $GridFast{ $_ . $x } . $GridFast{ $y . $_ } for @OneToNine;
+        for my $f ( 1 .. 3 ) { $t .= $GridFast{ c($y) + $f . c($x) + $_ } for 1 .. 3 }
+        &TryToSolve( $GridFast{$c} = $_ ) && return for grep $t !~ m/$_/, @OneToNine;
+        return $GridFast{$c} = 0;
         }
     }
-die map { $G{$_} } 9 .. 99;
+my @output = map { $GridFast{$_} } 9 .. 99;
 }
 
 sub IsPuzzleSolvableFast()
 {
+my $input;
+for my $y (@OneToNine)
+    {
+    for my $x (@OneToNine)
+        {
+        if( $TempGameArray[$x][$y] == undef )
+            {
+            $input = $input . "0";
+            $GridFast{ $y . $x } = 0;    
+            }
+        else
+            {
+            $input = $input . $TempGameArray[$x][$y];
+            $GridFast{ $y . $x } =  $TempGameArray[$x][$y];
+            }
+        }
+    }
+    
 #try 3 line? simpler?
-my $a = 8;
-$G{ int( ++$a / 9 ) . $a % 9 + 1 } = $_ for split //, <>;
-&G();
-
+#my $a = 8;
+#my $output = $G{ int( ++$a / 9 ) . $a % 9 + 1 } = $_ for split //, <>;
+&TryToSolve();
 
 =pod
 echo 000010000301400860900500200700160000020805010000097004003004006048006907000080000 | perl sudoku.pl
@@ -722,7 +744,8 @@ if($debug) {print DEBUG "Testing IsPuzzleSolvable.<br>";}
 &CopyGameArrays( \@GameArray  , \@TempGameArray );
 #&CalcAllBlankCellsInTempGameArray();
 #if ( &RecursiveSolveTempGameArray(@AllBlankCells)==0 ) #if it is not solvable replace the number in the grid
-if (&IsPuzzleSolvable()==0)
+#if (&IsPuzzleSolvable()==0)
+if (&IsPuzzleSolvableFast()==0)
       {
       if($debug) {print DEBUG "Previous RecursiveRemoveCells was not Solvable. Returning 0<br>";}
       return 0
