@@ -231,7 +231,7 @@ for (my $y = 0; $y < 9 ; $y++)
       }
 }
 
-sub c
+sub block_offset
 {
 # returns 0, 3 or 6 for 1..3, 4..6 or 7..9.
 # ip 1,2or3 op 0
@@ -246,10 +246,21 @@ for my $y (@OneToNine)
     {
     for my $x (@OneToNine)
         {
-        my $CurrentCell = my $t = $GridFast{ my $c = $y . $x } && next;
-        $t .= $GridFast{ $_ . $x } . $GridFast{ $y . $_ } for @OneToNine;
-        for my $f ( 1 .. 3 ) { $t .= $GridFast{ c($y) + $f . c($x) + $_ } for 1 .. 3 }
-        &TryToSolve( $GridFast{$c} = $_ ) && return for grep $t !~ m/$_/, @OneToNine;
+        #look for blank cell. if == 0 then next
+        my $CurrentCell = my $taken = $GridFast{ my $c = $y . $x } && next; 
+        #set taken for this cell based on row and col
+        $taken .= $GridFast{ $_ . $x } . $GridFast{ $y . $_ } for @OneToNine;
+        #set taken for block
+        for my $yy ( 1 .. 3 )
+            {
+            for my $xx (1 .. 3)
+                {    
+                $taken .= $GridFast{ block_offset($y) + $yy . block_offset($x) + $xx }
+                }
+            }
+        
+        &TryToSolve( $GridFast{$c} = $_ ) && return for grep $taken !~ m/$_/, @OneToNine;
+        
         return $GridFast{$c} = 0;
         }
     }
