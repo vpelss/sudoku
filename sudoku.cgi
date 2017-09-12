@@ -47,7 +47,7 @@ my @PossibleNumberArray; #global for recursive routines. $PossibleNumberArray[$x
 my @TempPossibleNumberArray; #global for recursive routines. $PossibleNumberArray[$x][$y]{0 - 9} = 1|undef Note: Final value is a series of hashes = 1 so we can easily remove them = undef
 my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns,hs,np,ir
 my %GridFast;
-my @OneToNine = 1 .. 9;
+#my @OneToNine = 1 .. 9;
 my $RemoveAttempCount;
 my $starttime;
 my $TimeTaken;
@@ -239,45 +239,75 @@ sub block_offset
 #ip 7,8,9 op 6
 int( ( $_[0] - 1 ) / 3 ) * 3;
 }
+
 sub TryToSolve()
 {
-# $G{$y$x}
-for my $y (@OneToNine)
+# Note: $GridFast{$y$x}
+my $taken; # !!!!!!!!! should be hash to avoid duplicates!
+for my $y (0..8)
     {
-    for my $x (@OneToNine)
+    for my $x (0..8)
         {
         #look for blank cell. if == 0 then next
-        my $CurrentCell = my $taken = $GridFast{ my $c = $y . $x } && next; 
+        $GridFast{ my $cell = $y . $x } && next; 
         #set taken for this cell based on row and col
-        $taken .= $GridFast{ $_ . $x } . $GridFast{ $y . $_ } for @OneToNine;
+        $taken .= $GridFast{ $_ . $x } . $GridFast{ $y . $_ } for 0..8;
+=pod        
+        foreach my $OneToNine ( @OneToNine )
+            {
+            $taken{ $GridFast{ $OneToNine . $x } } = 1;
+            $taken{ $GridFast{ $y . $OneToNine } } = 1;
+            }
+=cut
         #set taken for block
         for my $yy ( 1 .. 3 )
             {
             for my $xx (1 .. 3)
                 {    
                 $taken .= $GridFast{ block_offset($y) + $yy . block_offset($x) + $xx }
+                #$taken{ $GridFast{ block_offset($y) + $yy . block_offset($x) + $xx } } = 1;
                 }
             }
         
-        &TryToSolve( $GridFast{$c} = $_ ) && return for grep $taken !~ m/$_/, @OneToNine;
-        
-        return $GridFast{$c} = 0;
+        foreach my $try ( grep $taken !~ m/$_/, 0..8 ) #for 1..9 NOT in $taken
+        #foreach my $try ( keys %taken ) #for each non zero $taken
+            {
+            $GridFast{$cell} = $try;
+            #&TryToSolve() && return 1;
+            my $result = &TryToSolve(); 
+            if($result == 1)
+                {return 1;} #return only reached if call returns a true. cascade back condition 
+            }
+        #this point is reached only if all our $try have failed in this $cell
+        $GridFast{$cell} = 0;
+        return 0;
         }
     }
-my @output = map { $GridFast{$_} } 9 .. 99;
+#all cells have a non zero value. done
+my @output;
+for my $y (0..8)
+    {
+    for my $x (0..8)
+        {
+        #push @GlobalOutput , $GridFast{ my $cell = $y . $x }   
+        }
+    }
+#die map { $GridFast{$_} } 9 .. 99;
+#@output = map { $GridFast{$_} } 9 .. 99;
+return 1;
 }
 
 sub IsPuzzleSolvableFast()
 {
 my $input;
-for my $y (@OneToNine)
+for my $y (0..8)
     {
-    for my $x (@OneToNine)
+    for my $x (0..8)
         {
         if( $TempGameArray[$x][$y] == undef )
             {
             $input = $input . "0";
-            $GridFast{ $y . $x } = 0;    
+            $GridFast{ $y+1 . $x+1 } = 0;    
             }
         else
             {
@@ -579,6 +609,7 @@ foreach my $cell ( @AllCells )
 
 sub IsPuzzleSolvable()
 {
+#note the techniques used must not be a blind recursive or random attempt. Those types solve for grids without unique solutions!!!!  
 #$debug = 0;
 #this takes a partially filled @TempGameArray and continually try to solve it by various techniques, IR, NP, HS and finally NS
 #it fails if there is no progress on one loop
@@ -757,8 +788,8 @@ if($debug) {print DEBUG "Testing IsPuzzleSolvable.<br>";}
 &CopyGameArrays( \@GameArray  , \@TempGameArray );
 #&CalcAllBlankCellsInTempGameArray();
 #if ( &RecursiveSolveTempGameArray(@AllBlankCells)==0 ) #if it is not solvable replace the number in the grid
-#if (&IsPuzzleSolvable()==0)
-if (&IsPuzzleSolvableFast()==0)
+if (&IsPuzzleSolvable()==0)
+#if (&IsPuzzleSolvableFast()==0)
       {
       if($debug) {print DEBUG "Previous RecursiveRemoveCells was not Solvable. Returning 0<br>";}
       return 0
