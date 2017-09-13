@@ -2,9 +2,9 @@
 <HTML> 
   <HEAD><META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 	 <META NAME="KEYWORDS"
-	  CONTENT="Sudoku , Friends , infinite , instant , unlimited , Sudoku , cross, word, generator , puzzle , script , Sudoku, printable , free">
+	  CONTENT="Sudoku , infinite , instant , unlimited , Sudoku , cross, word, generator , puzzle , script , Sudoku, printable , free">
 	 <META NAME="DESCRIPTION"
-	  CONTENT="Sudoku for Friends Infinite Free Sudoku Puzzle Generator Script to create Sudoku for prining or saving for use in your web browser">
+	  CONTENT="Sudoku : Infinite Free Sudoku Puzzle Generator Script to create Sudoku for prining">
 	 
 	 <TITLE>Sudoku Puzzle Generator by Emogic.com</TITLE><LINK REL="stylesheet"
 	 TYPE="text/css" HREF="/cgi/sudoku/ncross.css"> <STYLE TYPE="text/css">
@@ -83,7 +83,8 @@
   border-left: 1pt Black solid;
 }
 
-.bigtable{
+.bigtable 
+{
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
   border-bottom: 1pt Black solid;
@@ -1056,19 +1057,19 @@ $( "#SolutionDialog" ).dialog( "option", "width", 800 );
 				</TBODY> 
 			 </TABLE> </FORM></DIV> </DIV>
 	 <!--end  dialogs jqueryui-->
-	 <TABLE BORDER="0" ALIGN="CENTER">
-		<TR>
-		  <TD ALIGN="CENTER">
+	 <TABLE BORDER="0" ALIGN="CENTER"> 
+		<TR> 
+		  <TD ALIGN="CENTER"> 
 			 <DIV> 
 				<FORM>
 				  <INPUT TYPE="BUTTON" NAME="Button3" VALUE="How am I doing?"
-				  ONCLICK="keyinput(LastCursorID , 72);"> </FORM></DIV>
+				  ONCLICK="keyinput(LastCursorID , 72);"> </FORM></DIV> 
 			 <DIV> 
 				<FORM><INPUT TYPE="BUTTON" NAME="Button1"
 				  VALUE="Reveal Bad Choices"
-				  ONCLICK="keyinput(LastCursorID , 82);"></FORM></DIV></TD>
-		  <TD>
-			 <TABLE BORDER="1" ALIGN="CENTER"> 
+				  ONCLICK="keyinput(LastCursorID , 82);"></FORM></DIV></TD> 
+		  <TD> 
+			 <TABLE ALIGN="CENTER" CLASS="table_pad"> 
 				<TR> 
 				  <TD> 
 					 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON"
@@ -1111,20 +1112,20 @@ $( "#SolutionDialog" ).dialog( "option", "width", 800 );
 						NAME="Button1" VALUE="9" ONCLICK="keyinput(LastCursorID , 57);"
 						CLASS="pad_button_numeric"></FORM></TD> 
 				</TR> 
-			 </TABLE></TD>
-		  <TD ALIGN="CENTER">
+			 </TABLE></TD> 
+		  <TD ALIGN="CENTER"> 
 			 <DIV> 
 				<FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="Lock/Unlock"
-				  ONCLICK="keyinput(LastCursorID , 83);"></FORM></DIV>
+				  ONCLICK="keyinput(LastCursorID , 83);"></FORM></DIV> 
 			 <DIV> 
 				<FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="Clear Cell"
-				  ONCLICK="keyinput(LastCursorID , 67);"></FORM></DIV>
+				  ONCLICK="keyinput(LastCursorID , 67);"></FORM></DIV> 
 			 <DIV> 
 				<FORM>
 				  <INPUT TYPE="SUBMIT" VALUE="Clear Unlocked Cells"
 				  ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers that are not locked.')) {ClearUnlockedCells();}else{return false;}">
-				  </FORM></DIV></TD>
-		</TR>
+				  </FORM></DIV></TD> 
+		</TR> 
 	 </TABLE> 
 	 <TABLE CLASS="bigtable" CELLSPACING="0" CELLPADDING="0"
 	 ONCLICK="intable = 1;" ALIGN="CENTER"> 
@@ -1473,7 +1474,7 @@ $( "#SolutionDialog" ).dialog( "option", "width", 800 );
 	 <DIV ALIGN="CENTER"> 
 		<FORM> 
 		  <P><INPUT TYPE="BUTTON" NAME="Button6" VALUE="Puzzle Statistics"
-			 ONCLICK="Statistics();"></P></FORM></DIV>
+			 ONCLICK="Statistics();"></P></FORM></DIV> 
 	 <TABLE CELLPADDING="3" CELLSPACING="0" BGCOLOR="#FFFFFF" BORDER="0"
 	 ALIGN="CENTER"> 
 		<TR> 
@@ -1507,7 +1508,6 @@ else{};"></FORM></TD>
 	 <P>reset board fix</P> 
 	 <P>better layout</P> 
 	 <P>auto size? size fix</P> 
-	 <P>lock unlock button</P> 
 	 <P>modernize as per rules css!</P> 
 	 <P>folders for difficulties!</P> 
 		  
@@ -1582,13 +1582,6 @@ tt.href = window.location.href;
 FindStatic();
 ColorStatic();
 choose('cell_0_0'); 
- 
-//set our name for the chat if passed from facebook!
-var $name = gup("name");
-
-//setTimeout("continue_main();",1000);
-var exposed = 81 - blanksquares;
-//send_chat(unescape($name + ' joined the game.  ' + exposed + ' exposed numbers in this puzzle'));
 SolutionClass();
 start_cross(document.getElementById("Solution")); //solve js solution board
 get_sudoku_updates();

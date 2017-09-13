@@ -2,16 +2,8 @@
 
 #!/usr/bin/perl -d
 
-#still have not implemented XWing or YWing searches
-#maybe run a brute force generic solvable routine after all the other tests? too slow!
+#still have not implemented YWing searches
 
-#try with blank Possibility Array, all blank. Then work backwards. Ex:
-
-#try with full Possibility Array, all blank. Then work backwards. Ex: set single grid # if ns works there by not creating a spot with no possibilitis!
-#faster? and more direct and we can target types of searches
-
-#INTERFACE: right click brings up phone like number pad with all possibilities.
-#use English;
 use strict;
 use List::Util qw(shuffle);
 use sudokuvars;
@@ -46,8 +38,6 @@ my @TempGameArray; #simple $TempGameArray[$x][$y] = $value | undef
 my @PossibleNumberArray; #global for recursive routines. $PossibleNumberArray[$x][$y]{0 - 9} = 1|undef Note: Final value is a series of hashes = 1 so we can easily remove them = undef
 my @TempPossibleNumberArray; #global for recursive routines. $PossibleNumberArray[$x][$y]{0 - 9} = 1|undef Note: Final value is a series of hashes = 1 so we can easily remove them = undef
 my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns,hs,np,ir
-my %GridFast;
-#my @OneToNine = 1 .. 9;
 my $RemoveAttempCount;
 my $starttime;
 my $TimeTaken;
@@ -82,14 +72,6 @@ if ( $debug ) { open (DEBUG, ">../aaa.html") }
 &CalcRegionalCellLocations(); #build @cellsIn  : used quickly find cells in regions
 
 $starttime = time();
-#&FillTempPossibilityArray1to9();
-#RecursiveBuild(@AllCells);
-$TimeTaken = time() - $starttime;
-if ( $debug ){  print DEBUG "Time for CreateFullSudokuGridRecursive: $TimeTaken</br>";}
-print DEBUG &PrintTextGameArrayDebug();
-#exit;
-
-$starttime = time();
 $debug = 0;
 &CreateFullSudokuGridRecursive( @AllCells );
 $TimeTaken = time() - $starttime;
@@ -122,16 +104,13 @@ foreach my $cell ( @AllCells )
       my $choice = $GameArray[$x][$y];
       if ($choice == '') {$blanksquares++}
       }
-
 my $exposedsquares = 81 - $blanksquares;
-$globalstring = " RemoveAttempCount: $RemoveAttempCount | NS: $NS | HS: $HS | NP: $NP | IR1: $IR1  | IR2: $IR2 | XW: $XW | Blank: $blanksquares | Time: $TimeTaken";
+$globalstring = "Removal attempts: $RemoveAttempCount | NS: $NS | HS: $HS | NP: $NP | IR1: $IR1  | IR2: $IR2 | XW: $XW | Blank: $blanksquares | Time: $TimeTaken";
 $difficulty = "Simple";
-if ($HS > 0 )
-      {$difficulty = "Easy";}
-if ($NP > 0 )
-      {$difficulty = "Medium";}
-if ($IR > 0 )
-      {$difficulty = "Hard";}
+if ($HS > 0 ){$difficulty = "Easy";}
+if ($NP > 0 ){$difficulty = "Medium";}
+if ($IR > 0 ){$difficulty = "Hard";}
+if ($XW > 0 ){$difficulty = "Difficult";}
 
 if($debug) {print DEBUG &PrintGameArrayDebug();}
 
@@ -140,14 +119,12 @@ my @DATA = <DATA>;
 close (DATA);
 my $template_file = join('' , @DATA);
 
-my $jscalcpuzz = "";
+my $jscalcpuzz = ""; #javascript puzzle
 #replace cell template data
 for (my $y = 0; $y < 9 ; $y++)
       {
       for (my $x = 0; $x < 9 ; $x++)
-#foreach my $cell ( @AllCells )
             {
-            #my ($x,$y) = @{ $cell };
             $template_file =~ s/<\%solution\_$x\_$y\%>/$FullGameArray[$x][$y]/g;
             if ( $GameArray[$x][$y] != undef )
                   {
@@ -161,7 +138,6 @@ for (my $y = 0; $y < 9 ; $y++)
                   }
             }
       $jscalcpuzz .= "\n";
-      #$possibilities .= "<br>\n";
       }
 
 #$template_file =~ s/%possibilities%/$possibilities/g;
@@ -191,17 +167,19 @@ $template_file = "$template_file";
 
 #write archive game file and directory
 if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}
-if (not -d ("$archivepath/$uid")) {mkdir("$archivepath/$uid")  or die("Could not create archive path $archivepath/$uid");}
-if (not -d ("$archivepath/$uid/$game")) {mkdir("$archivepath/$uid/$game")  or die("Could not create archive path $archivepath/$uid/$game");}
-open (DATA, ">$archivepath/$uid/$game/index.html") or die("Could not create archive file $archivepath/$uid/$game/index.html");
+$archivepath = $archivepath . "/$uid";
+if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}
+$archivepath = $archivepath . "/$difficulty";
+if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}
+$archivepath = $archivepath . "/$game";
+if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}
+$archivepath = $archivepath . "/index.html";
+open (DATA, ">$archivepath") or die("Could not create archive file $archivepath");
 print DATA $template_file;
 close (DATA);
-#open (DATA, ">$archivepath/$uid/$game/out.txt") or die("Could not create chat file $archivepath/$uid/$game/out.txt");
-#close (DATA);
 
 #print a jump to game page output
-print qq|<META HTTP-EQUIV="Refresh" CONTENT="0; URL=$archiveurl/$uid/$game/?uid=$uid&name=$name">|; #name is for chat
-
+print qq|<META HTTP-EQUIV="Refresh" CONTENT="0; URL=$archivepath">|; 
 print "\n\n";
 if ($debug) {close DEBUG;}
 };
@@ -231,7 +209,7 @@ for (my $y = 0; $y < 9 ; $y++)
       }
 }
 
-sub RecursiveBuild()
+sub _RecursiveBuild()
 {
 #recursively go through each @AllCells
 #randomly choose a possible value
@@ -289,15 +267,13 @@ do
       $GameArray[$x][$y] = $choice;
       if($debug) { print DEBUG "Seting GameArray at $x,$y with $choice<br>" }
       }
-    #$TempGameArray[$x][$y] = $choice; #remove choice from $PossibleNumberArray[$x][$y]
-    #if($debug) { print DEBUG &PrintTempGameArrayDebug() }
     if($debug) { print DEBUG "Next Recursion<br>" }
     }
 until( &RecursiveBuild(@RemainingCells ) );
 return(1); #cascade
 }
 
-sub SetPossibilityArrayBasedOnGameArrayValuesUsingSudokuRules()
+sub _SetPossibilityArrayBasedOnGameArrayValuesUsingSudokuRules()
 {
 #IMPORTANT totally rebuilds/wipes @PossibleNumberArray
 #fill up @PossibleNumberArray based on values in @$gameArray for each $row,$col,$squ
@@ -465,7 +441,7 @@ foreach my $cell ( @AllCells )
       }
 }
 
-sub FillTempPossibilityArray1to9()
+sub _FillTempPossibilityArray1to9()
 {
 foreach my $cell ( @AllCells )
       {
@@ -488,7 +464,7 @@ foreach my $cell ( @AllCells )
       }
 }
 
-sub CopyPossibleNumberArrays()
+sub _CopyPossibleNumberArrays()
 {
 #not tested
 #not used
@@ -565,7 +541,7 @@ if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
               }
             $AnyProgress += $LpXW;
             }
-$debug=0;
+
        if ($methods{ir})
             {
             $LpIR1 = &SetIR1(); #Set IR1 for rows and columns
@@ -638,7 +614,6 @@ $debug=0;
                   if ($debug) {print DEBUG "Set $LpNS NS<br>"}
                   }
            }
-$debug=1;
 
       #lets see if we are done yet
       $blanksquaresleft = &AreThereBlankSquares();
@@ -649,14 +624,10 @@ if ($blanksquaresleft == 0)
      {
      $solved = 1;
      } #it is only solvable if there are no blank squares left!
-
-#if ($debug) {print DEBUG "<br>\n solvable:$solved | blankleft:$blanksquaresleft | NS:$NS | NP:$NP | HS:$HS | IR:$IR | loopcount:$loopcount<br>\n";}
-
-$debug = 1;
 return ($solved);
 };
 
-sub CalcAllBlankCellsInTempGameArray()
+sub _CalcAllBlankCellsInTempGameArray()
 {
 @AllBlankCells=(); #erase old global or bad things will happen
 for (my $y = 0; $y < 9 ; $y++)
@@ -673,9 +644,6 @@ for (my $y = 0; $y < 9 ; $y++)
 
 sub RecursiveRemoveCells()
 {
-#&PrintGameArrayHTML();
-#&PrintPossibilityArrayHTML();
-
 my @CellsToRemove = shuffle @_; #will get shorter each loop by $NumberOfPicks
 my %RemovedList;
 $RemoveAttempCount++;
@@ -741,7 +709,7 @@ until( &RecursiveRemoveCells(@CellsToRemove) );
 return 1; #cascade back
 }
 
-sub RecursiveSolveTempGameArray()
+sub _RecursiveSolveTempGameArray()
 {
 #IMPORTANT: Does not require IsPuzzleSolvible loop.
 #It can replace it.
@@ -1291,7 +1259,7 @@ $string .=  "</pre>";
 return $string;
 }
 
-sub PrintTextTempGameArrayDebug()
+sub _PrintTextTempGameArrayDebug()
 {        #for game array
 my $string = "<pre>";
 
@@ -1314,7 +1282,7 @@ $string .=  "</pre>";
 return $string;
 }
 
-sub PrintTextPossibilityArrayDebug()
+sub _PrintTextPossibilityArrayDebug()
 {        #for game array
 my $string = "<pre>";
 
@@ -1337,7 +1305,7 @@ $string .=  "</pre>";
 return $string;
 }
 
-sub PrintGameArrayHTML()
+sub _PrintGameArrayHTML()
 {        #for game array
 open (HTML, ">./GameArray.html");
 my $string = "";
@@ -1362,7 +1330,7 @@ close HTML;
 #return $string;
 }
 
-sub PrintPossibilityArrayHTML()
+sub _PrintPossibilityArrayHTML()
 { #for poss array
 open (HTML, ">./PossibilityArray.html");
 
@@ -1411,7 +1379,7 @@ $string .=  "</table>";
 return $string;
 }
 
-sub PrintTempPossibilityArrayDebug()
+sub _PrintTempPossibilityArrayDebug()
 { #for poss array
 my $string = "TempPossibilityArray:</br>";
 
@@ -1499,128 +1467,4 @@ sub CgiErr {
     print "\n</PRE>";
     exit -1;
 }
-
-sub __SetGameArrayWithSinglePossibility()
-{
-#Not such a good idea. No benefit
-
-#NS Naked Singles
-#for @AllCells. if you find a cell with one possible value, set @TempGameArray as that value and remove value from @PossibleNumberArray
-#remove the possibility from the affected squ,row,col regions
-#only one that sets @TempGameArray
-
-foreach my $cell ( @AllCells)
-      {
-      my ($x,$y) = @{ $cell };
-      if (scalar(keys %{ $PossibleNumberArray[$x][$y] }) == 1)
-            {
-            #$countNS++;
-            my ($PossibleNumber) = keys %{ $PossibleNumberArray[$x][$y] };
-            $TempGameArray[$x][$y] = $PossibleNumber;
-            delete $PossibleNumberArray[$x][$y]{$PossibleNumber};
-            }
-      }
-};
-
-sub block_offset
-{
-# returns 0, 3 or 6 for 1..3, 4..6 or 7..9.
-# ip 1,2or3 op 0
-#ip 4,5,6 op 3
-#ip 7,8,9 op 6
-int( ( $_[0] - 1 ) / 3 ) * 3;
-}
-
-sub TryToSolve()
-{
-# Note: $GridFast{$y$x}
-my $taken; # !!!!!!!!! should be hash to avoid duplicates!
-for my $y (0..8)
-    {
-    for my $x (0..8)
-        {
-        #look for blank cell. if == 0 then next
-        $GridFast{ my $cell = $y . $x } && next; 
-        #set taken for this cell based on row and col
-        $taken .= $GridFast{ $_ . $x } . $GridFast{ $y . $_ } for 0..8;
-=pod        
-        foreach my $OneToNine ( @OneToNine )
-            {
-            $taken{ $GridFast{ $OneToNine . $x } } = 1;
-            $taken{ $GridFast{ $y . $OneToNine } } = 1;
-            }
-=cut
-        #set taken for block
-        for my $yy ( 1 .. 3 )
-            {
-            for my $xx (1 .. 3)
-                {    
-                $taken .= $GridFast{ block_offset($y) + $yy . block_offset($x) + $xx }
-                #$taken{ $GridFast{ block_offset($y) + $yy . block_offset($x) + $xx } } = 1;
-                }
-            }
-        
-        foreach my $try ( grep $taken !~ m/$_/, 0..8 ) #for 1..9 NOT in $taken
-        #foreach my $try ( keys %taken ) #for each non zero $taken
-            {
-            $GridFast{$cell} = $try;
-            #&TryToSolve() && return 1;
-            my $result = &TryToSolve(); 
-            if($result == 1)
-                {return 1;} #return only reached if call returns a true. cascade back condition 
-            }
-        #this point is reached only if all our $try have failed in this $cell
-        $GridFast{$cell} = 0;
-        return 0;
-        }
-    }
-#all cells have a non zero value. done
-my @output;
-for my $y (0..8)
-    {
-    for my $x (0..8)
-        {
-        #push @GlobalOutput , $GridFast{ my $cell = $y . $x }   
-        }
-    }
-#die map { $GridFast{$_} } 9 .. 99;
-#@output = map { $GridFast{$_} } 9 .. 99;
-return 1;
-}
-
-sub IsPuzzleSolvableFast()
-{
-my $input;
-for my $y (0..8)
-    {
-    for my $x (0..8)
-        {
-        if( $TempGameArray[$x][$y] == undef )
-            {
-            $input = $input . "0";
-            $GridFast{ $y+1 . $x+1 } = 0;    
-            }
-        else
-            {
-            $input = $input . $TempGameArray[$x][$y];
-            $GridFast{ $y . $x } =  $TempGameArray[$x][$y];
-            }
-        }
-    }
-    
-#try 3 line? simpler?
-#my $a = 8;
-#my $output = $G{ int( ++$a / 9 ) . $a % 9 + 1 } = $_ for split //, <>;
-my $output = &TryToSolve();
-
-print $output;
-
-=pod
-echo 000010000301400860900500200700160000020805010000097004003004006048006907000080000 | perl sudoku.pl
-
-$_=$`.$_.$'.<>;split//;${/[@_[map{$i-($i="@-")%9+$_,9*$_+$i%
-9,9*$_%26+$i-$i%27+$i%9-$i%3}0..8]]/o||do$0}for/0/||print..9
-=cut
-}
-
 
