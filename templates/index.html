@@ -102,6 +102,7 @@
 {
 height: 30pt;
 width: 30pt;
+border-radius: 3pt;
 }
 </STYLE> <SCRIPT SRC="/cgi/sudoku/ncross.js"></SCRIPT>
 	 <LINK REL="stylesheet" HREF="/jqueryui/jquery-ui.css"> <SCRIPT SRC="//code.jquery.com/jquery-1.10.2.js"></SCRIPT> <SCRIPT SRC="/jqueryui/jquery-ui.js"></SCRIPT> <SCRIPT
@@ -666,396 +667,7 @@ function SolutionsDialog()
 $( "#SolutionDialog" ).dialog( "option", "width", 800 );   
  };
  </SCRIPT> 
-	 <DIV ID="dialog-message" TITLE="How do I play?" CLASS="dialogs"
-	 STYLE="width:100%;"> 
-		<P>Suduku Rules:</P> 
-		<UL> 
-		  <LI>Every row must contain the numbers 1 through 9.</LI> 
-		  <LI> Every column must contain the numbers 1 through 9.</LI> 
-		  <LI> Every one of the 9 smaller squares (3 x 3) must contain the
-			 numbers 1 through 9.</LI> 
-		</UL> 
-		<P>How to Play:</P> 
-		<UL> 
-		  <LI>Use arrow keys to move cursor.</LI> 
-		  <LI>Use number keys to add number(s).</LI> 
-		  <LI>Note that you can add multiple numbers to use as a scratch
-			 pad.</LI> 
-		  <LI>To remove a number, hit that number again. 'C' will clear the
-			 current cell of all numbers, if unlocked.</LI> 
-		  <LI>When you are sure you have a correct number, hit 'S' to Save or
-			 unSave it.</LI> 
-		  <LI>Hit 'H' to see How you are doing. The result will show in the chat
-			 box.</LI> 
-		  <LI>Hit 'R' to Reveal the incorrect locked positions.</LI> 
-		  <LI>It is advisable to turn on your Num Lock is on and use the
-			 keypad.</LI> 
-		  <LI>If you accidentaly hit F5, your browser will refresh.</LI> 
-		  <LI>Add to Favorites to complete it at a later time.</LI> 
-		  <LI>If you print it, you may want to Show Answers at the bottom of this
-			 page first.</LI> 
-		</UL> </DIV> 
-	 <DIV ID="Statistics" TITLE="Statistics" CLASS="dialogs"> Difficulty: <B><A
-		HREF="#"
-		TITLE="This rating is based on algorithms used to generate this puzzle and may not be reflected in actual gameplay.">%difficulty%</A></B>
-		%globalstring%</DIV> 
-	 <DIV ID="SolutionDialog" STYLE="" CLASS="dialogs" TITLE="Solution"> 
-		<TABLE CLASS="bigtable" CELLSPACING="0" CELLPADDING="0" ALIGN="CENTER"> 
-		  <TR> 
-			 <TD> 
-				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				  <TR> 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_0_0"><%solution_0_0%></DIV></TD>
-					 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_1_0"><%solution_1_0%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_2_0"><%solution_2_0%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_0_1"><%solution_0_1%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_1_1"><%solution_1_1%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_2_1"><%solution_2_1%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_0_2"><%solution_0_2%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_1_2"><%solution_1_2%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_2_2"><%solution_2_2%></DIV></TD>
-					 
-				  </TR> 
-				</TABLE></TD> 
-			 <TD> 
-				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				  <TR> 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_3_0"><%solution_3_0%></DIV></TD>
-					 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_4_0"><%solution_4_0%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_5_0"><%solution_5_0%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_3_1"><%solution_3_1%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_4_1"><%solution_4_1%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_5_1"><%solution_5_1%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_3_2"><%solution_3_2%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_4_2"><%solution_4_2%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_5_2"><%solution_5_2%></DIV></TD>
-					 
-				  </TR> 
-				</TABLE> </TD> 
-			 <TD> 
-				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				  <TR> 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_6_0"><%solution_6_0%></DIV></TD>
-					 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_7_0"><%solution_7_0%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_8_0"><%solution_8_0%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_6_1"><%solution_6_1%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_7_1"><%solution_7_1%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_8_1"><%solution_8_1%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_6_2"><%solution_6_2%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_7_2"><%solution_7_2%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_8_2"><%solution_8_2%></DIV></TD>
-					 
-				  </TR> 
-				</TABLE></TD> 
-		  </TR> 
-		  <TR> 
-			 <TD> 
-				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				  <TR> 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_0_3"><%solution_0_3%></DIV></TD>
-					 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_1_3"><%solution_1_3%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_2_3"><%solution_2_3%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_0_4"><%solution_0_4%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_1_4"><%solution_1_4%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_2_4"><%solution_2_4%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_0_5"><%solution_0_5%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_1_5"><%solution_1_5%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_2_5"><%solution_2_5%></DIV></TD>
-					 
-				  </TR> 
-				</TABLE></TD> 
-			 <TD> 
-				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				  <TR> 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_3_3"><%solution_3_3%></DIV></TD>
-					 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_4_3"><%solution_4_3%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_5_3"><%solution_5_3%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_3_4"><%solution_3_4%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_4_4"><%solution_4_4%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_5_4"><%solution_5_4%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_3_5"><%solution_3_5%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_4_5"><%solution_4_5%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_5_5"><%solution_5_5%></DIV></TD>
-					 
-				  </TR> 
-				</TABLE></TD> 
-			 <TD> 
-				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				  <TR> 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_6_3"><%solution_6_3%></DIV></TD>
-					 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_7_3"><%solution_7_3%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_8_3"><%solution_8_3%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_6_4"><%solution_6_4%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_7_4"><%solution_7_4%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_8_4"><%solution_8_4%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_6_5"><%solution_6_5%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_7_5"><%solution_7_5%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_8_5"><%solution_8_5%></DIV></TD>
-					 
-				  </TR> 
-				</TABLE></TD> 
-		  </TR> 
-		  <TR> 
-			 <TD> 
-				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				  <TR> 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_0_6"><%solution_0_6%></DIV></TD>
-					 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_1_6"><%solution_1_6%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_2_6"><%solution_2_6%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_0_7"><%solution_0_7%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_1_7"><%solution_1_7%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_2_7"><%solution_2_7%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_0_8"><%solution_0_8%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_1_8"><%solution_1_8%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_2_8"><%solution_2_8%></DIV></TD>
-					 
-				  </TR> 
-				</TABLE></TD> 
-			 <TD> 
-				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				  <TR> 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_3_6"><%solution_3_6%></DIV></TD>
-					 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_4_6"><%solution_4_6%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_5_6"><%solution_5_6%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_3_7"><%solution_3_7%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_4_7"><%solution_4_7%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_5_7"><%solution_5_7%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_3_8"><%solution_3_8%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_4_8"><%solution_4_8%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_5_8"><%solution_5_8%></DIV></TD>
-					 
-				  </TR> 
-				</TABLE></TD> 
-			 <TD> 
-				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				  <TR> 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_6_6"><%solution_6_6%></DIV></TD>
-					 
-					 <TD HEIGHT="25"> 
-						<DIV CLASS="numbersquare" ID="solution_7_6"><%solution_7_6%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_8_6"><%solution_8_6%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_6_7"><%solution_6_7%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_7_7"><%solution_7_7%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_8_7"><%solution_8_7%></DIV></TD>
-					 
-				  </TR> 
-				  <TR> 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_6_8"><%solution_6_8%></DIV></TD>
-					 
-					 <TD> 
-						<DIV CLASS="numbersquare" ID="solution_7_8"><%solution_7_8%></DIV></TD>
-					 
-					 <TD WIDTH="25"> 
-						<DIV CLASS="numbersquare" ID="solution_8_8"><%solution_8_8%></DIV></TD>
-					 
-				  </TR> 
-				</TABLE></TD> 
-		  </TR> 
-		</TABLE> 
-		<DIV ALIGN="CENTER"> 
-		  <FORM ID="Solution"> 
-			 <TABLE ALIGN="CENTER"> 
-				<TBODY> 
-				  <TR VALIGN="MIDDLE"> 
-					 <TD VALIGN="middle" ALIGN="CENTER" COLSPAN="3">Sudoku
-						Solver</TD> 
-				  </TR> 
-				  <TR VALIGN="MIDDLE"> 
-					 <TD VALIGN="middle" ALIGN="LEFT" COLSPAN="3">If the grid below
-						is not complete, the puzzle is not solvable and there is a bug in our program..
-						Please notify us.at <A HREF="http://www.emogic.com/contact"
-						TARGET="_blank">http://www.emogic.com/contact</A></TD> 
-				  </TR> 
-				  <TR VALIGN="MIDDLE"> 
-					 <TD ALIGN="RIGHT">
-						<INPUT TYPE="BUTTON" ONCLICK="start_cross(this.form);" VALUE="Calculate 
- Answer" ID="answerbutton"><BR><TEXTAREA ID="map" NAME="map" ONKEYUP="start_cross(this.form);" ONCHANGE="start_cross(this.form);" ROWS="10" COLS="10">%jscalcpuzz%
-</TEXTAREA></TD> 
-					 <TD ID="result_here" CLASS="num_cross" COLSPAN="2"
-					 ALIGN="LEFT">&nbsp;</TD> 
-				  </TR> 
-				</TBODY> 
-			 </TABLE> </FORM></DIV> </DIV>
+	 
 	 <!--end  dialogs jqueryui-->
 	 <TABLE BORDER="0" ALIGN="CENTER"> 
 		<TR> 
@@ -1459,22 +1071,28 @@ $( "#SolutionDialog" ).dialog( "option", "width", 800 );
 				</TR> 
 			 </TABLE></TD> 
 		</TR> 
+	 </TABLE>
+	 <P ALIGN="CENTER"></P> 
+	 <TABLE ALIGN="CENTER">
+		<TR>
+		  <TD>
+			 <DIV ALIGN="CENTER"> 
+				<FORM> 
+				  <P><INPUT TYPE="BUTTON" NAME="Button7" VALUE="Solution"
+					 ONCLICK="SolutionsDialog();"></P></FORM></DIV></TD>
+		  <TD>
+			 <DIV ALIGN="CENTER"> 
+				<FORM> 
+				  <P><INPUT TYPE="BUTTON" NAME="Button6" VALUE="Puzzle Statistics"
+					 ONCLICK="Statistics();"></P></FORM></DIV></TD>
+		  <TD>
+			 <FORM METHOD="GET"> 
+				<P ALIGN="CENTER"><INPUT TYPE="SUBMIT"
+				  VALUE="Restart this Sudoku Board"
+				  ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers.')) {DeleteCookies();location.reload();}">
+				  </P> </FORM></TD>
+		</TR>
 	 </TABLE> 
-	 <DIV ALIGN="CENTER"> 
-		<FORM> 
-		  <P><INPUT TYPE="BUTTON" NAME="Button7" VALUE="Solution"
-			 ONCLICK="SolutionsDialog();"></P></FORM></DIV> 
-	 <FORM METHOD="GET"> 
-		<P ALIGN="CENTER"><INPUT TYPE="HIDDEN" NAME="uid" VALUE="%uid%"><INPUT
-		  TYPE="HIDDEN" NAME="game" VALUE="%game%"><INPUT TYPE="HIDDEN"
-		  NAME="name" VALUE="%name%"><INPUT TYPE="SUBMIT"
-		  VALUE="Restart this Sudoku Board"
-		  ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers.')) {DeleteCookies();location.reload();}">
-		  </P> </FORM> 
-	 <DIV ALIGN="CENTER"> 
-		<FORM> 
-		  <P><INPUT TYPE="BUTTON" NAME="Button6" VALUE="Puzzle Statistics"
-			 ONCLICK="Statistics();"></P></FORM></DIV> 
 	 <TABLE CELLPADDING="3" CELLSPACING="0" BGCOLOR="#FFFFFF" BORDER="0"
 	 ALIGN="CENTER"> 
 		<TR> 
@@ -1505,11 +1123,400 @@ else{};"></FORM></TD>
 		<A HREF="%archiveurl%/%uid%/%game%">%archiveurl%/%uid%/%game%/</A></P> 
 		-->
 	 <P>cookie imports export / save</P> 
-	 <P>reset board fix</P> 
 	 <P>better layout</P> 
 	 <P>auto size? size fix</P> 
 	 <P>modernize as per rules css!</P> 
-	 <P>folders for difficulties!</P> 
+	 <P>folders for difficulties!</P>
+	 <DIV ID="dialog-message" TITLE="How do I play?" CLASS="dialogs"
+	 STYLE="width:100%;"> 
+		<P>Suduku Rules:</P> 
+		<UL> 
+		  <LI>Every row must contain the numbers 1 through 9.</LI> 
+		  <LI> Every column must contain the numbers 1 through 9.</LI> 
+		  <LI> Every one of the 9 smaller squares (3 x 3) must contain the
+			 numbers 1 through 9.</LI> 
+		</UL> 
+		<P>How to Play:</P> 
+		<UL> 
+		  <LI>Use arrow keys to move cursor.</LI> 
+		  <LI>Use number keys to add number(s).</LI> 
+		  <LI>Note that you can add multiple numbers to use as a scratch
+			 pad.</LI> 
+		  <LI>To remove a number, hit that number again. 'C' will clear the
+			 current cell of all numbers, if unlocked.</LI> 
+		  <LI>When you are sure you have a correct number, hit 'S' to Save or
+			 unSave it.</LI> 
+		  <LI>Hit 'H' to see How you are doing. The result will show in the chat
+			 box.</LI> 
+		  <LI>Hit 'R' to Reveal the incorrect locked positions.</LI> 
+		  <LI>It is advisable to turn on your Num Lock is on and use the
+			 keypad.</LI> 
+		  <LI>If you accidentaly hit F5, your browser will refresh.</LI> 
+		  <LI>Add to Favorites to complete it at a later time.</LI> 
+		  <LI>If you print it, you may want to Show Answers at the bottom of this
+			 page first.</LI> 
+		</UL> </DIV> 
+	 <DIV ID="Statistics" TITLE="Statistics" CLASS="dialogs"> Difficulty: <B><A
+		HREF="#"
+		TITLE="This rating is based on algorithms used to generate this puzzle and may not be reflected in actual gameplay.">%difficulty%</A></B>
+		%globalstring%</DIV> 
+	 <DIV ID="SolutionDialog" STYLE="" CLASS="dialogs" TITLE="Solution"> 
+		<TABLE CLASS="bigtable" CELLSPACING="0" CELLPADDING="0" ALIGN="CENTER"> 
+		  <TR> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_0_0"><%solution_0_0%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_1_0"><%solution_1_0%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_2_0"><%solution_2_0%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_1"><%solution_0_1%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_1"><%solution_1_1%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_1"><%solution_2_1%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_2"><%solution_0_2%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_2"><%solution_1_2%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_2"><%solution_2_2%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_3_0"><%solution_3_0%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_4_0"><%solution_4_0%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_5_0"><%solution_5_0%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_1"><%solution_3_1%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_1"><%solution_4_1%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_1"><%solution_5_1%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_2"><%solution_3_2%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_2"><%solution_4_2%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_2"><%solution_5_2%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE> </TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_6_0"><%solution_6_0%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_7_0"><%solution_7_0%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_8_0"><%solution_8_0%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_1"><%solution_6_1%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_1"><%solution_7_1%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_1"><%solution_8_1%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_2"><%solution_6_2%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_2"><%solution_7_2%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_2"><%solution_8_2%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+		  </TR> 
+		  <TR> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_0_3"><%solution_0_3%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_1_3"><%solution_1_3%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_2_3"><%solution_2_3%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_4"><%solution_0_4%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_4"><%solution_1_4%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_4"><%solution_2_4%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_5"><%solution_0_5%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_5"><%solution_1_5%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_5"><%solution_2_5%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_3_3"><%solution_3_3%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_4_3"><%solution_4_3%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_5_3"><%solution_5_3%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_4"><%solution_3_4%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_4"><%solution_4_4%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_4"><%solution_5_4%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_5"><%solution_3_5%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_5"><%solution_4_5%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_5"><%solution_5_5%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_6_3"><%solution_6_3%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_7_3"><%solution_7_3%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_8_3"><%solution_8_3%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_4"><%solution_6_4%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_4"><%solution_7_4%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_4"><%solution_8_4%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_5"><%solution_6_5%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_5"><%solution_7_5%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_5"><%solution_8_5%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+		  </TR> 
+		  <TR> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_0_6"><%solution_0_6%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_1_6"><%solution_1_6%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_2_6"><%solution_2_6%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_7"><%solution_0_7%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_7"><%solution_1_7%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_7"><%solution_2_7%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_0_8"><%solution_0_8%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_1_8"><%solution_1_8%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_2_8"><%solution_2_8%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_3_6"><%solution_3_6%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_4_6"><%solution_4_6%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_5_6"><%solution_5_6%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_7"><%solution_3_7%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_7"><%solution_4_7%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_7"><%solution_5_7%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_3_8"><%solution_3_8%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_4_8"><%solution_4_8%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_5_8"><%solution_5_8%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+			 <TD> 
+				<TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				  <TR> 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_6_6"><%solution_6_6%></DIV></TD>
+					 
+					 <TD HEIGHT="25"> 
+						<DIV CLASS="numbersquare" ID="solution_7_6"><%solution_7_6%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_8_6"><%solution_8_6%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_7"><%solution_6_7%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_7"><%solution_7_7%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_7"><%solution_8_7%></DIV></TD>
+					 
+				  </TR> 
+				  <TR> 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_6_8"><%solution_6_8%></DIV></TD>
+					 
+					 <TD> 
+						<DIV CLASS="numbersquare" ID="solution_7_8"><%solution_7_8%></DIV></TD>
+					 
+					 <TD WIDTH="25"> 
+						<DIV CLASS="numbersquare" ID="solution_8_8"><%solution_8_8%></DIV></TD>
+					 
+				  </TR> 
+				</TABLE></TD> 
+		  </TR> 
+		</TABLE> 
+		<DIV ALIGN="CENTER"> 
+		  <FORM ID="Solution"> 
+			 <TABLE ALIGN="CENTER"> 
+				<TBODY> 
+				  <TR VALIGN="MIDDLE"> 
+					 <TD VALIGN="middle" ALIGN="CENTER" COLSPAN="3">Sudoku
+						Solver</TD> 
+				  </TR> 
+				  <TR VALIGN="MIDDLE"> 
+					 <TD VALIGN="middle" ALIGN="LEFT" COLSPAN="3">If the grid below
+						is not complete, the puzzle is not solvable and there is a bug in our program..
+						Please notify us.at <A HREF="http://www.emogic.com/contact"
+						TARGET="_blank">http://www.emogic.com/contact</A></TD> 
+				  </TR> 
+				  <TR VALIGN="MIDDLE"> 
+					 <TD ALIGN="RIGHT">
+						<INPUT TYPE="BUTTON" ONCLICK="start_cross(this.form);" VALUE="Calculate 
+ Answer" ID="answerbutton"><BR><TEXTAREA ID="map" NAME="map" ONKEYUP="start_cross(this.form);" ONCHANGE="start_cross(this.form);" ROWS="10" COLS="10">%jscalcpuzz%
+</TEXTAREA></TD> 
+					 <TD ID="result_here" CLASS="num_cross" COLSPAN="2"
+					 ALIGN="LEFT">&nbsp;</TD> 
+				  </TR> 
+				</TBODY> 
+			 </TABLE> </FORM></DIV> </DIV> 
 		  
 
 		  
