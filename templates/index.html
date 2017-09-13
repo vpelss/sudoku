@@ -638,8 +638,7 @@ for (var x = 0 ; x <= 8; x++)
 </SCRIPT> 
 
 
-<!--start How To Play dialog jqueryui-->
-	 <SCRIPT>
+<!--start dialogs jqueryui--><SCRIPT>
 //start dialogs and turn off
 $(function() {
     $( ".dialogs" ).dialog({
@@ -652,12 +651,47 @@ $(function() {
       }
     });
   });
-  
+ 
+</SCRIPT><SCRIPT>
+ 
 function howtoplay ()
  {
  $( '#dialog-message' ).dialog( "open" );
 $( "#dialog-message" ).dialog( "option", "width", 800 );   
  };
+ 
+</SCRIPT>
+	 <!--start Statistics dialog jqueryui-->
+	 <SCRIPT>
+  
+function Statistics ()
+ {
+ $( '#Statistics' ).dialog( "open" );
+$( "#Statistics" ).dialog( "option", "width", 800 );   
+ };
+ 
+</SCRIPT><!--start Solutions dialog jqueryui-->
+	 <SCRIPT>
+ 
+function SolutionsDialog()
+ {
+ $( '#SolutionDialog' ).dialog( "open" );
+$( "#SolutionDialog" ).dialog( "option", "width", 800 );   
+ };
+ 
+</SCRIPT><SCRIPT>
+//start dialogs and turn off
+$(function() {
+    $( ".dialogs" ).dialog({
+        autoOpen: false,
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+  });
  
 </SCRIPT> 
 	 <DIV ID="dialog-message" TITLE="How do I play?" CLASS="dialogs"
@@ -688,459 +722,12 @@ $( "#dialog-message" ).dialog( "option", "width", 800 );
 		  <LI>Add to Favorites to complete it at a later time.</LI> 
 		  <LI>If you print it, you may want to Show Answers at the bottom of this
 			 page first.</LI> 
-		</UL> </DIV>  
-<!--end How To Play dialog jqueryui-->
-	 <TABLE CELLPADDING="3" CELLSPACING="0" BGCOLOR="#FFFFFF" BORDER="1"
-	 ALIGN="CENTER"> 
-		<TR> 
-		  <TD> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="How do I play"
-				ONCLICK="howtoplay();"></FORM> </TD> 
-		  <TD> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button5"
-				VALUE="Create another Sudoku"
-				ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('%scripturl%/','_self');}
-else{};"></FORM></TD>
-		  
-		  <TD> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button2"
-				VALUE="Other Sudoku Puzzles"
-				ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('/sudoku/common/','_self');}
-else{};"></FORM></TD>
-		  
-		</TR> 
-		<TR> 
-		  <TD COLSPAN="3"> 
-			 <P ALIGN="CENTER">Your puzzle has been archived at:
-				<A HREF="%archiveurl%/%uid%/%game%">%archiveurl%/%uid%/%game%/</A></P></TD> 
-		</TR> 
-	 </TABLE> 
-	 <DIV ID="fbhide3" ALIGN="CENTER"> </DIV> 
-	 <DIV ALIGN="CENTER">Difficulty: <B><A HREF="#"
+		</UL> </DIV> 
+	 <DIV ID="Statistics" TITLE="Statistics" CLASS="dialogs"> Difficulty: <B><A
+		HREF="#"
 		TITLE="This rating is based on algorithms used to generate this puzzle and may not be reflected in actual gameplay.">%difficulty%</A></B>
 		%globalstring%</DIV> 
-	 <TABLE CLASS="bigtable" CELLSPACING="0" CELLPADDING="0"
-	 ONCLICK="intable = 1;" ALIGN="CENTER"> 
-		<TR> 
-		  <TD COLSPAN="3"> 
-			 <TABLE WIDTH="100%" CELLPADDING="0" CELLSPACING="0"> 
-				<TR> 
-				  <TD> 
-					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="1"
-						ONCLICK="keyinput(LastCursorID , 49);"
-						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
-				  <TD> 
-					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="2"
-						ONCLICK="keyinput(LastCursorID , 50);"
-						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
-				  <TD> 
-					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="3"
-						ONCLICK="keyinput(LastCursorID , 51);"
-						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
-				  <TD> 
-					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="4"
-						ONCLICK="keyinput(LastCursorID , 52);"
-						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
-				  <TD> 
-					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="5"
-						ONCLICK="keyinput(LastCursorID , 53);"
-						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
-				  <TD> 
-					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="6"
-						ONCLICK="keyinput(LastCursorID , 54);"
-						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
-				  <TD> 
-					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="7"
-						ONCLICK="keyinput(LastCursorID , 55);"
-						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
-				  <TD> 
-					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="8"
-						ONCLICK="keyinput(LastCursorID , 56);"
-						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
-				  <TD> 
-					 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="9"
-						ONCLICK="keyinput(LastCursorID , 57);"
-						STYLE="width:20pt; height: 20pt;"></FORM></TD> 
-				</TR> 
-			 </TABLE> </TD> 
-		  <TD ROWSPAN="4"> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button1"
-				VALUE="Lock/Unlock" ONCLICK="keyinput(LastCursorID , 83);"></FORM> 
-			 <FORM>
-				<INPUT TYPE="BUTTON" NAME="Button3" VALUE="How am I doing?"
-				ONCLICK="keyinput(LastCursorID , 72);"> </FORM> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="Reveal Bad Choices"
-				ONCLICK="keyinput(LastCursorID , 82);"></FORM> 
-			 <FORM> 
-				<P><INPUT TYPE="HIDDEN" NAME="uid" VALUE="%uid%"><INPUT
-				  TYPE="HIDDEN" NAME="game" VALUE="%game%"><INPUT TYPE="HIDDEN"
-				  NAME="name" VALUE="%name%"><INPUT TYPE="SUBMIT" VALUE="Clear Unlocked Cells"
-				  ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers that are not locked.')) {ClearUnlockedCells();}else{return false;}">
-				  </P> </FORM> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="Clear Cell"
-				ONCLICK="keyinput(LastCursorID , 67);"></FORM> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button4"
-				VALUE="Grid Bigger" ONCLICK="MakeBigger();"></FORM> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button4" VALUE="Grid Smaller"
-				ONCLICK="MakeSmaller();"></FORM> </TD> 
-		</TR> 
-		<TR> 
-		  <TD> 
-			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				<TR> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_0_0"
-					 ONCLICK="choose(this.id);"><%cell_0_0%></DIV></TD> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_1_0"
-					 ONCLICK="choose(this.id);"><%cell_1_0%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_2_0"
-					 ONCLICK="choose(this.id);"><%cell_2_0%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_0_1"
-					 ONCLICK="choose(this.id);"><%cell_0_1%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_1_1"
-					 ONCLICK="choose(this.id);"><%cell_1_1%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_2_1"
-					 ONCLICK="choose(this.id);"><%cell_2_1%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_0_2"
-					 ONCLICK="choose(this.id);"><%cell_0_2%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_1_2"
-					 ONCLICK="choose(this.id);"><%cell_1_2%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_2_2"
-					 ONCLICK="choose(this.id);"><%cell_2_2%></DIV></TD> 
-				</TR> 
-			 </TABLE></TD> 
-		  <TD> 
-			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				<TR> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_3_0"
-					 ONCLICK="choose(this.id);"><%cell_3_0%></DIV></TD> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_4_0"
-					 ONCLICK="choose(this.id);"><%cell_4_0%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_5_0"
-					 ONCLICK="choose(this.id);"><%cell_5_0%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_3_1"
-					 ONCLICK="choose(this.id);"><%cell_3_1%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_4_1"
-					 ONCLICK="choose(this.id);"><%cell_4_1%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_5_1"
-					 ONCLICK="choose(this.id);"><%cell_5_1%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_3_2"
-					 ONCLICK="choose(this.id);"><%cell_3_2%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_4_2"
-					 ONCLICK="choose(this.id);"><%cell_4_2%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_5_2"
-					 ONCLICK="choose(this.id);"><%cell_5_2%></DIV></TD> 
-				</TR> 
-			 </TABLE> </TD> 
-		  <TD> 
-			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				<TR> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_6_0"
-					 ONCLICK="choose(this.id);"><%cell_6_0%></DIV></TD> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_7_0"
-					 ONCLICK="choose(this.id);"><%cell_7_0%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_8_0"
-					 ONCLICK="choose(this.id);"><%cell_8_0%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_6_1"
-					 ONCLICK="choose(this.id);"><%cell_6_1%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_7_1"
-					 ONCLICK="choose(this.id);"><%cell_7_1%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_8_1"
-					 ONCLICK="choose(this.id);"><%cell_8_1%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_6_2"
-					 ONCLICK="choose(this.id);"><%cell_6_2%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_7_2"
-					 ONCLICK="choose(this.id);"><%cell_7_2%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_8_2"
-					 ONCLICK="choose(this.id);"><%cell_8_2%></DIV></TD> 
-				</TR> 
-			 </TABLE></TD> 
-		</TR> 
-		<TR> 
-		  <TD> 
-			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				<TR> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_0_3"
-					 ONCLICK="choose(this.id);"><%cell_0_3%></DIV></TD> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_1_3"
-					 ONCLICK="choose(this.id);"><%cell_1_3%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_2_3"
-					 ONCLICK="choose(this.id);"><%cell_2_3%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_0_4"
-					 ONCLICK="choose(this.id);"><%cell_0_4%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_1_4"
-					 ONCLICK="choose(this.id);"><%cell_1_4%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_2_4"
-					 ONCLICK="choose(this.id);"><%cell_2_4%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_0_5"
-					 ONCLICK="choose(this.id);"><%cell_0_5%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_1_5"
-					 ONCLICK="choose(this.id);"><%cell_1_5%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_2_5"
-					 ONCLICK="choose(this.id);"><%cell_2_5%></DIV></TD> 
-				</TR> 
-			 </TABLE></TD> 
-		  <TD> 
-			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				<TR> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_3_3"
-					 ONCLICK="choose(this.id);"><%cell_3_3%></DIV></TD> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_4_3"
-					 ONCLICK="choose(this.id);"><%cell_4_3%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_5_3"
-					 ONCLICK="choose(this.id);"><%cell_5_3%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_3_4"
-					 ONCLICK="choose(this.id);"><%cell_3_4%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_4_4"
-					 ONCLICK="choose(this.id);"><%cell_4_4%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_5_4"
-					 ONCLICK="choose(this.id);"><%cell_5_4%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_3_5"
-					 ONCLICK="choose(this.id);"><%cell_3_5%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_4_5"
-					 ONCLICK="choose(this.id);"><%cell_4_5%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_5_5"
-					 ONCLICK="choose(this.id);"><%cell_5_5%></DIV></TD> 
-				</TR> 
-			 </TABLE></TD> 
-		  <TD> 
-			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				<TR> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_6_3"
-					 ONCLICK="choose(this.id);"><%cell_6_3%></DIV></TD> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_7_3"
-					 ONCLICK="choose(this.id);"><%cell_7_3%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_8_3"
-					 ONCLICK="choose(this.id);"><%cell_8_3%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_6_4"
-					 ONCLICK="choose(this.id);"><%cell_6_4%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_7_4"
-					 ONCLICK="choose(this.id);"><%cell_7_4%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_8_4"
-					 ONCLICK="choose(this.id);"><%cell_8_4%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_6_5"
-					 ONCLICK="choose(this.id);"><%cell_6_5%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_7_5"
-					 ONCLICK="choose(this.id);"><%cell_7_5%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_8_5"
-					 ONCLICK="choose(this.id);"><%cell_8_5%></DIV></TD> 
-				</TR> 
-			 </TABLE></TD> 
-		</TR> 
-		<TR> 
-		  <TD> 
-			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				<TR> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_0_6"
-					 ONCLICK="choose(this.id);"><%cell_0_6%></DIV></TD> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_1_6"
-					 ONCLICK="choose(this.id);"><%cell_1_6%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_2_6"
-					 ONCLICK="choose(this.id);"><%cell_2_6%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_0_7"
-					 ONCLICK="choose(this.id);"><%cell_0_7%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_1_7"
-					 ONCLICK="choose(this.id);"><%cell_1_7%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_2_7"
-					 ONCLICK="choose(this.id);"><%cell_2_7%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_0_8"
-					 ONCLICK="choose(this.id);"><%cell_0_8%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_1_8"
-					 ONCLICK="choose(this.id);"><%cell_1_8%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_2_8"
-					 ONCLICK="choose(this.id);"><%cell_2_8%></DIV></TD> 
-				</TR> 
-			 </TABLE></TD> 
-		  <TD> 
-			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				<TR> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_3_6"
-					 ONCLICK="choose(this.id);"><%cell_3_6%></DIV></TD> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_4_6"
-					 ONCLICK="choose(this.id);"><%cell_4_6%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_5_6"
-					 ONCLICK="choose(this.id);"><%cell_5_6%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_3_7"
-					 ONCLICK="choose(this.id);"><%cell_3_7%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_4_7"
-					 ONCLICK="choose(this.id);"><%cell_4_7%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_5_7"
-					 ONCLICK="choose(this.id);"><%cell_5_7%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_3_8"
-					 ONCLICK="choose(this.id);"><%cell_3_8%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_4_8"
-					 ONCLICK="choose(this.id);"><%cell_4_8%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_5_8"
-					 ONCLICK="choose(this.id);"><%cell_5_8%></DIV></TD> 
-				</TR> 
-			 </TABLE></TD> 
-		  <TD> 
-			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
-				<TR> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_6_6"
-					 ONCLICK="choose(this.id);"><%cell_6_6%></DIV></TD> 
-				  <TD HEIGHT="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_7_6"
-					 ONCLICK="choose(this.id);"><%cell_7_6%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_8_6"
-					 ONCLICK="choose(this.id);"><%cell_8_6%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_6_7"
-					 ONCLICK="choose(this.id);"><%cell_6_7%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_7_7"
-					 ONCLICK="choose(this.id);"><%cell_7_7%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_8_7"
-					 ONCLICK="choose(this.id);"><%cell_8_7%></DIV></TD> 
-				</TR> 
-				<TR> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_6_8"
-					 ONCLICK="choose(this.id);"><%cell_6_8%></DIV></TD> 
-				  <TD> 
-					 <DIV CLASS="numbersquare" ID="cell_7_8"
-					 ONCLICK="choose(this.id);"><%cell_7_8%></DIV></TD> 
-				  <TD WIDTH="25"> 
-					 <DIV CLASS="numbersquare" ID="cell_8_8"
-					 ONCLICK="choose(this.id);"><%cell_8_8%></DIV></TD> 
-				</TR> 
-			 </TABLE></TD> 
-		</TR> 
-	 </TABLE> 
-	 <P></P> 
-	 <P ALIGN="CENTER"><A HREF="#" ONCLICK='showID("Solution");'>Show</A> or
-		<A HREF="#" ONCLICK='hideID("Solution");'>Hide</A> Sudoku Solution</P> 
-	 <FORM ID="Solution"> 
-		<TABLE ALIGN="CENTER"> 
-		  <TBODY> 
-			 <TR VALIGN="MIDDLE"> 
-				<TD VALIGN="middle" ALIGN="CENTER" COLSPAN="3">Sudoku Solver</TD> 
-			 </TR> 
-			 <TR VALIGN="MIDDLE"> 
-				<TD VALIGN="middle" ALIGN="LEFT" COLSPAN="3">If the grid below is
-				  not complete, the puzzle is not solvable and there is a bug in our program..
-				  Please notify us.at <A HREF="http://www.emogic.com/contact"
-				  TARGET="_blank">http://www.emogic.com/contact</A></TD> 
-			 </TR> 
-			 <TR VALIGN="MIDDLE"> 
-				<TD VALIGN="middle" ALIGN="LEFT" WIDTH="50%">
-				  <INPUT TYPE="BUTTON" ONCLICK="start_cross(this.form);" VALUE="Calculate 
- Answer" ID="answerbutton"><BR><TEXTAREA ID="map" NAME="map" ONKEYUP="start_cross(this.form);" ONCHANGE="start_cross(this.form);" ROWS="10" COLS="10">%jscalcpuzz%
-</TEXTAREA></TD> 
-				<TD VALIGN="MIDDLE" ID="result_here" CLASS="num_cross" COLSPAN="2"
-				WIDTH="50%">&nbsp;</TD> 
-			 </TR> 
-		  </TBODY> 
-		</TABLE> </FORM> 
-	 <DIV ID="Solution__" STYLE="display: none"> 
+	 <DIV ID="SolutionDialog" STYLE="dialogs"> 
 		<TABLE CLASS="bigtable" CELLSPACING="0" CELLPADDING="0" ALIGN="CENTER"> 
 		  <TR> 
 			 <TD> 
@@ -1472,8 +1059,479 @@ else{};"></FORM></TD>
 				  </TR> 
 				</TABLE></TD> 
 		  </TR> 
-		</TABLE> </DIV> 
-	 <FORM ACTION="%scripturl%/clear.cgi" METHOD="GET"> 
+		</TABLE> </DIV>
+	 <!--end  dialogs jqueryui-->
+	 <TABLE CELLPADDING="3" CELLSPACING="0" BGCOLOR="#FFFFFF" BORDER="1"
+	 ALIGN="CENTER"> 
+		<TR> 
+		  <TD> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="How do I play"
+				ONCLICK="howtoplay();"></FORM> </TD> 
+		  <TD> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button5"
+				VALUE="Create another Sudoku"
+				ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('%scripturl%/','_self');}
+else{};"></FORM></TD>
+		  
+		  <TD> 
+			 <FORM><INPUT TYPE="BUTTON" NAME="Button2"
+				VALUE="Other Sudoku Puzzles"
+				ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('/sudoku/common/','_self');}
+else{};"></FORM></TD>
+		  
+		</TR> 
+		<TR> 
+		  <TD COLSPAN="3"> 
+			 <P ALIGN="CENTER">Your puzzle has been archived at:
+				<A HREF="%archiveurl%/%uid%/%game%">%archiveurl%/%uid%/%game%/</A></P></TD> 
+		</TR> 
+	 </TABLE> 
+	 <DIV ALIGN="CENTER"> 
+		<FORM> 
+		  <P><INPUT TYPE="BUTTON" NAME="Button6" VALUE="Statistics"
+			 ONCLICK="Statistics();"></P></FORM></DIV> 
+	 <P>cookie imports export / save</P> 
+	 <P>reset board fix</P> 
+	 <P>better layout</P> 
+	 <P>auto size? size fix</P> 
+	 <P>stats button</P> 
+	 <P>lock unlock button</P> 
+	 <P>pop up show?</P> 
+	 <P>modernize as per rules css!</P> 
+	 <DIV ID="fbhide3" ALIGN="CENTER"> </DIV> 
+	 <FORM><INPUT TYPE="BUTTON" NAME="Button4" VALUE="Grid Bigger"
+		ONCLICK="MakeBigger();"></FORM> 
+	 <FORM><INPUT TYPE="BUTTON" NAME="Button4" VALUE="Grid Smaller"
+		ONCLICK="MakeSmaller();"></FORM> 
+	 <DIV ALIGN="CENTER"> 
+		<DIV STYLE="display: inline;"> 
+		  <FORM STYLE="display: inline;">
+			 <INPUT TYPE="BUTTON" NAME="Button3" VALUE="How am I doing?"
+			 ONCLICK="keyinput(LastCursorID , 72);"> </FORM></DIV> 
+		<DIV STYLE="display: inline"> 
+		  <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+			 VALUE="Reveal Bad Choices" ONCLICK="keyinput(LastCursorID , 82);"></FORM></DIV>
+		</DIV> 
+	 <DIV ALIGN="CENTER"> 
+		<DIV STYLE="display: inline;"> 
+		  <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+			 VALUE="Clear Cell" ONCLICK="keyinput(LastCursorID , 67);"></FORM></DIV> 
+		<DIV STYLE="display: inline"> 
+		  <FORM STYLE="display: inline;">
+			 <INPUT TYPE="HIDDEN" NAME="uid" VALUE="%uid%"><INPUT TYPE="HIDDEN" NAME="game"
+			 VALUE="%game%"><INPUT TYPE="HIDDEN" NAME="name" VALUE="%name%"><INPUT
+			 TYPE="SUBMIT" VALUE="Clear Unlocked Cells"
+			 ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers that are not locked.')) {ClearUnlockedCells();}else{return false;}">
+			 </FORM></DIV> </DIV> 
+	 <DIV ALIGN="CENTER"> 
+		<FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+		  VALUE="Lock/Unlock" ONCLICK="keyinput(LastCursorID , 83);"></FORM></DIV> 
+	 <TABLE BORDER="1" ALIGN="CENTER"> 
+		<TR> 
+		  <TD> 
+			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+				VALUE="1" ONCLICK="keyinput(LastCursorID , 49);"
+				STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+		  <TD> 
+			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+				VALUE="2" ONCLICK="keyinput(LastCursorID , 50);"
+				STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+		  <TD> 
+			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+				VALUE="3" ONCLICK="keyinput(LastCursorID , 51);"
+				STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+		</TR> 
+		<TR> 
+		  <TD> 
+			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+				VALUE="4" ONCLICK="keyinput(LastCursorID , 52);"
+				STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+		  <TD> 
+			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+				VALUE="5" ONCLICK="keyinput(LastCursorID , 53);"
+				STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+		  <TD> 
+			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+				VALUE="6" ONCLICK="keyinput(LastCursorID , 54);"
+				STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+		</TR> 
+		<TR> 
+		  <TD> 
+			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+				VALUE="7" ONCLICK="keyinput(LastCursorID , 55);"
+				STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+		  <TD> 
+			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+				VALUE="8" ONCLICK="keyinput(LastCursorID , 56);"
+				STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+		  <TD> 
+			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
+				VALUE="9" ONCLICK="keyinput(LastCursorID , 57);"
+				STYLE="width:20pt; height: 20pt;"></FORM></TD> 
+		</TR> 
+	 </TABLE> 
+	 <TABLE CLASS="bigtable" CELLSPACING="0" CELLPADDING="0"
+	 ONCLICK="intable = 1;" ALIGN="CENTER"> 
+		<TR> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_0_0"
+					 ONCLICK="choose(this.id);"><%cell_0_0%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_1_0"
+					 ONCLICK="choose(this.id);"><%cell_1_0%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_2_0"
+					 ONCLICK="choose(this.id);"><%cell_2_0%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_1"
+					 ONCLICK="choose(this.id);"><%cell_0_1%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_1"
+					 ONCLICK="choose(this.id);"><%cell_1_1%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_1"
+					 ONCLICK="choose(this.id);"><%cell_2_1%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_2"
+					 ONCLICK="choose(this.id);"><%cell_0_2%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_2"
+					 ONCLICK="choose(this.id);"><%cell_1_2%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_2"
+					 ONCLICK="choose(this.id);"><%cell_2_2%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_3_0"
+					 ONCLICK="choose(this.id);"><%cell_3_0%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_4_0"
+					 ONCLICK="choose(this.id);"><%cell_4_0%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_5_0"
+					 ONCLICK="choose(this.id);"><%cell_5_0%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_1"
+					 ONCLICK="choose(this.id);"><%cell_3_1%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_1"
+					 ONCLICK="choose(this.id);"><%cell_4_1%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_1"
+					 ONCLICK="choose(this.id);"><%cell_5_1%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_2"
+					 ONCLICK="choose(this.id);"><%cell_3_2%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_2"
+					 ONCLICK="choose(this.id);"><%cell_4_2%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_2"
+					 ONCLICK="choose(this.id);"><%cell_5_2%></DIV></TD> 
+				</TR> 
+			 </TABLE> </TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_6_0"
+					 ONCLICK="choose(this.id);"><%cell_6_0%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_7_0"
+					 ONCLICK="choose(this.id);"><%cell_7_0%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_8_0"
+					 ONCLICK="choose(this.id);"><%cell_8_0%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_1"
+					 ONCLICK="choose(this.id);"><%cell_6_1%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_1"
+					 ONCLICK="choose(this.id);"><%cell_7_1%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_1"
+					 ONCLICK="choose(this.id);"><%cell_8_1%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_2"
+					 ONCLICK="choose(this.id);"><%cell_6_2%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_2"
+					 ONCLICK="choose(this.id);"><%cell_7_2%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_2"
+					 ONCLICK="choose(this.id);"><%cell_8_2%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		</TR> 
+		<TR> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_0_3"
+					 ONCLICK="choose(this.id);"><%cell_0_3%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_1_3"
+					 ONCLICK="choose(this.id);"><%cell_1_3%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_2_3"
+					 ONCLICK="choose(this.id);"><%cell_2_3%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_4"
+					 ONCLICK="choose(this.id);"><%cell_0_4%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_4"
+					 ONCLICK="choose(this.id);"><%cell_1_4%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_4"
+					 ONCLICK="choose(this.id);"><%cell_2_4%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_5"
+					 ONCLICK="choose(this.id);"><%cell_0_5%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_5"
+					 ONCLICK="choose(this.id);"><%cell_1_5%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_5"
+					 ONCLICK="choose(this.id);"><%cell_2_5%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_3_3"
+					 ONCLICK="choose(this.id);"><%cell_3_3%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_4_3"
+					 ONCLICK="choose(this.id);"><%cell_4_3%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_5_3"
+					 ONCLICK="choose(this.id);"><%cell_5_3%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_4"
+					 ONCLICK="choose(this.id);"><%cell_3_4%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_4"
+					 ONCLICK="choose(this.id);"><%cell_4_4%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_4"
+					 ONCLICK="choose(this.id);"><%cell_5_4%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_5"
+					 ONCLICK="choose(this.id);"><%cell_3_5%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_5"
+					 ONCLICK="choose(this.id);"><%cell_4_5%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_5"
+					 ONCLICK="choose(this.id);"><%cell_5_5%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_6_3"
+					 ONCLICK="choose(this.id);"><%cell_6_3%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_7_3"
+					 ONCLICK="choose(this.id);"><%cell_7_3%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_8_3"
+					 ONCLICK="choose(this.id);"><%cell_8_3%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_4"
+					 ONCLICK="choose(this.id);"><%cell_6_4%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_4"
+					 ONCLICK="choose(this.id);"><%cell_7_4%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_4"
+					 ONCLICK="choose(this.id);"><%cell_8_4%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_5"
+					 ONCLICK="choose(this.id);"><%cell_6_5%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_5"
+					 ONCLICK="choose(this.id);"><%cell_7_5%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_5"
+					 ONCLICK="choose(this.id);"><%cell_8_5%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		</TR> 
+		<TR> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_0_6"
+					 ONCLICK="choose(this.id);"><%cell_0_6%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_1_6"
+					 ONCLICK="choose(this.id);"><%cell_1_6%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_2_6"
+					 ONCLICK="choose(this.id);"><%cell_2_6%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_7"
+					 ONCLICK="choose(this.id);"><%cell_0_7%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_7"
+					 ONCLICK="choose(this.id);"><%cell_1_7%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_7"
+					 ONCLICK="choose(this.id);"><%cell_2_7%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_0_8"
+					 ONCLICK="choose(this.id);"><%cell_0_8%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_1_8"
+					 ONCLICK="choose(this.id);"><%cell_1_8%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_2_8"
+					 ONCLICK="choose(this.id);"><%cell_2_8%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_3_6"
+					 ONCLICK="choose(this.id);"><%cell_3_6%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_4_6"
+					 ONCLICK="choose(this.id);"><%cell_4_6%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_5_6"
+					 ONCLICK="choose(this.id);"><%cell_5_6%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_7"
+					 ONCLICK="choose(this.id);"><%cell_3_7%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_7"
+					 ONCLICK="choose(this.id);"><%cell_4_7%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_7"
+					 ONCLICK="choose(this.id);"><%cell_5_7%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_3_8"
+					 ONCLICK="choose(this.id);"><%cell_3_8%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_4_8"
+					 ONCLICK="choose(this.id);"><%cell_4_8%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_5_8"
+					 ONCLICK="choose(this.id);"><%cell_5_8%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		  <TD> 
+			 <TABLE CLASS="subtable" CELLSPACING="0" CELLPADDING="0"> 
+				<TR> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_6_6"
+					 ONCLICK="choose(this.id);"><%cell_6_6%></DIV></TD> 
+				  <TD HEIGHT="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_7_6"
+					 ONCLICK="choose(this.id);"><%cell_7_6%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_8_6"
+					 ONCLICK="choose(this.id);"><%cell_8_6%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_7"
+					 ONCLICK="choose(this.id);"><%cell_6_7%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_7"
+					 ONCLICK="choose(this.id);"><%cell_7_7%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_7"
+					 ONCLICK="choose(this.id);"><%cell_8_7%></DIV></TD> 
+				</TR> 
+				<TR> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_6_8"
+					 ONCLICK="choose(this.id);"><%cell_6_8%></DIV></TD> 
+				  <TD> 
+					 <DIV CLASS="numbersquare" ID="cell_7_8"
+					 ONCLICK="choose(this.id);"><%cell_7_8%></DIV></TD> 
+				  <TD WIDTH="25"> 
+					 <DIV CLASS="numbersquare" ID="cell_8_8"
+					 ONCLICK="choose(this.id);"><%cell_8_8%></DIV></TD> 
+				</TR> 
+			 </TABLE></TD> 
+		</TR> 
+	 </TABLE> 
+	 <DIV ALIGN="CENTER"> 
+		<FORM> 
+		  <P><INPUT TYPE="BUTTON" NAME="Button7" VALUE="Solutions"
+			 ONCLICK="SolutionsDialog();"></P></FORM></DIV> 
+	 <P ALIGN="CENTER"><A HREF="#" ONCLICK='showID("Solution");'>Show</A> or
+		<A HREF="#" ONCLICK='hideID("Solution");'>Hide</A> Sudoku Solution</P> 
+	 <FORM ID="Solution"> 
+		<TABLE ALIGN="CENTER"> 
+		  <TBODY> 
+			 <TR VALIGN="MIDDLE"> 
+				<TD VALIGN="middle" ALIGN="CENTER" COLSPAN="3">Sudoku Solver</TD> 
+			 </TR> 
+			 <TR VALIGN="MIDDLE"> 
+				<TD VALIGN="middle" ALIGN="LEFT" COLSPAN="3">If the grid below is
+				  not complete, the puzzle is not solvable and there is a bug in our program..
+				  Please notify us.at <A HREF="http://www.emogic.com/contact"
+				  TARGET="_blank">http://www.emogic.com/contact</A></TD> 
+			 </TR> 
+			 <TR VALIGN="MIDDLE"> 
+				<TD ALIGN="RIGHT">
+				  <INPUT TYPE="BUTTON" ONCLICK="start_cross(this.form);" VALUE="Calculate 
+ Answer" ID="answerbutton"><BR><TEXTAREA ID="map" NAME="map" ONKEYUP="start_cross(this.form);" ONCHANGE="start_cross(this.form);" ROWS="10" COLS="10">%jscalcpuzz%
+</TEXTAREA></TD> 
+				<TD ID="result_here" CLASS="num_cross" COLSPAN="2"
+				ALIGN="LEFT">&nbsp;</TD> 
+			 </TR> 
+		  </TBODY> 
+		</TABLE> </FORM> 
+	 <FORM METHOD="GET"> 
 		<P ALIGN="CENTER"><INPUT TYPE="HIDDEN" NAME="uid" VALUE="%uid%"><INPUT
 		  TYPE="HIDDEN" NAME="game" VALUE="%game%"><INPUT TYPE="HIDDEN"
 		  NAME="name" VALUE="%name%"><INPUT TYPE="SUBMIT"
