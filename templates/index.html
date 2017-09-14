@@ -12,8 +12,8 @@
 .cellnotselectedclass {
   background-color: white;
   text-align: center;
-  height: 30pt;
-  width: 30pt;
+  height: 10vw;
+  width: 10vw;
   font-size: 7pt;
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
@@ -24,8 +24,8 @@
 .cellselectedclass {
   background-color: yellow;
   text-align: center;
-  height: 30pt;
-  width: 30pt;
+  height: 10vw;
+  width: 10vw;
   font-size: 7pt;
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
@@ -36,10 +36,11 @@
 .cellstaticclass {
   background-color: #CCFFFF;
   text-align: center;
-  height: 30pt;
-  width: 30pt;
+  height: 10vw;
+  width: 10vw;
   font-weight: bold;
-  font-size: 14pt;
+font-size: 8vw;
+  //font-size: 14pt;
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
   border-bottom: 1pt Black solid;
@@ -48,8 +49,8 @@
 
 .celllockedclass {
   text-align: center;
-  height: 30pt;
-  width: 30pt;
+  height: 10vw;
+  width: 10vw;
   font-weight: bold;
   font-size: 14pt;
   border-top: 1pt black solid;
@@ -61,8 +62,8 @@
 .cellgrayclass {
   background-color: gray;
   text-align: center;
-  height: 30pt;
-  width: 30pt;
+  height: 10vw;
+  width: 10vw;
   font-weight: bold;
   font-size: 14pt;
   border-top: 1pt black solid;
@@ -74,8 +75,8 @@
 .cellredclass {
   background-color: red;
   text-align: center;
-  height: 30pt;
-  width: 30pt;
+  height: 10vw;
+  width: 10vw;
   font-size: 14pt;
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
@@ -100,8 +101,8 @@
 
 .pad_button_numeric
 {
-height: 30pt;
-width: 30pt;
+  height: 5vw;
+  width: 5vw;
 border-radius: 3pt;
 }
 </STYLE> <SCRIPT SRC="/cgi/sudoku/ncross.js"></SCRIPT>
@@ -1071,27 +1072,27 @@ $( "#SolutionDialog" ).dialog( "option", "width", 800 );
 				</TR> 
 			 </TABLE></TD> 
 		</TR> 
-	 </TABLE>
+	 </TABLE> 
 	 <P ALIGN="CENTER"></P> 
-	 <TABLE ALIGN="CENTER">
-		<TR>
-		  <TD>
+	 <TABLE ALIGN="CENTER"> 
+		<TR> 
+		  <TD> 
 			 <DIV ALIGN="CENTER"> 
 				<FORM> 
 				  <P><INPUT TYPE="BUTTON" NAME="Button7" VALUE="Solution"
-					 ONCLICK="SolutionsDialog();"></P></FORM></DIV></TD>
-		  <TD>
+					 ONCLICK="SolutionsDialog();"></P></FORM></DIV></TD> 
+		  <TD> 
 			 <DIV ALIGN="CENTER"> 
 				<FORM> 
 				  <P><INPUT TYPE="BUTTON" NAME="Button6" VALUE="Puzzle Statistics"
-					 ONCLICK="Statistics();"></P></FORM></DIV></TD>
-		  <TD>
+					 ONCLICK="Statistics();"></P></FORM></DIV></TD> 
+		  <TD> 
 			 <FORM METHOD="GET"> 
 				<P ALIGN="CENTER"><INPUT TYPE="SUBMIT"
 				  VALUE="Restart this Sudoku Board"
 				  ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers.')) {DeleteCookies();location.reload();}">
-				  </P> </FORM></TD>
-		</TR>
+				  </P> </FORM></TD> 
+		</TR> 
 	 </TABLE> 
 	 <TABLE CELLPADDING="3" CELLSPACING="0" BGCOLOR="#FFFFFF" BORDER="0"
 	 ALIGN="CENTER"> 
@@ -1108,7 +1109,7 @@ else{};"></FORM></TD>
 		  <TD> 
 			 <FORM><INPUT TYPE="BUTTON" NAME="Button2"
 				VALUE="Other Sudoku Puzzles"
-				ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('/sudoku/common/','_self');}
+				ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('/sudoku/','_self');}
 else{};"></FORM></TD>
 		  
 		</TR> 
@@ -1126,7 +1127,7 @@ else{};"></FORM></TD>
 	 <P>better layout</P> 
 	 <P>auto size? size fix</P> 
 	 <P>modernize as per rules css!</P> 
-	 <P>folders for difficulties!</P>
+	 <P>folders for difficulties!</P> 
 	 <DIV ID="dialog-message" TITLE="How do I play?" CLASS="dialogs"
 	 STYLE="width:100%;"> 
 		<P>Suduku Rules:</P> 

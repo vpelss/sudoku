@@ -166,8 +166,8 @@ $template_file =~ s/\%game\%/$game/g;
 $template_file = "$template_file";
 
 #write archive game file and directory
-if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}
-$archivepath = $archivepath . "/$uid";
+#if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}
+#$archivepath = $archivepath . "/$uid";
 if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}
 $archivepath = $archivepath . "/$difficulty";
 if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}

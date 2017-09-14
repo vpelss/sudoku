@@ -12,6 +12,15 @@
 background-color: white;	
 }
 
+#dialog-waiting /*center spinner*/  
+{  
+position: fixed;  
+top: 50%;  
+left: 50%;  
+transform: translate(-50%, -50%);  
+z-index: 999;  
+}
+
 .facebook_button {
     display: inline-block;
 
@@ -38,7 +47,9 @@ background-color: white;
 
 }
 </STYLE> 
-	 <TITLE>Sudoku of Death. Puzzle Generator by Emogic.com</TITLE> 
+	 <TITLE>Sudoku of Death. Puzzle Generator by Emogic.com</TITLE>
+	 <LINK REL="stylesheet" HREF="/cgi/sudoku/jqueryui/jquery-ui.css"> <SCRIPT SRC="/cgi/sudoku/jquery/jquery.js"></SCRIPT> <SCRIPT
+	 SRC="/cgi/sudoku/jqueryui/jquery-ui.js"></SCRIPT> <SCRIPT SRC="/cgi/sudoku/cookie.js"></SCRIPT> 
   </HEAD> 
   <BODY BACKGROUND="_sudoku.gif"> <SCRIPT TYPE="text/javascript"> 		
 
@@ -149,6 +160,9 @@ Diff[5] = function()
 	}
 
 </SCRIPT> 
+		  <P><INPUT TYPE="SUBMIT" NAME="Submit1"
+			 VALUE="Generate Puzzle - Please wait"
+			 ONCLICK='$( "#dialog-waiting" ).show();'></P>
 		  <P>Time to generate puzzle:
 			 <INPUT TYPE="TEXT" NAME="TimeToTry" VALUE="5" SIZE="4" ID="TimeToTry"></P> 
 		  <P><A
@@ -161,8 +175,7 @@ Diff[5] = function()
 		  <P>Number of Blank Squares:<INPUT TYPE="TEXT" NAME="NumberOfSquares"
 			 VALUE="58" SIZE="4" ID="NumberOfSquares"><BR>(55 is average. Higher numbers
 			 might not be reached.)</P> 
-		  <P><INPUT TYPE="SUBMIT" NAME="Submit1"
-			 VALUE="Generate Puzzle - Please wait"></P> 
+		   
 								
 								<!--
 							 <P><INPUT TYPE="RESET" NAME="Reset1"
@@ -170,10 +183,10 @@ Diff[5] = function()
 								-->
 		</FORM> 
 		<DIV ID="fbhide"> 
-		  <P><A HREF="/sudoku/common/">Sudoku Puzzle Archive</A></P> </DIV>
-		<SCRIPT>hide2("fbhide");</SCRIPT> 
+		  <P><A HREF="/sudoku/">Sudoku Puzzle Archive</A></P> </DIV> <SCRIPT>hide2("fbhide");</SCRIPT> 
 		<P><A HREF="/cgi/sudoku/WeWarnYouOnce.wav" TARGET="_blank">Why Sudoku of
-		  Death?</A> </P>
+		  Death?</A> </P> 
+		<DIV ID="dialog-waiting"><IMG SRC="./images/flash.gif"></DIV>
 <!--FB share start-->
 		<DIV ID="fb-root"></DIV> <SCRIPT>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
@@ -220,5 +233,5 @@ if (!(document.getElementById("name").value)) //we are not in facebook. reveal h
 	show2("fbhide");
 	}
 
-</SCRIPT> </BODY>
+</SCRIPT> <SCRIPT>$( "#dialog-waiting" ).hide();</SCRIPT> </BODY>
 </HTML>
