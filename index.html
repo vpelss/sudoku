@@ -6,7 +6,12 @@
 	 <META NAME="DESCRIPTION"
 	  CONTENT="Sudoku of Death. Sudoku Puzzle Generator Script to create Sudoku for prining or saving for use in your web browser">
 	 <STYLE TYPE="text/css">
-	
+
+*
+{
+font-size: 4vmin;
+}
+
 #white_box
 {
 background-color: white;	
@@ -99,7 +104,7 @@ function gup( name )
 		  <P><INPUT TYPE="HIDDEN" NAME="uid" ID="uid"><INPUT TYPE="HIDDEN"
 			 NAME="name" ID="name"></P> 
 		  <P> 
-			 <SELECT NAME='SIZE="1"' ONCHANGE="Diff[this.value]();"> 
+			 <SELECT ONCHANGE="Diff[this.value]();" SIZE="1" NAME="h"> 
 				<OPTION VALUE="1">Simple</OPTION> 
 				<OPTION VALUE="2">Easy</OPTION> 
 				<OPTION VALUE="3" SELECTED="SELECTED">Medium</OPTION> 
@@ -162,7 +167,7 @@ Diff[5] = function()
 </SCRIPT> 
 		  <P><INPUT TYPE="SUBMIT" NAME="Submit1"
 			 VALUE="Generate Puzzle - Please wait"
-			 ONCLICK='$( "#dialog-waiting" ).show();'></P>
+			 ONCLICK='$( "#dialog-waiting" ).show();'></P> 
 		  <P>Time to generate puzzle:
 			 <INPUT TYPE="TEXT" NAME="TimeToTry" VALUE="5" SIZE="4" ID="TimeToTry"></P> 
 		  <P><A
