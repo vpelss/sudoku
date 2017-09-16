@@ -34,7 +34,6 @@ my @AllBlankCells; #array of ($x,$y) values
 my @FullGameArray; #simple $FullGameArray[$x][$y] = $value | undef
 my @GameArray; #simple $GameArray[$x][$y] = $value | undef
 my @TempGameArray; #simple $TempGameArray[$x][$y] = $value | undef
-#my @RecursiveTempGameArray;
 my @PossibleNumberArray; #global for recursive routines. $PossibleNumberArray[$x][$y]{0 - 9} = 1|undef Note: Final value is a series of hashes = 1 so we can easily remove them = undef
 my @TempPossibleNumberArray; #global for recursive routines. $PossibleNumberArray[$x][$y]{0 - 9} = 1|undef Note: Final value is a series of hashes = 1 so we can easily remove them = undef
 my %methods; # $methods{ns} = 1 indicates to use that method/routine also use ns,hs,np,ir
@@ -166,8 +165,6 @@ $template_file =~ s/\%game\%/$game/g;
 $template_file = "$template_file";
 
 #write archive game file and directory
-#if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}
-#$archivepath = $archivepath . "/$uid";
 if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}
 $archivepath = $archivepath . "/$difficulty";
 if (not -d ("$archivepath")) {mkdir("$archivepath")  or die("Could not create archive path $archivepath");}

@@ -125,7 +125,7 @@ font-size: 6vmin;
 }
 </STYLE> <SCRIPT SRC="/cgi/sudoku/js/ncross.js"></SCRIPT>
 	 <LINK REL="stylesheet" HREF="/jqueryui/jquery-ui.css"> <SCRIPT SRC="//code.jquery.com/jquery-1.10.2.js"></SCRIPT> <SCRIPT SRC="/jqueryui/jquery-ui.js"></SCRIPT> <SCRIPT
-	 SRC="/sudoku/cookie.js"></SCRIPT> 
+	 SRC="/cgi/sudoku/js/cookie.js"></SCRIPT> 
   </HEAD> 
   <BODY ONKEYUP="keyinput(LastCursorID , event.keyCode);"
 	CLASS="pad_button_numeric"><!--start dialogs jqueryui--><SCRIPT>
@@ -823,7 +823,7 @@ for (var x = 0 ; x <= 8; x++)
 			 </TABLE></TD> 
 		  <TD><IMG SRC="/cgi/sudoku/images/lock.jpg" ALT="Lock/Unlock"
 			 WIDTH="113" HEIGHT="136" BORDER="0" ONCLICK="keyinput(LastCursorID , 83);"
-			 CLASS="pad_button_numeric"></TD> 
+			 CLASS="pad_button_numeric" TITLE="Lock/Unlock"></TD> 
 		</TR> 
 		<TR> 
 		  <TD> 
@@ -935,8 +935,8 @@ for (var x = 0 ; x <= 8; x++)
 				</TR> 
 			 </TABLE></TD> 
 		  <TD><IMG SRC="/cgi/sudoku/images/clearcell.jpg" ALT="Clear Cell"
-			 WIDTH="200" HEIGHT="200" BORDER="0" ONCLICK="keyinput(LastCursorID , 67);"
-			 CLASS="pad_button_numeric"></TD> 
+			 TITLE="Clear Cell" WIDTH="200" HEIGHT="200" BORDER="0"
+			 ONCLICK="keyinput(LastCursorID , 67);" CLASS="pad_button_numeric"></TD> 
 		</TR> 
 		<TR> 
 		  <TD> 
@@ -1048,7 +1048,8 @@ for (var x = 0 ; x <= 8; x++)
 				</TR> 
 			 </TABLE></TD> 
 		  <TD><IMG SRC="/cgi/sudoku/images/clearunlockedcells.jpg"
-			 ALT="Clear blank cells" BORDER="0" WIDTH="200" HEIGHT="200"
+			 ALT="Clear blank cells" TITLE="Clear blank cells" BORDER="0"
+			 WIDTH="200" HEIGHT="200"
 			 ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers that are not locked.')) {ClearUnlockedCells();}else{return false;}"
 			 CLASS="pad_button_numeric"></TD> 
 		</TR> 
@@ -1095,38 +1096,39 @@ for (var x = 0 ; x <= 8; x++)
 	 </TABLE> 
 	 <TABLE CLASS="subtable"
 	 STYLE="border-top: 1px solid; border-right: 1px solid; border-bottom: 1px solid; border-left: 1px solid"
-	 CELLPADDING="5">
-		<TR>
+	 CELLPADDING="5"> 
+		<TR> 
+		  <TD><IMG SRC="/cgi/sudoku/images/help.gif" ALT="How do I play"
+			 TITLE="How do I play" WIDTH="200" HEIGHT="200" BORDER="0"
+			 ONCLICK="howtoplay();" CLASS="pad_button_numeric"></TD> 
 		  <TD><IMG SRC="/cgi/sudoku/images/check.jpg" ALT="How am I doing"
-			 WIDTH="200" HEIGHT="200" BORDER="0" ONCLICK="keyinput(LastCursorID , 72);"
-			 CLASS="pad_button_numeric"></TD>
+			 TITLE="How am I doing" WIDTH="200" HEIGHT="200" BORDER="0"
+			 ONCLICK="keyinput(LastCursorID , 72);" CLASS="pad_button_numeric"></TD> 
 		  <TD><IMG SRC="/cgi/sudoku/images/badchoices.jpg"
-			 ALT="Reveal bad choices" WIDTH="200" HEIGHT="200" BORDER="0"
-			 ONCLICK="keyinput(LastCursorID , 82);" CLASS="pad_button_numeric"></TD>
-		  <TD><IMG SRC="/cgi/sudoku/images/help.jpg" ALT="Help. How do I play"
-			 WIDTH="200" HEIGHT="200" BORDER="0" ONCLICK="howtoplay();"
-			 CLASS="pad_button_numeric"></TD>
+			 ALT="Reveal bad choices" TITLE="Reveal bad choices" WIDTH="200" HEIGHT="200"
+			 BORDER="0" ONCLICK="keyinput(LastCursorID , 82);"
+			 CLASS="pad_button_numeric"></TD> 
 		  <TD><IMG SRC="/cgi/sudoku/images/statistics.png"
-			 ALT="Puzzle statistics" WIDTH="200" HEIGHT="200" BORDER="0"
-			 ONCLICK="Statistics();" CLASS="pad_button_numeric"></TD>
+			 ALT="Puzzle statistics" TITLE="Puzzle statistics" WIDTH="200" HEIGHT="200"
+			 BORDER="0" ONCLICK="Statistics();" CLASS="pad_button_numeric"></TD> 
 		  <TD><IMG SRC="/cgi/sudoku/images/solution.jpg" ALT="Puzzle solution"
-			 WIDTH="200" HEIGHT="200" BORDER="0" ONCLICK="SolutionsDialog();"
-			 CLASS="pad_button_numeric"></TD>
+			 TITLE="Puzzle solution" WIDTH="200" HEIGHT="200" BORDER="0"
+			 ONCLICK="SolutionsDialog();" CLASS="pad_button_numeric"></TD> 
 		  <TD><IMG SRC="/cgi/sudoku/images/restart.jpg" ALT="Restart puzzle"
-			 WIDTH="200" HEIGHT="200" BORDER="0"
+			 TITLE="Restart puzzle" WIDTH="200" HEIGHT="200" BORDER="0"
 			 ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers.')) {DeleteCookies();location.reload();}"
-			 CLASS="pad_button_numeric"></TD>
-		  <TD><IMG SRC="/cgi/sudoku/images/new.jpg" ALT="New puzzle" WIDTH="200"
-			 HEIGHT="200" BORDER="0"
+			 CLASS="pad_button_numeric"></TD> 
+		  <TD><IMG SRC="/cgi/sudoku/images/new.jpg" ALT="New puzzle"
+			 TITLE="New puzzle" WIDTH="200" HEIGHT="200" BORDER="0"
 			 ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('%scripturl%/','_self');}
 else{};"
-			 CLASS="pad_button_numeric"></TD>
-		  <TD><IMG SRC="/cgi/sudoku/images/otherlist.jpg" ALT="Other puzzles"
-			 WIDTH="200" HEIGHT="200" BORDER="0"
+			 CLASS="pad_button_numeric"></TD> 
+		  <TD><IMG SRC="/cgi/sudoku/images/otherlist.jpg" ALT="Archived puzzles"
+			 TITLE="Archived puzzles" WIDTH="200" HEIGHT="200" BORDER="0"
 			 ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('/sudoku/','_self');}
 else{};"
-			 CLASS="pad_button_numeric"></TD>
-		</TR>
+			 CLASS="pad_button_numeric"></TD> 
+		</TR> 
 	 </TABLE> 
 	  
 	  
@@ -1146,23 +1148,27 @@ else{};"
 		</UL> 
 		<P>How to Play:</P> 
 		<UL> 
-		  <LI>Use arrow keys to move cursor.</LI> 
+		  <LI>To see what an icon does, hover the mouse over it (PC/Laptop) or
+			 push and hold it (tablets).</LI>
+		  <LI>Use arrow keys to move cursor (PC/Laptop) or tap the cell to select
+			 (tablets).</LI> 
 		  <LI>Use number keys to add number(s).</LI> 
 		  <LI>Note that you can add multiple numbers to use as a scratch
 			 pad.</LI> 
-		  <LI>To remove a number, hit that number again. 'C' will clear the
-			 current cell of all numbers, if unlocked.</LI> 
-		  <LI>When you are sure you have a correct number, hit 'S' to Save or
-			 unSave it.</LI> 
-		  <LI>Hit 'H' to see How you are doing. The result will show in the chat
-			 box.</LI> 
-		  <LI>Hit 'R' to Reveal the incorrect locked positions.</LI> 
+		  <LI>To remove a number, hit that number again. 'C' (icon: rectangle
+			 with x) will clear the current cell of all numbers, if unlocked.</LI> 
+		  <LI>When you are sure you have a correct number, hit 'S' (icon: lock)
+			 to Save or unSave it.</LI> 
+		  <LI>Hit 'H' (icon: green check) to see How you are doing. The result
+			 will show in the chat box.</LI> 
+		  <LI>Hit 'R' (icon: red x) to Reveal the incorrect locked
+			 positions.</LI> 
 		  <LI>It is advisable to turn on your Num Lock is on and use the
 			 keypad.</LI> 
 		  <LI>If you accidentaly hit F5, your browser will refresh.</LI> 
 		  <LI>Add to Favorites to complete it at a later time.</LI> 
-		  <LI>If you print it, you may want to Show Answers at the bottom of this
-			 page first.</LI> 
+		  <LI>If you print it, you may want to Show Answers (icon: light bulb) at
+			 the bottom of this page first.</LI> 
 		</UL> </DIV> 
 	 <DIV ID="Statistics" TITLE="Statistics" CLASS="dialogs"> Difficulty: <B><A
 		HREF="#"
