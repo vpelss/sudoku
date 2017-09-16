@@ -14,7 +14,8 @@
   text-align: center;
   height: 8vmin;
   width: 8vmin;
-  font-size: 7pt;
+		font-weight: bold;
+  font-size: 2vmin;
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
   border-bottom: 1pt Black solid;
@@ -26,7 +27,8 @@
   text-align: center;
   height: 8vmin;
   width: 8vmin;
-  font-size: 7pt;
+		font-weight: bold;
+  font-size: 2vmin;
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
   border-bottom: 1pt Black solid;
@@ -39,7 +41,7 @@
   height: 8vmin;
   width: 8vmin;
   font-weight: bold;
-		font-size: 8vmin;
+		font-size: 6vmin;
   //font-size: 14pt;
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
@@ -52,7 +54,7 @@
   height: 8vmin;
   width: 8vmin;
   font-weight: bold;
-  font-size: 8vmin;
+  font-size: 6vmin;
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
   border-bottom: 1pt Black solid;
@@ -65,7 +67,7 @@
   height: 8vmin;
   width: 8vmin;
   font-weight: bold;
-  font-size: 8vmin;
+  font-size: 6vmin;
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
   border-bottom: 1pt Black solid;
@@ -77,7 +79,7 @@
   text-align: center;
   height: 8vmin;
   width: 8vmin;
-  font-size: 8vmin;
+  font-size: 6vmin;
   border-top: 1pt black solid;
   border-right: 1pt Black solid;
   border-bottom: 1pt Black solid;
@@ -114,12 +116,19 @@
   height: 8vmin;
   width: 8vmin;
 border-radius: 3pt;
+font-size: 6vmin;
 }
-</STYLE> <SCRIPT SRC="/cgi/sudoku/ncross.js"></SCRIPT>
+
+.dialogs
+{
+	font-size: 2vmin;
+}
+</STYLE> <SCRIPT SRC="/cgi/sudoku/js/ncross.js"></SCRIPT>
 	 <LINK REL="stylesheet" HREF="/jqueryui/jquery-ui.css"> <SCRIPT SRC="//code.jquery.com/jquery-1.10.2.js"></SCRIPT> <SCRIPT SRC="/jqueryui/jquery-ui.js"></SCRIPT> <SCRIPT
 	 SRC="/sudoku/cookie.js"></SCRIPT> 
   </HEAD> 
-  <BODY ONKEYUP="keyinput(LastCursorID , event.keyCode);"><!--start dialogs jqueryui--><SCRIPT>
+  <BODY ONKEYUP="keyinput(LastCursorID , event.keyCode);"
+	CLASS="pad_button_numeric"><!--start dialogs jqueryui--><SCRIPT>
 //start dialogs and turn off
 $(function() {
     $( ".dialogs" ).dialog({
@@ -811,9 +820,10 @@ for (var x = 0 ; x <= 8; x++)
 					 <DIV CLASS="numbersquare" ID="cell_8_2"
 					 ONCLICK="chooseOnClick(this.id);"><%cell_8_2%></DIV></TD> 
 				</TR> 
-			 </TABLE></TD>
-		  <TD><IMG SRC="/cgi/sudoku/lock.jpg" ALT="Lock/Unlock" WIDTH="113"
-			 HEIGHT="136" BORDER="0" ONCLICK="keyinput(LastCursorID , 83);"></TD> 
+			 </TABLE></TD> 
+		  <TD><IMG SRC="/cgi/sudoku/images/lock.jpg" ALT="Lock/Unlock"
+			 WIDTH="113" HEIGHT="136" BORDER="0" ONCLICK="keyinput(LastCursorID , 83);"
+			 CLASS="pad_button_numeric"></TD> 
 		</TR> 
 		<TR> 
 		  <TD> 
@@ -923,8 +933,10 @@ for (var x = 0 ; x <= 8; x++)
 					 <DIV CLASS="numbersquare" ID="cell_8_5"
 					 ONCLICK="chooseOnClick(this.id);"><%cell_8_5%></DIV></TD> 
 				</TR> 
-			 </TABLE></TD>
-		  <TD>&nbsp;</TD> 
+			 </TABLE></TD> 
+		  <TD><IMG SRC="/cgi/sudoku/images/clearcell.jpg" ALT="Clear Cell"
+			 WIDTH="200" HEIGHT="200" BORDER="0" ONCLICK="keyinput(LastCursorID , 67);"
+			 CLASS="pad_button_numeric"></TD> 
 		</TR> 
 		<TR> 
 		  <TD> 
@@ -1034,148 +1046,95 @@ for (var x = 0 ; x <= 8; x++)
 					 <DIV CLASS="numbersquare" ID="cell_8_8"
 					 ONCLICK="chooseOnClick(this.id);"><%cell_8_8%></DIV></TD> 
 				</TR> 
-			 </TABLE></TD>
-		  <TD>&nbsp;</TD> 
+			 </TABLE></TD> 
+		  <TD><IMG SRC="/cgi/sudoku/images/clearunlockedcells.jpg"
+			 ALT="Clear blank cells" BORDER="0" WIDTH="200" HEIGHT="200"
+			 ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers that are not locked.')) {ClearUnlockedCells();}else{return false;}"
+			 CLASS="pad_button_numeric"></TD> 
 		</TR> 
-	 </TABLE>
-	 <TABLE>
-		<TR>
-		  <TD>
+	 </TABLE> 
+	 <TABLE CELLPADDING="5"> 
+		<TR> 
+		  <TD> 
 			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
 				VALUE="1" ONCLICK="keyinput(LastCursorID , 49);"
-				CLASS="pad_button_numeric"></FORM></TD>
-		  <TD>
+				CLASS="pad_button_numeric"></FORM></TD> 
+		  <TD> 
 			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
 				VALUE="2" ONCLICK="keyinput(LastCursorID , 50);"
-				CLASS="pad_button_numeric"></FORM></TD>
-		  <TD>
+				CLASS="pad_button_numeric"></FORM></TD> 
+		  <TD> 
 			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
 				VALUE="3" ONCLICK="keyinput(LastCursorID , 51);"
-				CLASS="pad_button_numeric"></FORM></TD>
-		  <TD>
+				CLASS="pad_button_numeric"></FORM></TD> 
+		  <TD> 
 			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
 				VALUE="4" ONCLICK="keyinput(LastCursorID , 52);"
-				CLASS="pad_button_numeric"></FORM></TD>
-		  <TD>
+				CLASS="pad_button_numeric"></FORM></TD> 
+		  <TD> 
 			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
 				VALUE="5" ONCLICK="keyinput(LastCursorID , 53);"
-				CLASS="pad_button_numeric"></FORM></TD>
-		  <TD>
+				CLASS="pad_button_numeric"></FORM></TD> 
+		  <TD> 
 			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
 				VALUE="6" ONCLICK="keyinput(LastCursorID , 54);"
-				CLASS="pad_button_numeric"></FORM></TD>
-		  <TD>
+				CLASS="pad_button_numeric"></FORM></TD> 
+		  <TD> 
 			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
 				VALUE="7" ONCLICK="keyinput(LastCursorID , 55);"
-				CLASS="pad_button_numeric"></FORM></TD>
-		  <TD>
+				CLASS="pad_button_numeric"></FORM></TD> 
+		  <TD> 
 			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
 				VALUE="8" ONCLICK="keyinput(LastCursorID , 56);"
-				CLASS="pad_button_numeric"></FORM></TD>
-		  <TD>
+				CLASS="pad_button_numeric"></FORM></TD> 
+		  <TD> 
 			 <FORM STYLE="display: inline;"><INPUT TYPE="BUTTON" NAME="Button1"
 				VALUE="9" ONCLICK="keyinput(LastCursorID , 57);"
-				CLASS="pad_button_numeric"></FORM></TD>
+				CLASS="pad_button_numeric"></FORM></TD> 
+		</TR> 
+	 </TABLE> 
+	 <TABLE CLASS="subtable"
+	 STYLE="border-top: 1px solid; border-right: 1px solid; border-bottom: 1px solid; border-left: 1px solid"
+	 CELLPADDING="5">
+		<TR>
+		  <TD><IMG SRC="/cgi/sudoku/images/check.jpg" ALT="How am I doing"
+			 WIDTH="200" HEIGHT="200" BORDER="0" ONCLICK="keyinput(LastCursorID , 72);"
+			 CLASS="pad_button_numeric"></TD>
+		  <TD><IMG SRC="/cgi/sudoku/images/badchoices.jpg"
+			 ALT="Reveal bad choices" WIDTH="200" HEIGHT="200" BORDER="0"
+			 ONCLICK="keyinput(LastCursorID , 82);" CLASS="pad_button_numeric"></TD>
+		  <TD><IMG SRC="/cgi/sudoku/images/help.jpg" ALT="Help. How do I play"
+			 WIDTH="200" HEIGHT="200" BORDER="0" ONCLICK="howtoplay();"
+			 CLASS="pad_button_numeric"></TD>
+		  <TD><IMG SRC="/cgi/sudoku/images/statistics.png"
+			 ALT="Puzzle statistics" WIDTH="200" HEIGHT="200" BORDER="0"
+			 ONCLICK="Statistics();" CLASS="pad_button_numeric"></TD>
+		  <TD><IMG SRC="/cgi/sudoku/images/solution.jpg" ALT="Puzzle solution"
+			 WIDTH="200" HEIGHT="200" BORDER="0" ONCLICK="SolutionsDialog();"
+			 CLASS="pad_button_numeric"></TD>
+		  <TD><IMG SRC="/cgi/sudoku/images/restart.jpg" ALT="Restart puzzle"
+			 WIDTH="200" HEIGHT="200" BORDER="0"
+			 ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers.')) {DeleteCookies();location.reload();}"
+			 CLASS="pad_button_numeric"></TD>
+		  <TD><IMG SRC="/cgi/sudoku/images/new.jpg" ALT="New puzzle" WIDTH="200"
+			 HEIGHT="200" BORDER="0"
+			 ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('%scripturl%/','_self');}
+else{};"
+			 CLASS="pad_button_numeric"></TD>
+		  <TD><IMG SRC="/cgi/sudoku/images/otherlist.jpg" ALT="Other puzzles"
+			 WIDTH="200" HEIGHT="200" BORDER="0"
+			 ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('/sudoku/','_self');}
+else{};"
+			 CLASS="pad_button_numeric"></TD>
 		</TR>
 	 </TABLE> 
-	 <TABLE BORDER="0"> 
-		<TR> 
-		  <TD ALIGN="CENTER"> 
-			 <DIV> 
-				<FORM>
-				  <INPUT TYPE="BUTTON" NAME="Button3" VALUE="How am I doing?"
-				  ONCLICK="keyinput(LastCursorID , 72);"> </FORM></DIV> 
-			 <DIV> 
-				<FORM><INPUT TYPE="BUTTON" NAME="Button1"
-				  VALUE="Reveal Bad Choices"
-				  ONCLICK="keyinput(LastCursorID , 82);"></FORM></DIV></TD> 
-		  <TD> 
-			 <TABLE ALIGN="CENTER" CLASS="table_pad" ID="Pad"> 
-				<TR> 
-				  <TD> </TD> 
-				  <TD> </TD> 
-				  <TD> </TD> 
-				</TR> 
-				<TR> 
-				  <TD> </TD> 
-				  <TD> </TD> 
-				  <TD> </TD> 
-				</TR> 
-				<TR> 
-				  <TD> </TD> 
-				  <TD> </TD> 
-				  <TD> </TD> 
-				</TR> 
-			 </TABLE></TD> 
-		  <TD ALIGN="CENTER"> 
-			 <DIV> 
-				<FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="Lock/Unlock"
-				  ONCLICK="keyinput(LastCursorID , 83);"></FORM></DIV> 
-			 <DIV> 
-				<FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="Clear Cell"
-				  ONCLICK="keyinput(LastCursorID , 67);"></FORM></DIV> 
-			 <DIV> 
-				<FORM>
-				  <INPUT TYPE="SUBMIT" VALUE="Clear Unlocked Cells"
-				  ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers that are not locked.')) {ClearUnlockedCells();}else{return false;}">
-				  </FORM></DIV></TD> 
-		</TR> 
-	 </TABLE> 
-	 <P ALIGN="CENTER"></P> 
-	 <TABLE ALIGN="CENTER"> 
-		<TR> 
-		  <TD> 
-			 <DIV ALIGN="CENTER"> 
-				<FORM> 
-				  <P><INPUT TYPE="BUTTON" NAME="Button7" VALUE="Solution"
-					 ONCLICK="SolutionsDialog();"></P></FORM></DIV></TD> 
-		  <TD> 
-			 <DIV ALIGN="CENTER"> 
-				<FORM> 
-				  <P><INPUT TYPE="BUTTON" NAME="Button6" VALUE="Puzzle Statistics"
-					 ONCLICK="Statistics();"></P></FORM></DIV></TD> 
-		  <TD> 
-			 <FORM METHOD="GET"> 
-				<P ALIGN="CENTER"><INPUT TYPE="SUBMIT"
-				  VALUE="Restart this Sudoku Board"
-				  ONCLICK="if (confirm('Are you sure? This will clear the board of all numbers.')) {DeleteCookies();location.reload();}">
-				  </P> </FORM></TD> 
-		</TR> 
-	 </TABLE> 
-	 <TABLE CELLPADDING="3" CELLSPACING="0" BGCOLOR="#FFFFFF" BORDER="0"
-	 ALIGN="CENTER"> 
-		<TR> 
-		  <TD> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button1" VALUE="How do I play"
-				ONCLICK="howtoplay();"></FORM> </TD> 
-		  <TD> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button5"
-				VALUE="Create another Sudoku"
-				ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('%scripturl%/','_self');}
-else{};"></FORM></TD>
-		  
-		  <TD> 
-			 <FORM><INPUT TYPE="BUTTON" NAME="Button2"
-				VALUE="Other Sudoku Puzzles"
-				ONCLICK="if (confirm('Are you sure? Be sure to bookmark the current puzzle first.')) {window.open('/sudoku/','_self');}
-else{};"></FORM></TD>
-		  
-		</TR> 
-	 </TABLE> 
-	 <FORM><INPUT TYPE="BUTTON" NAME="Button4" VALUE="Grid Bigger"
-		ONCLICK="MakeBigger();"></FORM> 
-	 <FORM><INPUT TYPE="BUTTON" NAME="Button4" VALUE="Grid Smaller"
-		ONCLICK="MakeSmaller();"></FORM> 
+	  
+	  
 		
 		<!--
 	 <P ALIGN="CENTER">Your puzzle has been archived at:
 		<A HREF="%archiveurl%/%uid%/%game%">%archiveurl%/%uid%/%game%/</A></P> 
 		-->
-	 <P>cookie imports export / save</P> 
-	 <P>better layout</P> 
-	 <P>auto size? size fix</P> 
-	 <P>modernize as per rules css!</P> 
-	 <P>folders for difficulties!</P> 
 	 <DIV ID="dialog-message" TITLE="How do I play?" CLASS="dialogs"
 	 STYLE="width:100%;"> 
 		<P>Suduku Rules:</P> 
