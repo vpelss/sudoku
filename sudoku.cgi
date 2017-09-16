@@ -351,7 +351,6 @@ foreach my $cell ( @AllCells )
 sub IsPuzzleSolvable()
 {
 #note the techniques used must not be a blind recursive or random attempt. Those types solve for grids without unique solutions!!!!  
-#$debug = 0;
 #this takes a partially filled @TempGameArray and continually try to solve it by various techniques, IR, NP, HS and finally NS
 #it fails if there is no progress on one loop
 my $AnyProgress = 1; #set so we can enter loop
