@@ -1,6 +1,6 @@
 #!c:\perl64\bin\perl.exe -d
 
-#!/usr/bin/perl -d
+#!/usr/bin/perl
 
 #still have not implemented YWing searches
 
@@ -43,7 +43,7 @@ my $TimeTaken;
 my $timetotry = 5;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once? too big and we overshoot and fall back a lot 2 is good
 my $target = 60;
-my $debug = 1;
+my $debug = 0;
 
 eval { &Main(); };                            # Trap any fatal errors so the program hopefully
 if ($@) { &CgiErr("fatal error: $@"); }     # never produces that nasty 500 server error page.
@@ -74,7 +74,7 @@ $starttime = time();
 $debug = 0;
 &CreateFullSudokuGridRecursive( @AllCells );
 $TimeTaken = time() - $starttime;
-$debug = 1;
+$debug = 0;
 if ( $debug ){  print DEBUG "Time for CreateFullSudokuGridRecursive: $TimeTaken</br>";}
 
 &CopyGameArrays( \@TempGameArray , \@FullGameArray );
@@ -176,7 +176,7 @@ print DATA $template_file;
 close (DATA);
 
 #print a jump to game page output
-print qq|<META HTTP-EQUIV="Refresh" CONTENT="0; URL=$archivepath">|; 
+print qq|<META HTTP-EQUIV="Refresh" CONTENT="0; URL=$archivepath">|;
 print "\n\n";
 if ($debug) {close DEBUG;}
 };
@@ -347,7 +347,7 @@ foreach my $cell ( @AllCells )
 
 sub IsPuzzleSolvable()
 {
-#note the techniques used must not be a blind recursive or random attempt. Those types solve for grids without unique solutions!!!!  
+#note the techniques used must not be a blind recursive or random attempt. Those types solve for grids without unique solutions!!!!
 #this takes a partially filled @TempGameArray and continually try to solve it by various techniques, IR, NP, HS and finally NS
 #it fails if there is no progress on one loop
 my $AnyProgress = 1; #set so we can enter loop
