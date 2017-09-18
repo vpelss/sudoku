@@ -44,6 +44,7 @@ my $timetotry = 5;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once? too big and we overshoot and fall back a lot 2 is good
 my $target = 60;
 my $debug = 0;
+#my @RemainingCells;
 
 eval { &Main(); };                            # Trap any fatal errors so the program hopefully
 if ($@) { &CgiErr("fatal error: $@"); }     # never produces that nasty 500 server error page.
@@ -72,7 +73,9 @@ if ( $debug ) { open (DEBUG, ">../aaa.html") }
 
 $starttime = time();
 $debug = 0;
+#@RemainingCells = @AllCells;
 &CreateFullSudokuGridRecursive( @AllCells );
+#&CreateFullSudokuGridRecursive2( @AllCells );
 $TimeTaken = time() - $starttime;
 $debug = 0;
 if ( $debug ){  print DEBUG "Time for CreateFullSudokuGridRecursive: $TimeTaken</br>";}
@@ -223,6 +226,46 @@ if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
 if ( $result == 0 )
       {
       if($debug) { print DEBUG "No Possibilities Somewhere Returning<br>" }
+      return(0)
+      }
+my @CellPossibilities = shuffle keys %{ $PossibleNumberArray[$x][$y] } ;
+do
+      {
+      #if we are here, we are either:
+      #forging ahead
+      #returning from an failed recurse attempt. blank $GameArray[$x][$y] and try another choice if available
+      delete $TempGameArray[$x][$y];
+      if (scalar @CellPossibilities == 0)
+            {
+            if($debug) { print DEBUG "No Possibilities left at $x,$y Returning<br>" }
+            return(0);
+            }
+      my $choice = shift @CellPossibilities;
+      $TempGameArray[$x][$y] = $choice; #remove choice from $PossibleNumberArray[$x][$y]
+      if($debug) { print DEBUG &PrintTempGameArrayDebug() }
+      }
+until( &CreateFullSudokuGridRecursive( @RemainingCells ) );
+return(1); #cascade
+}
+
+sub CreateFullSudokuGridRecursive2()
+{
+#recursively go through each @AllCells
+#randomly choose a possible value
+#test, said value, to ensure that all cells still have valid possibilities
+@RemainingCells = @_;
+if (scalar(@RemainingCells) == 0)
+      {
+      return(1)
+      } #no more cells. done
+my $Cell = shift @RemainingCells;
+my ($x , $y) = @{ $Cell };
+my $result = &SetPossibilityArrayBasedOnTempGameArrayValuesUsingSudokuRules();
+if($debug) { print DEBUG &PrintPossibilityArrayDebug() }
+if ( $result == 0 )
+      {
+      if($debug) { print DEBUG "No Possibilities Somewhere Returning<br>" }
+      unshift ( @RemainingCells , $Cell );
       return(0)
       }
 my @CellPossibilities = shuffle keys %{ $PossibleNumberArray[$x][$y] } ;
@@ -490,6 +533,73 @@ return ($solved);
 };
 
 sub RecursiveRemoveCells()
+{
+my @CellsToRemove = shuffle @_; #will get shorter each loop by $NumberOfPicks
+my %RemovedList;
+$RemoveAttempCount++;
+if($debug) {print DEBUG "Entering RecursiveRemoveCells. Count $RemoveAttempCount.<br>";}
+#if($debug) { print DEBUG "GameArray is:</br>" }
+#if($debug) { print DEBUG &PrintGameArrayDebug() }
+
+if($debug) {print DEBUG "Testing IsPuzzleSolvable.<br>";}
+&CopyGameArrays( \@GameArray  , \@TempGameArray );
+#&CalcAllBlankCellsInTempGameArray();
+#if ( &RecursiveSolveTempGameArray(@AllBlankCells)==0 ) #if it is not solvable replace the number in the grid
+if (&IsPuzzleSolvable()==0)
+#if (&IsPuzzleSolvableFast()==0)
+      {
+      if($debug) {print DEBUG "Previous RecursiveRemoveCells was not Solvable. Returning 0<br>";}
+      return 0
+      } #note: tests previous call
+if($debug) {print DEBUG "Previous RecursiveRemoveCells was Solvable. Contiuing.<br>"}
+#if( (time() - $starttime) >= $timetotry ) {if($debug) {print DEBUG "Time limit reached. Return 1<br>";}; return 1;} #Test for time
+if($blanksquares >= $target)
+      {
+      if($debug) {print DEBUG "Reached target. Return 1<br>";}
+      return 1
+      } #Test for $target
+do
+      { #was not solvable. replace removed numbers. Note: will be blank on forward
+      foreach my $cell (keys %RemovedList)
+            {
+            my ($x,$y) = split('',$cell);
+            #$TempGameArray[$x][$y] = $RemovedList{$cell};
+            $GameArray[$x][$y] = $RemovedList{$cell};
+            delete $RemovedList{$cell}; #otherwise %$RemovedList piles up and we get errors
+            push @CellsToRemove , [$x,$y]; # restore removed cells to list so we can remove them AGAIN
+            $blanksquares--;
+            if($debug) {print DEBUG "Restoring $RemovedList{$cell} to \$GameArray[$x][$y].<br>";}
+            }
+      if( (time() - $starttime) >= $timetotry ) {if($debug) {print DEBUG "Time limit reached. Return 1<br>";}; return 1;} #Test for time
+      #if($debug) {print DEBUG "Restoring \%RemovedList if any.<br>";}
+      #try to remove some random cells
+      for (my $count = 0; $count < $NumberOfPicks ; $count++) #loop to remove a bunch at one time
+            {
+            #maybe later to make it truly recursive, we will have a shuffled list of all full, removable squares we can shift off
+            if (scalar @CellsToRemove == 0){return 0} #out of random cells to try
+            my $CellRef = shift @CellsToRemove ;
+            my $x = $CellRef->[0];
+            my $y = $CellRef->[1];
+            if ($GameArray[$x][$y] == undef)
+                  {
+                  next;
+                  } #no need to try and remove an already removed spot
+            $RemovedList{"$x$y"} = $GameArray[$x][$y]; #add to remove list. we may need to restore them if we can't solve board
+            if($debug) {print DEBUG "$GameArray[$x][$y] removed at $x,$y : ";}
+            #delete $TempGameArray[$x][$y]; #remove picked number
+            delete $GameArray[$x][$y]; #remove picked number
+            if($debug) {print DEBUG "Deleting $GameArray[$x][$y] from both TempGameArray and GameArray.<br>";}
+            $blanksquares++;
+            }
+      #if($debug) {print DEBUG "Solvable: continuing...<br>";}
+      #and test in &RecursiveRemoveCells()
+      if($debug) {print DEBUG "Calling next \&RecursiveRemoveCells.<br>"}
+      }
+until( &RecursiveRemoveCells(@CellsToRemove) );
+return 1; #cascade back
+}
+
+sub RecursiveRemoveCells2()
 {
 my @CellsToRemove = shuffle @_; #will get shorter each loop by $NumberOfPicks
 my %RemovedList;
