@@ -71,3 +71,45 @@ My breakout condition for the Sudoku number removal loop, is set by a time limit
 
 The next part we need to code are the algorithms to actually fill in the blank squares. See the next article.
 
+#  Sudoku Algorithm Part 3 The Seven Basic Ways of Solving Sudoku Stratagies
+
+To my knowledge, there are 7 basic methods to try and solve Sudoku puzzles. Naked Singles (NS), Hidden Singles (HS), Naked Pairs (NP), Hidden Pairs (HP), Intersection Removal (IR), X-Wing (XW), and Y-Wing (YW).
+
+Naked Singles (NS): Naked Singles routine iterates through all the empty squares on the board, calculating the possible values in each cell based on Sudoku’s rules. When we find a cell with a single possibility we fill in the Sudoku cell with that value.  Then we remove that possibility from all the cells in the affected column, row and square regions. We run this routine first as all the ones below rely on the cell's update possibility lists.
+
+Hidden Singles (HS): Hidden Singles scan each row, column and 3 x 3 square for the "number of possibilities" (not the possibilities) for each number ranging from one to nine. When it finds a cell containing a possibility of a number that appears only once in a row, column or 3 x 3 square, we fill in the Sudoku board with that value.  Then we remove that possibility from the affected column, row and 3 x 3 square regions.
+
+Naked Pairs (NP):
+
+The first version of Naked Pairs searches each region (row, column and 3 x 3 square) for two possibility values that occur only twice in, and share two cells, which may or may not contain other possibilities. Because they occur
+only in these two cells, one of them must go in one cell and the other in the second. Therefore, any other values in these two cells may be eliminated.
+
+The second version scans each region (row, column and 3 x 3 square) for two cells, each containing ONLY the same two possibilities. Because one of these values must occur in each of the two cells, they cannot occur anywhere else in that region, and may be eliminated from the lists of possibilities for every other cell in the region.
+
+Hidden Pairs (HP):
+
+Hidden Pairs are taken care of  by the combination of Naked Singles and Hidden Singles algorithms.
+
+Intersection Removal (IR):
+
+If exactly two or three possibilities exist for a single number in a 3 x 3 box and they are restricted to one row or column, their values may be eliminated from the rest of the row or column. The case of one possibility is covered by HS above.
+
+If exactly two or three possibilities exist for a single number in a row or column and it is bound by a 3 x 3 box, the number can be eliminated from the rest of the box. The case of one possibility is covered by HS above.
+
+X-Wing (XW):
+
+Look for a single possibility value that occurs exactly twice in two rows. If the cells containing
+the value line up in two columns to form a rectangle, all occurrences of the value may be
+removed from both columns. This also works the other way, starting with columns and eliminating
+from rows.
+
+Y-Wing (YW)
+Y-wings work by eliminating possibilities from intersections of influence. Each cell exerts
+a range of influence on all the others cells in the same row, column, and box. Y-wing is a
+complex, advanced technique, so we present an example:
+
+Suppose a cell has exactly two possibilities A and B. This cell AB is the pivot. Consider
+two cells, AC and BC, which are influenced by AB, but do not influence each other. If they
+each share exactly one possibility with AB and exactly one possibility with each other, then
+the possibility held in common between AC and BC, C, can be eliminated from every cell in
+the intersection of AC and BC’s ranges of influence.
