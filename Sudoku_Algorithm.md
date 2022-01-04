@@ -40,3 +40,34 @@ Using this method finds a workable Sudoku grid between 1 to ten try’s on avera
 A recursive algorithm could be used, but as my algorithm works, I did not follow that route. 
 
 The next article will cover the task of removing numbers from the Sudoku Game Array so we can have a Sudoku puzzle with only one possible solution.
+
+# Sudoku Algorithm Part 2 Removing numbers from the board
+
+So we now have a 9 x 9 grid with numbers that fit the constraints of Sudoku rules:
+
+1. Each row must contain the numbers 1 to 9.
+2. Each column must contain the numbers 1 to 9.
+3. Each of the nine 3 x 3 local square must contain the numbers 1 to 9.
+
+Now we have to remove numbers from the board one at a time. We can’t just remove any number. Each time we remove a number we will need to verify that the board can be solved. In essence, we will need to  try and solve the Sudoku puzzle each time we remove another number using the methods (ns,hs,np,ir,xw,yw) listed below. If we only use the simplest methods to see if the puzzle can be solved, then our puzzle will be simpler. For example using only ns and hs methods we will have a very simple Sudoku puzzle. If we use all the methods (ns,hs,np,ir,xw,yw) our puzzle has the potential to be more difficult. 
+
+So obviously we need to write a Sudoku solving algorithm with the ability to try all the methods (ns,hs,np,ir,xw,yw).
+
+My Sudoku solving algorithm uses a while loop:
+while ( ($blanksquaresleft == 1) and ($solvable == 1) ) {keep randomly blanking cells and try to solve the Sudoku grid}
+If we can solve the Sudoku grid,  return a success code. $solvable == 1
+
+The $solvable variable is set to 1 if we have at least filled in one blank square during the last loop. This at least gives us the hope that this 9 x 9 grid is solvable. If, during the last loop, we did not fill in any blank squares, this Sudoku grid is not solvable, so quit and return our failure. ????
+
+$LpNS, $LpHS, etc are return variables indicating that we filled in $LpNS number of cells for that type of Sudoku fill algorithm NS.
+if ( ($LpNS > 0) or ($LpHS > 0) ) {$solvable = 1} #still might be solvable! keep going
+else {$solvable = 0} #our algorithm can’t solve this board! quit and return a failure code
+
+We loop until we cannot fill in another cell or we complete the Sudoku puzzle. 
+If we cannot fill in a cell, we return a fail condition, replace the number in the last random cell we tried to remove, and remove another number from a randomly selected cell. 
+If we finally fill in all the Sudoku cells we return successfully and try to remove yet another random cell from the Sudoku board and try and solve that board.
+
+My breakout condition for the Sudoku number removal loop, is set by a time limit. My code is sufficiently fast that 5 seconds is plenty to get the Suduku board down to 25 visible numbers.
+
+The next part we need to code are the algorithms to actually fill in the blank squares. See the next article.
+
