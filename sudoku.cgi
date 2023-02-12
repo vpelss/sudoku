@@ -1,12 +1,14 @@
-#!c:\perl64\bin\perl.exe -d
-
-#!/usr/bin/perl
+#!/usr/bin/perl -d
 
 #still have not implemented YWing searches
-
+eval{
 use strict;
+use lib '.';
 use List::Util qw(shuffle);
-use sudokuvars;
+require sudokuvars;
+};
+if ($@) { &cgierr("fatal error: $@"); }     # never produces that nasty 500 server error page.
+
 #get setup variables the proper way
 my $archivepath = $sudokuvars::archivepath;
 my $archiveurl  = $sudokuvars::archiveurl;
@@ -44,7 +46,7 @@ my $timetotry = 5;
 my $NumberOfPicks = 1; #how many numbers should we try to remove and then test at once? too big and we overshoot and fall back a lot 2 is good
 my $target = 60;
 my $debug = 0;
-#my @RemainingCells;
+my @RemainingCells;
 
 eval { &Main(); };                            # Trap any fatal errors so the program hopefully
 if ($@) { &CgiErr("fatal error: $@"); }     # never produces that nasty 500 server error page.
@@ -1249,4 +1251,3 @@ sub CgiErr {
     print "\n</PRE>";
     exit -1;
 }
-
